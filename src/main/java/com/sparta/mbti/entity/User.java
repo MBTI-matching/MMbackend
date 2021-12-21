@@ -1,5 +1,6 @@
 package com.sparta.mbti.entity;
 
+import com.sparta.mbti.dto.UserInfoRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,4 +51,11 @@ public class User {
 
     @Column
     private String address;
+
+    public void updateProfile(UserInfoRequestDto requestDto) {
+        this.nickname = requestDto.getNickname();
+        this.intro = requestDto.getIntro();
+        this.profileImage = requestDto.getProfileImage();
+        this.location = requestDto.getLocation();
+    }
 }
