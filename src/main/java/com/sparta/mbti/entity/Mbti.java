@@ -22,12 +22,4 @@ public class Mbti {
 
     @Column
     private String mbti;
-
-    @OneToMany
-    @JoinColumn
-    private List<User> userList;
-
-    public void updateProfile(UserInfoRequestDto requestDto) {
-        this.mbti = requestDto.getMbti();
-    }
 }

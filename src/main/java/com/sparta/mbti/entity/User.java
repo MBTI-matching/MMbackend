@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,10 +40,10 @@ public class User {
     private String location;
 
     @Column
-    private double latitude;
+    private String latitude;
 
     @Column
-    private double longitude;
+    private String longitude;
 
     @Column
     private String gender;
@@ -52,10 +54,21 @@ public class User {
     @Column
     private String address;
 
+    @Column
+    private String mbti;
+
+    @OneToMany
+    @JoinColumn
+    private List<Interest> interestList = new ArrayList<>();
+    // 순환참조 방지 방법?
+
     public void updateProfile(UserInfoRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
         this.intro = requestDto.getIntro();
         this.profileImage = requestDto.getProfileImage();
         this.location = requestDto.getLocation();
+        this.mbti = requestDto.getMbti();
+        this.interestList = requestDto.getInterestList();
+
     }
 }

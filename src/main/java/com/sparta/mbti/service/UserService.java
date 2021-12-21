@@ -29,20 +29,5 @@ public class UserService {
                 () -> new NullPointerException("해당 유저가 없습니다.")
         );
         user.updateProfile(requestDto);
-
-
-        Mbti mbti = mbtiRepository.findByUserId(userId).orElseThrow(
-                () -> new NullPointerException("해당 MBTI가 없습니다.")
-        );
-
-        mbti.updateProfile(requestDto);
-
-
-        Interest interest = interestRepository.findByUserId(userId).orElseThrow(
-                () -> new NullPointerException("해당 관심사가 없습니다.")
-        );
-
-        interest.updateProfile(requestDto);
-
     }
 }
