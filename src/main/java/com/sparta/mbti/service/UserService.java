@@ -41,7 +41,7 @@ public class UserService {
         //List<UserInterestRequestDto> infoList = new ArrayList<>();
 
         for (UserInterestRequestDto interestDto : requestDto.getInterestList()) {
-            if (interestDto == null) {
+            if (interestDto.getInterest() == null) {
                 throw new NullPointerException("관심사를 입력해주십시오.");
             }
 //            else {
