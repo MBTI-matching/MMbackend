@@ -57,18 +57,11 @@ public class User {
     @Column
     private String mbti;
 
-    @OneToMany
-    @JoinColumn
-    private List<Interest> interestList = new ArrayList<>();
-    // 순환참조 방지 방법?
-
     public void updateProfile(UserInfoRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
         this.intro = requestDto.getIntro();
         this.profileImage = requestDto.getProfileImage();
         this.location = requestDto.getLocation();
         this.mbti = requestDto.getMbti();
-        this.interestList = requestDto.getInterestList();
-
     }
 }

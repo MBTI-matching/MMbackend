@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface InterestRepository extends JpaRepository<Interest, Long> {
     Optional<Interest> findByUserId(Long userId);
+
+    //List<Interest> findAllByUserId(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.sparta.mbti.entity;
 
+import com.sparta.mbti.dto.UserInterestRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,11 @@ public class Interest {
     @Column
     private String interest;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
+
+    public void updateProfile(UserInterestRequestDto interestDto) {
+        this.interest = interestDto.getInterest();
+    }
 }
