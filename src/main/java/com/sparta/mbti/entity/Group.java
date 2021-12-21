@@ -35,5 +35,5 @@ public class Group extends Timestamped {
 
     @ManyToOne
     @JoinColumn
-    private Category category;
+    private Interest interest;
 }

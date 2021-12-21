@@ -28,12 +28,26 @@ public class User {
     private String nickname;
 
     @Column
-    private String profileImg;
+    private String profileImage;
+
+    @Column
+    private String intro;
+
+    @Column
+    private String location;
+
+    @Column
+    private double latitude;
+
+    @Column
+    private double longitude;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String ageRange;
 
     @Column
     private String address;
-
-    @ManyToOne
-    @JoinColumn
-    private Mbti mbti;
 }

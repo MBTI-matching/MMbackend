@@ -6,18 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class Interest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;
+    private Long interestId;
 
     @Column
-    private String category;
+    private String interest;
+
+    @OneToMany
+    @JoinColumn
+    private List<User> userList; //= new ArrayList<>();
 }
