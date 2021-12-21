@@ -21,23 +21,25 @@ public class UserService {
 
     @Transactional
     public void updateProfile(UserInfoRequestDto requestDto) {
-        User user = userRepository.findByNickname(requestDto.getNickname()).orElseThrow(
+
+        Long userId = 1L;
+        // Long userId = user.getUserId();
+
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new NullPointerException("해당 유저가 없습니다.")
         );
         user.updateProfile(requestDto);
 
 
-        Long userId = user.getUserId();
-
         Mbti mbti = mbtiRepository.findByUserId(userId).orElseThrow(
-                () -> new NullPointerException("해당 데이터가 없습니다.")
+                () -> new NullPointerException("해당 MBTI가 없습니다.")
         );
 
         mbti.updateProfile(requestDto);
 
 
         Interest interest = interestRepository.findByUserId(userId).orElseThrow(
-                () -> new NullPointerException("해당 데이터가 없습니다.")
+                () -> new NullPointerException("해당 관심사가 없습니다.")
         );
 
         interest.updateProfile(requestDto);
