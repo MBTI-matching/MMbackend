@@ -1,7 +1,6 @@
 package com.sparta.mbti.controller;
 
 import com.sparta.mbti.dto.UserInfoRequestDto;
-import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.sparta.mbti.entity;
+package com.sparta.mbti.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
