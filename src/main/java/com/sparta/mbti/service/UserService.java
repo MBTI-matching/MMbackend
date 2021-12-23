@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.mbti.dto.KakaoUserInfoDto;
 import com.sparta.mbti.dto.UserRequestDto;
+import com.sparta.mbti.dto.UserResponseDto;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.UserRepository;
 import com.sparta.mbti.security.UserDetailsImpl;
@@ -34,7 +35,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    static boolean signStatus;      // 회원가입 상태
+
+    public UserResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -45,7 +48,7 @@ public class UserService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. 강제 로그인 처리
-        forceLogin(kakaoUser, response);
+        return forceLogin(kakaoUser, response);
     }
 
     // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -163,6 +166,7 @@ public class UserService {
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
         String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2);  // 카카오 연령대
 
+        // 가입 여부
         if (kakaoUser == null) {
             kakaoUser = User.builder()
                     .kakaoId(kakaoId)
@@ -174,16 +178,16 @@ public class UserService {
                     .ageRange(ageRange)
                     .build();
             userRepository.save(kakaoUser);
+            signStatus = false;                 // 처음 가입하면 false => 추가 정보 입력 페이지로 이동
         } else {
-            kakaoUser.updateKakao(kakaoUserInfo);
-            userRepository.save(kakaoUser);
+            signStatus = true;                  // 이미 가입했으면 true => 메인 페이지로 이동
         }
 
         return kakaoUser;
     }
 
     // 4. 강제 로그인 처리
-    private void forceLogin(User kakaoUser, HttpServletResponse response) {
+    private UserResponseDto forceLogin(User kakaoUser, HttpServletResponse response) {
         UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -193,6 +197,18 @@ public class UserService {
 
         // 헤더에 JWT 토큰 담아서 응답
         response.addHeader("Authorization", "Bearer " + token);
+
+        return UserResponseDto.builder()
+                .nickname(userDetails.getUser().getNickname())
+                .profileImage(userDetails.getUser().getProfileImage())
+                .gender(userDetails.getUser().getGender())
+                .ageRange(userDetails.getUser().getAgeRange())
+                .intro(userDetails.getUser().getIntro())
+                .location(userDetails.getUser().getLocation())
+                .interest(userDetails.getUser().getInterest())
+                .mbti(userDetails.getUser().getMbti())
+                .signStatus(signStatus)
+                .build();
     }
 
     // 추가 정보 입력
