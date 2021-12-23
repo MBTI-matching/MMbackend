@@ -170,7 +170,7 @@ public class UserService {
         // nullable = true
         String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
-        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2);  // 카카오 연령대
+        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
 
         // 가입 여부
         if (kakaoUser == null) {
