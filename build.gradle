@@ -9,8 +9,6 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
-    //customProvidedRuntime
-
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -22,28 +20,28 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-    ///////////////////////////////////////////////////////////////////////
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    ///////////////////////////////////////////////////////////////////////
-
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    //runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
 
-    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-java8time'
-    implementation 'com.querydsl:querydsl-jpa'
-    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
-    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
+    // JSON In Java
+    implementation group: 'org.json', name: 'json', version: '20160810'
+
+    // 스프링 시큐리티
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    //validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'commons-codec:commons-codec:1.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'com.auth0:java-jwt:3.13.0'
 
 
     //implementation 'org.springframework.boot:spring-boot-starter-Tomcat'
@@ -52,8 +50,6 @@ dependencies {
 
     //https://okky.kr/article/997902 gradle 7 version 이상부터는 compile, testCompile 대신 implementataion, testImplementation 사용
     //implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-
 
 }
 

@@ -21,7 +21,7 @@ public class Interest {
     @Column
     private String interest;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn
+//    private User user;
 }

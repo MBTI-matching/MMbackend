@@ -1,5 +1,7 @@
 package com.sparta.mbti.model;
 
+import com.sparta.mbti.dto.KakaoUserInfoDto;
+import com.sparta.mbti.dto.UserRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,9 +50,25 @@ public class User {
     @Column
     private String location;
 
-//    @Column
-//    private String interest;
+    @Column
+    private String interest;
     // JoinColumn은 아니지만 정말로 "복수의" 관심사를 나타내는 데 String으로 괜찮은가? String[]이나 List나 이런 걸로 해야 하는 거 아닌가?
 
+    // 카카오 정보
+    public void updateKakao(KakaoUserInfoDto kakaoUserInfo) {
+        this.nickname = kakaoUserInfo.getNickname();
+        this.profileImage = kakaoUserInfo.getProfileImage();
+        this.gender = kakaoUserInfo.getGender();
+        this.ageRange = kakaoUserInfo.getAgeRange();
+    }
 
+    // 추가 입력 정보
+    public void update(UserRequestDto userRequestDto) {
+        this.nickname = userRequestDto.getNickname();
+        this.profileImage = userRequestDto.getProfileImage();
+        this.intro = userRequestDto.getIntro();
+        this.location = userRequestDto.getLocation();
+        this.interest = userRequestDto.getInterest();
+        this.mbti = userRequestDto.getMbti();
+    }
 }
