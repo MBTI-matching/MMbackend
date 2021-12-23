@@ -14,9 +14,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 public class Post extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    @Column(name = "POST_ID")
+    private Long id;
 
     @Column
     private String title;

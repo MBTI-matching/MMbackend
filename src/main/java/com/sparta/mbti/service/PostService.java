@@ -70,7 +70,7 @@ public class PostService {
 
     @Transactional
     public void updatePost(Long postId, PostUndoDto postUndoDto, User user) {
-        Post post = postRepository.findByUserAndPostId(user, postId).orElseThrow(
+        Post post = postRepository.findByUserAndId(user, postId).orElseThrow(
                 () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 

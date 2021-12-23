@@ -16,7 +16,8 @@ public class Interest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long interestId;
+    @Column(name = "INTEREST_ID")
+    private Long id;
 
     @Column
     private String interest;

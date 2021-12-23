@@ -37,9 +37,7 @@ public class CommentService {
                 () -> new NullPointerException("해당 댓글이 존재하지 않습니다.")
         );
 
-        User writer = userRepository.findByCommentId(commentId).orElseThrow(
-                () -> new NullPointerException("해당 댓글의 작성자가 존재하지 않습니다.")
-        );
+        User writer = comment.getUser();
 
         if (!writer.equals(userDetails.getUser())) {
             throw new IllegalArgumentException("댓글은 작성자만 수정할 수 있습니다.");
@@ -51,9 +49,11 @@ public class CommentService {
     @Transactional // 댓글 삭제
     public void deleteComment(UserDetailsImpl userDetails, Long commentId) {
 
-        User writer = userRepository.findByCommentId(commentId).orElseThrow(
-                () -> new NullPointerException("해당 댓글의 작성자가 존재하지 않습니다.")
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NullPointerException("해당 댓글이 존재하지 않습니다.")
         );
+
+        User writer = comment.getUser();
 
         if (!writer.equals(userDetails.getUser())) {
             throw new IllegalArgumentException("댓글은 작성자만 지울 수 있습니다.");

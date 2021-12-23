@@ -20,7 +20,7 @@ public class User {
     @Column(name = "USER_ID")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, name = "KAKAO_ID")
     private Long kakaoId;
 
     @Column(nullable = false, unique = true)
