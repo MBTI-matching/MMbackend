@@ -104,6 +104,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
+        System.out.println(body);
 
         // ID (카카오 기본키)
         Long id = body.getLong("id");
@@ -122,11 +123,16 @@ public class UserService {
             profileImage = body.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");
         }
 
+        // has_gender: false (성별 선택 안함), true (성별 선택)
         // gender_needs_agreement: true (성별 동의 안함), false (성별 동의)
-        // 성별
+        // 성별 (male, female, unchecked)
         String gender = "";
-        // 이미지 동의 및 등록 되었으면
-        if (!body.getJSONObject("kakao_account").getBoolean("gender_needs_agreement")) {
+        if (!body.getJSONObject("kakao_account").getBoolean("has_gender")) {
+            gender = "unchecked";
+        }
+        // 성별 선택 및 성별 동의 되었으면
+        if (body.getJSONObject("kakao_account").getBoolean("has_gender") &&
+                !body.getJSONObject("kakao_account").getBoolean("gender_needs_agreement")) {
             gender = body.getJSONObject("kakao_account").getString("gender");
         }
 
@@ -164,7 +170,7 @@ public class UserService {
         // nullable = true
         String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
-        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2);  // 카카오 연령대
+        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
 
         // 가입 여부
         if (kakaoUser == null) {

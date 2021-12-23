@@ -1,5 +1,6 @@
 package com.sparta.mbti.model;
 
+import com.sparta.mbti.dto.PostUndoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,12 +21,17 @@ public class Post extends Timestamped {
     @Column
     private String title;
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
+
+    public void update(PostUndoDto postUndoDto) {
+        this.title = postUndoDto.getTitle();
+        this.content = postUndoDto.getContent();
+    }
 
 //    @Column
 //    private String interest;
