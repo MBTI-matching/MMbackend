@@ -1,4 +1,4 @@
 package com.sparta.mbti.model;
 
-public class ChatRoom {
+public class User_Room {
 }
