@@ -15,8 +15,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long id;                            // 테이블 기본키
 
     @Column(nullable = false, unique = true)
@@ -47,12 +48,6 @@ public class User {
     private String location;                    // 위치 (서울 특별시 구)
 
     @Column
-    private String longitude;                   // 경도
-
-    @Column
-    private String latitude;                    // 위도
-
-    @Column
     private String interest;                    // 관심사
 
     @Column
@@ -72,8 +67,6 @@ public class User {
         this.profileImage = userRequestDto.getProfileImage();
         this.intro = userRequestDto.getIntro();
         this.location = userRequestDto.getLocation();
-        this.longitude = userRequestDto.getLongitude();
-        this.latitude = userRequestDto.getLatitude();
         this.interest = userRequestDto.getInterest();
         this.mbti = userRequestDto.getMbti();
     }

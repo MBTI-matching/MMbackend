@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -194,7 +195,8 @@ public class UserService {
         response.addHeader("Authorization", "Bearer " + token);
     }
 
-    // 추가 정보 입력    @Transactional
+    // 추가 정보 입력
+    @Transactional
     public void updateProfile(User user, UserRequestDto userRequestDto) {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
@@ -206,7 +208,7 @@ public class UserService {
             userRequestDto.setNickname(user.getNickname());
         }
 
-        // 추가정보 설정하여 업데이트 (닉네임, 프로필, 소개글, 위치, 경도, 위도, 관심사, mbti)
+        // 추가정보 설정하여 업데이트 (닉네임, 프로필, 소개글, 위치, 관심사, mbti)
         findUser.update(userRequestDto);
 
         // DB 저장
