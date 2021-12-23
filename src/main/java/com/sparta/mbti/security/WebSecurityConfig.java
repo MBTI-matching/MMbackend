@@ -43,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         web
                 .ignoring()
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**")
+                .antMatchers("/chat/room/**");
     }
 
     @Override
@@ -95,8 +96,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
 
+        skipPathList.add("GET,/chat/**");
+        skipPathList.add("POST,/chat/**");
         // 회원 관리 API 허용
         skipPathList.add("GET,/user/**");
+        //skipPathList.add("GET,/**");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
