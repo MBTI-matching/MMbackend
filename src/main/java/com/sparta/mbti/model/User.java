@@ -32,7 +32,7 @@ public class User {
     @Column(nullable = false)
     private String nickname;                    // 카카오 닉네임
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     private String profileImage;                // 카카오 프로필
 
     @Column
@@ -41,7 +41,7 @@ public class User {
     @Column
     private String ageRange;                    // 카카오 연령대
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     private String intro;                       // 소개글
 
     @Column
