@@ -1,12 +1,13 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.*;
-import com.sparta.mbti.model.Comment;
-import com.sparta.mbti.model.Image;
-import com.sparta.mbti.model.Post;
-import com.sparta.mbti.model.User;
+import com.sparta.mbti.dto.CommentResopnseDto;
+import com.sparta.mbti.dto.ImageResponseDto;
+import com.sparta.mbti.dto.PostRequestDto;
+import com.sparta.mbti.dto.PostResponseDto;
+import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.CommentRepository;
 import com.sparta.mbti.repository.ImageRepository;
+import com.sparta.mbti.repository.LikesRepository;
 import com.sparta.mbti.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
+    private final LikesRepository likesRepository;
 
     // 게시글 작성
     @Transactional
@@ -57,6 +59,8 @@ public class PostService {
                 () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 
+        // 게시글 좋아요 수
+        int likesCount = (int)likesRepository.findAllByPost(post).size();
         // 게시글 이미지 리스트
         List<Image> imageList = imageRepository.findAllByPost(post);
         // 반환할 이미지 리스트
@@ -88,6 +92,7 @@ public class PostService {
                 .mbti(post.getUser().getMbti().getMbti())
                 .content(post.getContent())
                 .tag(post.getTag())
+                .likesCount(likesCount)
                 .imageList(images)
                 .commentList(comments)
                 .createdAt(post.getCreatedAt())
@@ -127,5 +132,27 @@ public class PostService {
 
         // DB 삭제
         postRepository.deleteById(postId);
+    }
+
+    // 게시글 좋아요
+    @Transactional
+    public void likesOnOff(Long postId, User user) {
+        // 게시글 조회
+        Post findPost = postRepository.findById(postId).orElseThrow(
+                () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
+        );
+
+        // 해당 사용자가 게시글에 좋아요 여부 조회
+        Likes findLikes = likesRepository.findByUserAndPost(user, findPost).orElse(null);
+
+        // 게시글에 좋아요 언했으면 추가, 했으면 삭제
+        if (findLikes == null) {
+            likesRepository.save(Likes.builder()
+                    .user(user)
+                    .post(findPost)
+                    .build());
+        } else {
+            likesRepository.delete(findLikes);
+        }
     }
 }

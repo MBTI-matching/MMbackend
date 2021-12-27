@@ -40,4 +40,11 @@ public class PostController {
                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.deletePost(postId, userDetails.getUser());
     }
+
+    // 게시글 좋아요
+    @PostMapping("/api/post/likes/{postId}")
+    public void likesOnOff(@PathVariable Long postId,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        postService.likesOnOff(postId, userDetails.getUser());
+    }
 }

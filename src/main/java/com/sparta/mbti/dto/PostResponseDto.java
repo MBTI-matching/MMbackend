@@ -19,6 +19,7 @@ public class PostResponseDto {
     private String mbti;            // mbti
     private String content;         // 게시글 내용
     private String tag;             // 게시글 태그
+    private int likesCount;         // 게시글 좋아요 수
     private List<ImageResponseDto> imageList;    // 이미지 리스트
     private List<CommentResopnseDto> commentList;    // 댓글 리스트
 
