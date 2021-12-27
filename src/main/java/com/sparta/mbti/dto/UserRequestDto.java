@@ -1,9 +1,12 @@
 package com.sparta.mbti.dto;
 
+import com.sparta.mbti.model.Interest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Builder
 @Data
@@ -14,6 +17,6 @@ public class UserRequestDto {
     private String profileImage;        // 프로필
     private String intro;               // 소개글
     private String location;            // 위치 (서울 특별시 구)
-    private String interest;            // 관심사
     private String mbti;                // mbti
+    List<InterestListDto> interestList; // 관심사 리스트
 }
