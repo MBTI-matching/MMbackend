@@ -111,7 +111,6 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
-        System.out.println(body);
 
         // ID (카카오 기본키)
         Long id = body.getLong("id");
@@ -232,7 +231,6 @@ public class UserService {
                                                 .interest(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest())
                                                 .build());
             }
-            System.out.println(interestListDtos);
         }
 
         // Body 에 반환
@@ -281,7 +279,6 @@ public class UserService {
         userRepository.save(findUser);
 
         // 관심사 리스트 조회
-        System.out.println(userRequestDto.getInterestList());
         List<UserInterest> userInterest = new ArrayList<>();
         for (int i = 0; i < userRequestDto.getInterestList().size(); i++) {
             Interest interest = interestRepository.findByInterest(userRequestDto.getInterestList().get(i).getInterest()).orElseThrow(

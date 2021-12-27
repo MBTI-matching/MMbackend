@@ -33,8 +33,6 @@ public class HomeService {
         for (Post onePost : postList) {
             // 게시글 좋아요 수
             int likesCount = (int)likesRepository.findAllByPost(onePost).size();
-            System.out.println(onePost.getContent());
-            System.out.println(likesCount);
             // 게시글 이미지 리스트
             List<Image> imageList = imageRepository.findAllByPost(onePost);
             // 반환할 이미지 리스트
