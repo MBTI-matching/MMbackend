@@ -91,16 +91,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthFilter jwtFilter() throws Exception {
         List<String> skipPathList = new ArrayList<>();
+        // 이 부분은 JWT 토큰이 불필요한 API 만 넣어주는 곳 (JWT 필터를 안거치므로 토큰 생성안됨)
 
         // h2-console 허용
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
 
-        skipPathList.add("GET,/chat/**");
-        skipPathList.add("POST,/chat/**");
-        // 회원 관리 API 허용
-        skipPathList.add("GET,/user/**");
-        //skipPathList.add("GET,/**");
+        // 카카오 로그인 페이지 허용
+        skipPathList.add("GET,/user/kakao/callback");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
