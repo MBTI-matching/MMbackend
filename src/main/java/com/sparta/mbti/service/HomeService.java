@@ -8,6 +8,7 @@ import com.sparta.mbti.model.Image;
 import com.sparta.mbti.model.Post;
 import com.sparta.mbti.repository.CommentRepository;
 import com.sparta.mbti.repository.ImageRepository;
+import com.sparta.mbti.repository.LikesRepository;
 import com.sparta.mbti.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +23,18 @@ public class HomeService {
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
+    private final LikesRepository likesRepository;
 
     public List<PostResponseDto> getAllposts(Pageable pageable) {
         // page, size, 내림차순으로 페이징한 게시글 리스트
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
         // 반환할 게시글 리스트
         List<PostResponseDto> posts = new ArrayList<>();
-
         for (Post onePost : postList) {
+            // 게시글 좋아요 수
+            int likesCount = (int)likesRepository.findAllByPost(onePost).size();
+            System.out.println(onePost.getContent());
+            System.out.println(likesCount);
             // 게시글 이미지 리스트
             List<Image> imageList = imageRepository.findAllByPost(onePost);
             // 반환할 이미지 리스트
@@ -61,6 +66,7 @@ public class HomeService {
                                 .mbti(onePost.getUser().getMbti().getMbti())
                                 .content(onePost.getContent())
                                 .tag(onePost.getTag())
+                                .likesCount(likesCount)
                                 .imageList(images)
                                 .commentList(comments)
                                 .createdAt(onePost.getCreatedAt())
