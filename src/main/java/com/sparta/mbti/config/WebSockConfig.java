@@ -1,4 +1,4 @@
-package com.sparta.mbti.security;
+package com.sparta.mbti.config;
 
 
 import org.springframework.context.annotation.Configuration;

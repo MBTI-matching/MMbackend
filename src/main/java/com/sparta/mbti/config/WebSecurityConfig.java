@@ -1,5 +1,6 @@
-package com.sparta.mbti.security;
+package com.sparta.mbti.config;
 
+import com.sparta.mbti.security.FilterSkipMatcher;
 import com.sparta.mbti.security.filter.JwtAuthFilter;
 import com.sparta.mbti.security.jwt.HeaderTokenExtractor;
 import com.sparta.mbti.security.provider.JWTAuthProvider;
@@ -47,7 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers("/h2-console/**")
-                .antMatchers("/chat/room/**");
+                .antMatchers("/chat/**")
+                .antMatchers("/webjars/**");
     }
 
     @Override
@@ -108,6 +110,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 카카오 로그인 페이지 허용
         skipPathList.add("GET,/user/kakao/callback");
 
+        skipPathList.add("GET,/webjars/**");
+        skipPathList.add("GET,/ws-stomp/**");
+        skipPathList.add("GET,/chat/**");
+        skipPathList.add("POST,/chat/**");
+        skipPathList.add("GET,/chat/user");
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
                 "/**"
