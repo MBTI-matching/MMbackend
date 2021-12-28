@@ -45,11 +45,11 @@ public class User {
     @Column(columnDefinition = "LONGTEXT")
     private String intro;                       // 소개글
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "LOCATION_ID")
     private Location location;                  // 위치 (서울 특별시 구)
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "MBTI_ID")
     private Mbti mbti;                          // mbti
 
