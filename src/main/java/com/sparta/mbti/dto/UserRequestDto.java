@@ -1,6 +1,5 @@
 package com.sparta.mbti.dto;
 
-import com.sparta.mbti.model.Interest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
