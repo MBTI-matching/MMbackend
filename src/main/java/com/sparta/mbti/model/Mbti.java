@@ -22,5 +22,14 @@ public class Mbti {
     private String mbti;                        // mbti
 
     @Column
-    private String mbtiChemy;                   // mbti 궁합
+    private String mbtiFirst;                   // mbti 이상적 1단계
+
+    @Column
+    private String mbtiSecond;                  // mbti 이상적 2단계
+
+    @Column
+    private String mbtiThird;                   // mbti 이상적 3단계
+
+    @Column
+    private String mbtiForth;                   // mbti 이상적 4단계
 }
