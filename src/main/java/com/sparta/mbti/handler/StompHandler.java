@@ -1,5 +1,6 @@
 package com.sparta.mbti.handler;
 
+import com.sparta.mbti.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StompHandler implements ChannelInterceptor {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenUtils jwtTokenUtils;
 
     // websocket을 통해 들어온 요청이 처리 되기전 실행된다.
     @Override
@@ -22,7 +23,7 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         // websocket 연결시 헤더의 jwt token 검증
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            jwtTokenProvider.validateToken(accessor.getFirstNativeHeader("token"));
+            jwtTokenUtils.validateToken(accessor.getFirstNativeHeader("token"));
         }
         return message;
     }

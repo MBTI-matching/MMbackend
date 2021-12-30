@@ -1,8 +1,13 @@
 package com.sparta.mbti.controller;
 
 import com.sparta.mbti.model.ChatRoom;
+import com.sparta.mbti.security.UserDetailsImpl;
+import com.sparta.mbti.security.jwt.JwtTokenUtils;
 import com.sparta.mbti.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +20,7 @@ import java.util.List;
 public class ChatRoomController{
 
     private final ChatRoomService chatRoomService;
+    private final JwtTokenUtils jwtTokenUtils;
 
     // 채팅 리스트 화면
     @GetMapping("/room")
@@ -45,4 +51,5 @@ public class ChatRoomController{
     public ChatRoom roomInfo(@PathVariable String roomId) {
         return chatRoomService.findRoomById(roomId);
     }
+
 }
