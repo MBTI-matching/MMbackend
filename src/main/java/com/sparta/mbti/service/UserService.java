@@ -3,16 +3,14 @@ package com.sparta.mbti.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.mbti.dto.InterestListDto;
-import com.sparta.mbti.dto.KakaoUserInfoDto;
-import com.sparta.mbti.dto.UserRequestDto;
-import com.sparta.mbti.dto.UserResponseDto;
+import com.sparta.mbti.dto.*;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -41,6 +39,10 @@ public class UserService {
     private final MbtiRepository mbtiRepository;
     private final InterestRepository interestRepository;
     private final UserInterestRepository userInterestRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final ImageRepository imageRepository;
+    private final LikesRepository likesRepository;
 
     static boolean signStatus = false;      // 회원가입 상태
 
@@ -111,7 +113,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
-
+        System.out.println(body);
         // ID (카카오 기본키)
         Long id = body.getLong("id");
         // 아이디 (이메일)
@@ -133,20 +135,19 @@ public class UserService {
         // gender_needs_agreement: true (성별 동의 안함), false (성별 동의)
         // 성별 (male, female, unchecked)
         String gender = "";
-        if (!body.getJSONObject("kakao_account").getBoolean("has_gender")) {
-            gender = "unchecked";
-        }
         // 성별 선택 및 성별 동의 되었으면
         if (body.getJSONObject("kakao_account").getBoolean("has_gender") &&
                 !body.getJSONObject("kakao_account").getBoolean("gender_needs_agreement")) {
             gender = body.getJSONObject("kakao_account").getString("gender");
         }
 
+        // has_age_range: false (연령대 선택 안함), true (연령대 선택)
         // age_range_needs_agreement: true (연령대 동의 안함), false (연령대 동의)
         // 연령대
         String ageRange = "";
         // 이미지 동의 및 등록 되었으면
-        if (!body.getJSONObject("kakao_account").getBoolean("age_range_needs_agreement")) {
+        if (body.getJSONObject("kakao_account").getBoolean("has_age_range") &&
+                !body.getJSONObject("kakao_account").getBoolean("age_range_needs_agreement")) {
             ageRange = body.getJSONObject("kakao_account").getString("age_range");
         }
 
@@ -294,5 +295,55 @@ public class UserService {
 
         // DB 저장
         userInterestRepository.saveAll(userInterest);
+    }
+
+    // 내가 쓴 글 조회
+    @Transactional
+    public List<PostResponseDto> getMyposts(Pageable pageable, User user) {
+        // page, size, 내림차순으로 페이징한 내가 쓴 게시글 리스트
+        List<Post> postList = postRepository.findAllByUserOrderByCreatedAtDesc(pageable, user).getContent();
+        // 반환할 게시글 리스트
+        List<PostResponseDto> posts = new ArrayList<>();
+        for (Post onePost : postList) {
+            // 게시글 좋아요 수
+            int likesCount = likesRepository.findAllByPost(onePost).size();
+            // 게시글 이미지 리스트
+            List<Image> imageList = imageRepository.findAllByPost(onePost);
+            // 반환할 이미지 리스트
+            List<ImageResponseDto> images = new ArrayList<>();
+            for (Image oneImage : imageList) {
+                images.add(ImageResponseDto.builder()
+                        .imageId(oneImage.getId())
+                        .imageLink(oneImage.getImageLink())
+                        .build());
+            }
+
+            // 게시글에 달린 댓글 리스트 (작성일자 오름차순)
+            List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtAsc(onePost);
+            // 반환할 댓글 리스트
+            List<CommentResopnseDto> comments = new ArrayList<>();
+            for (Comment oneComment : commentList) {
+                comments.add(CommentResopnseDto.builder()
+                        .commentId(oneComment.getId())
+                        .nickname(oneComment.getUser().getNickname())
+                        .mbti(oneComment.getUser().getMbti().getMbti())
+                        .comment(oneComment.getComment())
+                        .createdAt(oneComment.getCreatedAt())
+                        .build());
+            }
+            // 내가 쓴 게시글 리스트
+            posts.add(PostResponseDto.builder()
+                    .postId(onePost.getId())
+                    .nickname(onePost.getUser().getNickname())
+                    .mbti(onePost.getUser().getMbti().getMbti())
+                    .content(onePost.getContent())
+                    .tag(onePost.getTag())
+                    .likesCount(likesCount)
+                    .imageList(images)
+                    .commentList(comments)
+                    .createdAt(onePost.getCreatedAt())
+                    .build());
+        }
+        return posts;
     }
 }

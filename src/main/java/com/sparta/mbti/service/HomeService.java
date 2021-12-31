@@ -1,30 +1,65 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.CommentResopnseDto;
-import com.sparta.mbti.dto.ImageResponseDto;
-import com.sparta.mbti.dto.PostResponseDto;
-import com.sparta.mbti.model.Comment;
-import com.sparta.mbti.model.Image;
-import com.sparta.mbti.model.Post;
-import com.sparta.mbti.repository.CommentRepository;
-import com.sparta.mbti.repository.ImageRepository;
-import com.sparta.mbti.repository.LikesRepository;
-import com.sparta.mbti.repository.PostRepository;
+import com.sparta.mbti.dto.*;
+import com.sparta.mbti.model.*;
+import com.sparta.mbti.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class HomeService {
+    private final UserRepository userRepository;
+    private final LocationRepository locationRepository;
+    private final MbtiRepository mbtiRepository;
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
 
+    // 케미 리스트 (위치 / MBTI 케미)
+    @Transactional
+    public ChemyAllResponseDto chemyList(User user) {
+        // MBTI 이상적 궁합 리스트 4개까지 조회
+        String mbtiChemy = user.getMbti().getMbti();
+        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy);
+
+        // 사용자 조회
+        List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(user.getLocation(), findMbtiList);
+        // 반환 사용자 리스트
+        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        for (User oneUser : findUserList) {
+            chemyUserListDtos.add(ChemyUserListDto.builder()
+                                                .userId(oneUser.getId())
+                                                .nickname(oneUser.getNickname())
+                                                .profileImage(oneUser.getProfileImage())
+                                                .intro(oneUser.getIntro())
+                                                .location(oneUser.getLocation().getLocation())
+                                                .mbti(oneUser.getMbti().getMbti())
+                                                .build());
+        }
+
+        // 반환
+        return ChemyAllResponseDto.builder()
+                                .location(user.getLocation().getLocation())
+                                .longitude(user.getLocation().getLongitude())
+                                .latitude(user.getLocation().getLatitude())
+                                .userCount(findUserList.size())
+                                .userList(chemyUserListDtos)
+                                .build();
+    }
+
+    // 전체 게시글
+    @Transactional
     public List<PostResponseDto> getAllposts(Pageable pageable) {
         // page, size, 내림차순으로 페이징한 게시글 리스트
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
