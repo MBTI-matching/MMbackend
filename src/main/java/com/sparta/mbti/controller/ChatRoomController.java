@@ -52,4 +52,5 @@ public class ChatRoomController{
         return chatRoomService.findRoomById(roomId);
     }
 
+
 }

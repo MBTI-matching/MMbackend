@@ -28,6 +28,7 @@ public class ChatRoomService{
 
     // 모든 채팅방 조회
     public List<ChatRoom> findAllRoom() {
+
         return opsHashChatRoom.values(CHAT_ROOMS);
     }
 
