@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,13 @@ public class HomeController {
     @GetMapping("/api/chemy/list")
     public ChemyAllResponseDto chemyList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return homeService.chemyList(userDetails.getUser());
+    }
+
+    // 지역 케미 리스트 (위치 / MBTI)
+    @GetMapping("/api/chemy/list/{locationId}")
+    public ChemyAllResponseDto locationList(@PathVariable Long locationId,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return homeService.locationList(locationId, userDetails.getUser());
     }
 
     // 커뮤니티 (전체)
