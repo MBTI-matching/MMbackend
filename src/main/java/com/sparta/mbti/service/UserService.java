@@ -235,6 +235,7 @@ public class UserService {
 
         // Body 에 반환
         return UserResponseDto.builder()
+                .token(token)
                 .nickname(userDetails.getUser().getNickname())
                 .gender(userDetails.getUser().getGender())
                 .ageRange(userDetails.getUser().getAgeRange())

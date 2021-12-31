@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponseDto {
+    private String token;
     private String nickname;            // 닉네임
     private String profileImage;        // 프로필
     private String gender;              // 성별
