@@ -36,11 +36,7 @@ public class UserController {
 
     // 내정보 입력 / 수정
     @PutMapping("/api/profile")
-<<<<<<< HEAD
-    public void updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UserRequestDto userRequestDto) {
-=======
     public UserResponseDto updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody  UserRequestDto userRequestDto) {
->>>>>>> develop
         // 추가 정보 입력
         return userService.updateProfile(userDetails.getUser(), userRequestDto);
     }
