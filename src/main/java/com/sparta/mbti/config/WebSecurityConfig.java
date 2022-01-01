@@ -109,12 +109,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 카카오 로그인 페이지 허용
         skipPathList.add("GET,/user/kakao/callback");
-
-        skipPathList.add("GET,/webjars/**");
-        skipPathList.add("GET,/ws-stomp/**");
-        skipPathList.add("GET,/chat/**");
-        skipPathList.add("POST,/chat/**");
-        skipPathList.add("GET,/chat/user");
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
                 "/**"
