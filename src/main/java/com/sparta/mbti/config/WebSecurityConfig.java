@@ -47,9 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         web
                 .ignoring()
-                .antMatchers("/h2-console/**")
-                .antMatchers("/chat/**")
-                .antMatchers("/webjars/**");
+                .antMatchers("/h2-console/**");
     }
 
     @Override
@@ -103,12 +101,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> skipPathList = new ArrayList<>();
         // 이 부분은 JWT 토큰이 불필요한 API 만 넣어주는 곳 (JWT 필터를 안거치므로 토큰 생성안됨)
 
-        // h2-console 허용
-        skipPathList.add("GET,/h2-console/**");
-        skipPathList.add("POST,/h2-console/**");
-
+        skipPathList.add("GET,/ws-stomp/**");
         // 카카오 로그인 페이지 허용
         skipPathList.add("GET,/user/kakao/callback");
+        skipPathList.add("GET,/ws-stomp/**");
+
+        skipPathList.add("GET,/chat/room/**");
+        skipPathList.add("GET,/sub/chat/room/**");
+        skipPathList.add("GET,/pub/chat/room/**");
+        skipPathList.add("GET,/ws-stomp/pub/chat/room/**");
+        skipPathList.add("GET,/ws-stompAlarm/pub/chat/room/**");
+        skipPathList.add("GET,**/pub/chat/room/**");
+        skipPathList.add("GET,**/sub/chat/room/**");
+        skipPathList.add("GET,/ws-stomp/**");
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
                 "/**"
@@ -132,12 +137,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // local 테스트 시
-//        configuration.addAllowedOrigin("http://"); // 배포 주소
+        configuration.addAllowedOrigin("http://localhost:3000"); // 배포 주소
 //        configuration.addAllowedOrigin("http://"); // S3 주소
+        configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization");
+        configuration.addAllowedOriginPattern("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
