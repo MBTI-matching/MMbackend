@@ -21,6 +21,7 @@ public class HomeService {
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
+    private final UserInterestRepository userInterestRepository;
 
     // 케미 리스트 (위치 / MBTI 케미)
     @Transactional
@@ -38,6 +39,16 @@ public class HomeService {
         // 반환 사용자 리스트
         List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
+            // 관심사 리스트 조회
+            List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
+            List<InterestListDto> interestList = new ArrayList<>();
+            for (UserInterest userInterest : userInterestList) {
+                interestList.add(InterestListDto.builder()
+                        .interest(userInterest.getInterest().getInterest())
+                        .build());
+            }
+
+
             chemyUserListDtos.add(ChemyUserListDto.builder()
                                                 .userId(oneUser.getId())
                                                 .nickname(oneUser.getNickname())
@@ -45,6 +56,7 @@ public class HomeService {
                                                 .intro(oneUser.getIntro())
                                                 .location(oneUser.getLocation().getLocation())
                                                 .mbti(oneUser.getMbti().getMbti())
+                                                .interestList(interestList)
                                                 .build());
         }
 
@@ -56,6 +68,56 @@ public class HomeService {
                                 .userCount(findUserList.size())
                                 .userList(chemyUserListDtos)
                                 .build();
+    }
+
+    // 지역 케미 리스트 (위치 / MBTI)
+    public ChemyAllResponseDto locationList(Long locationId, User user) {
+        // 위치 조회
+        Location location = locationRepository.findById(locationId).orElseThrow(
+                () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // MBTI 이상적 궁합 리스트 4개까지 조회
+        String mbtiChemy = user.getMbti().getMbti();
+        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy);
+
+        // 사용자 조회
+        List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(location, findMbtiList);
+        // 반환 사용자 리스트
+        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        for (User oneUser : findUserList) {
+            // 관심사 리스트 조회
+            List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
+            List<InterestListDto> interestList = new ArrayList<>();
+            for (UserInterest userInterest : userInterestList) {
+                interestList.add(InterestListDto.builder()
+                        .interest(userInterest.getInterest().getInterest())
+                        .build());
+            }
+
+            chemyUserListDtos.add(ChemyUserListDto.builder()
+                    .userId(oneUser.getId())
+                    .nickname(oneUser.getNickname())
+                    .profileImage(oneUser.getProfileImage())
+                    .intro(oneUser.getIntro())
+                    .location(oneUser.getLocation().getLocation())
+                    .mbti(oneUser.getMbti().getMbti())
+                    .interestList(interestList)
+                    .build());
+        }
+
+        // 반환
+        return ChemyAllResponseDto.builder()
+                .location(location.getLocation())
+                .longitude(location.getLongitude())
+                .latitude(location.getLatitude())
+                .userCount(findUserList.size())
+                .userList(chemyUserListDtos)
+                .build();
     }
 
     // 전체 게시글

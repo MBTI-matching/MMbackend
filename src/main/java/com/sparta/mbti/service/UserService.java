@@ -253,7 +253,7 @@ public class UserService {
 
     // 추가 정보 입력
     @Transactional
-    public void updateProfile(User user, UserRequestDto userRequestDto) {
+    public UserResponseDto updateProfile(User user, UserRequestDto userRequestDto) {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
@@ -295,6 +295,28 @@ public class UserService {
 
         // DB 저장
         userInterestRepository.saveAll(userInterest);
+
+        List<InterestListDto> interestListDtos = new ArrayList<>();
+        for (int i = 0; i < findUser.getUserInterestList().size(); i++) {
+            interestListDtos.add(InterestListDto.builder()
+                    .interest(findUser.getUserInterestList().get(i).getInterest().getInterest())
+                    .build());
+        }
+
+        // Body 에 반환
+        return UserResponseDto.builder()
+                .nickname(findUser.getNickname())
+                .gender(findUser.getGender())
+                .ageRange(findUser.getAgeRange())
+                .profileImage(findUser.getProfileImage())
+                .intro(findUser.getIntro())
+                .location(findUser.getLocation().getLocation())
+                .longitude(findUser.getLocation().getLongitude())
+                .latitude(findUser.getLocation().getLatitude())
+                .mbti(findUser.getMbti().getMbti())
+                .interestList(interestListDtos)
+                .signStatus(true)
+                .build();
     }
 
     // 내가 쓴 글 조회

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -16,4 +18,5 @@ public class ChemyUserListDto {
     private String intro;               // 소개글
     private String location;            // 위치
     private String mbti;                // MBTI
+    List<InterestListDto> interestList; // 관심사 리스트
 }
