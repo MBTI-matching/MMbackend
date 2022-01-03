@@ -50,12 +50,12 @@ public class UserController {
         return userService.getMyposts(pageable, userDetails.getUser());
     }
 
-    @GetMapping("/chat/user")
-    @ResponseBody
-    public LoginInfo getUserInfo() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName();
-        return LoginInfo.builder().name(name).token(JwtTokenUtils.generateNameJwtToken(name)).build();
-    }
+//    @GetMapping("/chat/user")
+//    @ResponseBody
+//    public LoginInfo getUserInfo() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String name = auth.getName();
+//        return LoginInfo.builder().name(name).token(JwtTokenUtils.generateNameJwtToken(name)).build();
+//    }
 }
 

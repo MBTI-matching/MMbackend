@@ -41,20 +41,21 @@ public class JwtTokenUtils {
         return token;
     }
 
-    public static String generateNameJwtToken(String name) {
-        String token = null;
-        try {
-            token = JWT.create()
-                    .withIssuer("sparta")
-                    .withClaim(CLAIM_USER_NAME, name)
-                    // 토큰 만료 일시 = 현재 시간 + 토큰 유효기간)
-                    .withClaim(CLAIM_EXPIRED_DATE, new Date(System.currentTimeMillis() + JWT_TOKEN_VALID_MILLI_SEC))
-                    .sign(generateAlgorithm());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return token;
-    }
+    //이름만 빼서 토큰제작
+//    public static String generateNameJwtToken(String name) {
+//        String token = null;
+//        try {
+//            token = JWT.create()
+//                    .withIssuer("sparta")
+//                    .withClaim(CLAIM_USER_NAME, name)
+//                    // 토큰 만료 일시 = 현재 시간 + 토큰 유효기간)
+//                    .withClaim(CLAIM_EXPIRED_DATE, new Date(System.currentTimeMillis() + JWT_TOKEN_VALID_MILLI_SEC))
+//                    .sign(generateAlgorithm());
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return token;
+//    }
 
     private static Algorithm generateAlgorithm() {
         return Algorithm.HMAC256(JWT_SECRET);

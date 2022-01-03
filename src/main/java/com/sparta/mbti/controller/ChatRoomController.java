@@ -28,12 +28,14 @@ public class ChatRoomController{
         return "chat/room";     //aws용
         //return "/chat/room";    //로컬호스트용
     }
+
     // 모든 채팅방 목록 반환
     @GetMapping("/rooms")
     @ResponseBody
     public List<ChatRoom> room() {
         return chatRoomService.findAllRoom();
     }
+
     // 채팅방 생성
     @PostMapping("/room")
     @ResponseBody
@@ -47,6 +49,7 @@ public class ChatRoomController{
         return "chat/roomdetail";       //aws
         //return "/chat/roomdetail";    //로컬호스트
     }
+
     // 특정 채팅방 조회
     @GetMapping("/room/{roomId}")
     @ResponseBody

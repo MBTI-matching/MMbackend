@@ -18,6 +18,8 @@ public class JwtDecoder {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public String decodeUsername(String token) {
+        token = token.substring(token.lastIndexOf(" ")+1);
+        System.out.println("substring token : " + token + "\nJwtDecoder" );
         DecodedJWT decodedJWT = isValidToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));
 
