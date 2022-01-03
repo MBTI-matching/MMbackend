@@ -32,4 +32,16 @@ public class Mbti {
 
     @Column
     private String mbtiForth;                   // mbti 이상적 4단계
+
+    @Column
+    private String firstTitle;                  // 제목 #1
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String firstContent;                // 설명 #1
+
+    @Column
+    private String secondTitle;                 // 제목 #2
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String secondContent;               // 설명 #2
 }

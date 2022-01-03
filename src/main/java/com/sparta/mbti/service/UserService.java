@@ -371,4 +371,39 @@ public class UserService {
         }
         return posts;
     }
+
+    public UserProfileDto viewProfile(User user) {
+
+        List<InterestListDto> interestListDtos = new ArrayList<>();
+        for (int i = 0; i < user.getUserInterestList().size(); i++) {
+            interestListDtos.add(InterestListDto.builder()
+                    .interest(user.getUserInterestList().get(i).getInterest().getInterest())
+                    .build());
+        }
+
+        // 해당 유저의 mbti와 동일한 mbti
+        Mbti userMbti = user.getMbti();
+
+        MbtiDto mbtiDto = MbtiDto.builder()
+                .name(userMbti.getMbti()) // 해당 MBTI 명칭
+                .firstTitle(userMbti.getFirstTitle())
+                .firstContent(userMbti.getFirstContent())
+                .secondTitle(userMbti.getSecondTitle())
+                .secondContent(userMbti.getSecondContent())
+                .build();
+
+        return UserProfileDto.builder()
+                .nickname(user.getNickname())
+                .profileImage(user.getProfileImage())
+                .gender(user.getGender())
+                .ageRange(user.getAgeRange())
+                .intro(user.getIntro())
+                .location(user.getLocation().getLocation())
+                .longitude(user.getLocation().getLongitude())
+                .latitude(user.getLocation().getLatitude())
+                .mbtiDto(mbtiDto)
+                .interestList(interestListDtos)
+                .signStatus(true)
+                .build();
+    }
 }

@@ -2,6 +2,7 @@ package com.sparta.mbti.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.mbti.dto.PostResponseDto;
+import com.sparta.mbti.dto.UserProfileDto;
 import com.sparta.mbti.dto.UserRequestDto;
 import com.sparta.mbti.dto.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
@@ -30,7 +31,7 @@ public class UserController {
 
     // 내정보 입력 / 수정
     @PutMapping("/api/profile")
-    public UserResponseDto updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody  UserRequestDto userRequestDto) {
+    public UserResponseDto updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UserRequestDto userRequestDto) {
         // 추가 정보 입력
         return userService.updateProfile(userDetails.getUser(), userRequestDto);
     }
@@ -42,6 +43,12 @@ public class UserController {
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return userService.getMyposts(pageable, userDetails.getUser());
+    }
+
+    // 내 정보 조회
+    @GetMapping("/api/profile/self")
+    public UserProfileDto viewProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.viewProfile(userDetails.getUser());
     }
 
 }
