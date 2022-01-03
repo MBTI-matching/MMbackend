@@ -379,9 +379,9 @@ public class UserService {
         return MbtiDto.builder()
                 .name(userMbti.getMbti()) // 해당 MBTI 명칭
                 .firstTitle(userMbti.getFirstTitle())
-                .firstContent(userMbti.getFirstContent())
+                .firstContent(userMbti.getFirstContent().replaceAll(System.getProperty("line.separator"), " "))
                 .secondTitle(userMbti.getSecondTitle())
-                .secondContent(userMbti.getSecondContent())
+                .secondContent(userMbti.getSecondContent().replaceAll(System.getProperty("line.separator"), " "))
                 .build();
     }
 }
