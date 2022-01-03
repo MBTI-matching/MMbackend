@@ -1,10 +1,7 @@
 package com.sparta.mbti.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.mbti.dto.PostResponseDto;
-import com.sparta.mbti.dto.UserProfileDto;
-import com.sparta.mbti.dto.UserRequestDto;
-import com.sparta.mbti.dto.UserResponseDto;
+import com.sparta.mbti.dto.*;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +42,9 @@ public class UserController {
         return userService.getMyposts(pageable, userDetails.getUser());
     }
 
-    // 내 정보 조회
-    @GetMapping("/api/profile/self")
-    public UserProfileDto viewProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    // 내 MBTI 세부 정보 조회
+    @GetMapping("/api/profile/mbti")
+    public MbtiDto viewProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.viewProfile(userDetails.getUser());
     }
 
