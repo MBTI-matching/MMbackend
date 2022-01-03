@@ -31,6 +31,7 @@ public class Comment extends Timestamped {
     private Post post;                      // 게시글
 
     public void update(CommentRequestDto commentRequestDto) {
+
         this.comment = commentRequestDto.getComment();
     }
 }

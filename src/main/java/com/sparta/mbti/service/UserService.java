@@ -70,7 +70,7 @@ public class UserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -236,7 +236,7 @@ public class UserService {
 
         // Body 에 반환
         return UserResponseDto.builder()
-                .token(token)
+                .username(userDetails.getUser().getUsername())
                 .nickname(userDetails.getUser().getNickname())
                 .gender(userDetails.getUser().getGender())
                 .ageRange(userDetails.getUser().getAgeRange())

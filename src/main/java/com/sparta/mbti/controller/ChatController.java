@@ -1,17 +1,20 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.config.RedisConfig;
 import com.sparta.mbti.dto.ChatMessageDto;
+import com.sparta.mbti.model.ChatMessage;
+import com.sparta.mbti.model.User;
+import com.sparta.mbti.repository.ChatMessageRepository;
 import com.sparta.mbti.repository.UserRepository;
 import com.sparta.mbti.security.jwt.JwtDecoder;
-import com.sparta.mbti.security.jwt.JwtTokenUtils;
-import com.sparta.mbti.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Objects;
 
 // import 생략...
 
@@ -22,29 +25,33 @@ public class ChatController {
     private final ChannelTopic channelTopic;
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserRepository userRepository;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final ChatMessageRepository chatMessageRepository;
     private final JwtDecoder jwtDecoder;
     /**
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto message, @Header("token") String token) {
-        System.out.println("token : " + token + " \nChatController");
-        System.out.println("message : " + message.getMessage() + " \nChatController");
 
         String username = jwtDecoder.decodeUsername(token);
-        String nickname = userRepository.findByUsername(username).orElse(null).getNickname();
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다.")
+        );
 
-        System.out.println("nickname : " + username + " \nChatController");
         // 로그인 회원 정보로 대화명 설정
         message.setSender(username);
-        // 채팅방 입장시에는 대화명과 메시지를 자동으로 세팅한다.
-        if (ChatMessageDto.MessageType.ENTER.equals(message.getType())) {
-            message.setSender("[알림]");
-            message.setMessage(nickname + "님이 입장하셨습니다.");
-        }
+
         // Websocket에 발행된 메시지를 redis로 발행(publish)
 
-        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
+        ChatMessage newMessage = ChatMessage.builder()
+                .message(message.getMessage())
+                .roomId(message.getRoomId())
+                .type(message.getType())
+                .sender(user)
+                .build();
+
+        chatMessageRepository.save(newMessage);
+        redisTemplate.convertAndSend(channelTopic.getTopic(), newMessage);
+
     }
 }
