@@ -47,7 +47,7 @@ public class ChatController {
                 .message(message.getMessage())
                 .roomId(message.getRoomId())
                 .type(message.getType())
-                .sender(user)
+                .sender(username)
                 .build();
 
         chatMessageRepository.save(newMessage);

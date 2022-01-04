@@ -7,6 +7,7 @@ import com.sparta.mbti.model.ChatMessage;
 import com.sparta.mbti.model.ChatRoom;
 import com.sparta.mbti.repository.ChatMessageRepository;
 import com.sparta.mbti.repository.ChatRoomRepository;
+import com.sparta.mbti.repository.UserRepository;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.util.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class ChatRoomService{
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final UserRepository userRepository;
     // Redis repo
     private static final String CHAT_ROOMS = "CHAT_ROOM";
     private final RedisTemplate<String, Object> redisTemplate;
@@ -65,10 +67,9 @@ public class ChatRoomService{
         for (ChatMessage message : chatMessageList) {
             chatMessageDtoList.add(ChatMessageDto.builder()
                     .type(message.getType())
-                    .senderNick(message.getSender().getNickname())
                     .message(message.getMessage())
                     .roomId(message.getRoomId())
-                    .sender(message.getSender().getUsername())
+                    .sender(message.getSender())
                     .build());
         }
         return ChatMessageResponseDto.builder()

@@ -1,7 +1,5 @@
 package com.sparta.mbti.model;
 
-import com.sparta.mbti.dto.ChatMessageDto;
-import com.sparta.mbti.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +32,7 @@ public class ChatMessage extends Timestamped {
     @Column
     private String message;
 
-    @ManyToOne
-    private User sender;
+    @Column
+    private String sender;
 
 }

@@ -17,6 +17,5 @@ public class ChatMessageDto {
     private ChatMessage.MessageType type; // 메시지 타입
     private String roomId; // 방번호
     private String sender; // 메시지 보낸사람
-    private String senderNick; //
     private String message; // 메시지
 }
