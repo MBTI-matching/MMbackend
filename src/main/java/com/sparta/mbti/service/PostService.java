@@ -106,6 +106,8 @@ public class PostService {
         return PostResponseDto.builder()
                 .postId(post.getId())
                 .nickname(post.getUser().getNickname())
+                .profileImage(post.getUser().getProfileImage())
+                .location(post.getUser().getLocation().getLocation())
                 .mbti(post.getUser().getMbti().getMbti())
                 .content(post.getContent())
                 .tag(post.getTag())
