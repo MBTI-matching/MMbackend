@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostRequestDto {
-    private String content;     // 게시글 내용
-    private String tag;         // 게시글 관심사 태그
+public class MbtiDto {
+    private String name;
+    private String firstTitle;
+    private String firstContent;
+    private String secondTitle;
+    private String secondContent;
 }

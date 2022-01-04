@@ -372,4 +372,17 @@ public class UserService {
         }
         return posts;
     }
+
+    public MbtiDto viewProfile(User user) {
+        // 해당 유저의 mbti와 동일한 mbti
+        Mbti userMbti = user.getMbti();
+
+        return MbtiDto.builder()
+                .name(userMbti.getMbti()) // 해당 MBTI 명칭
+                .firstTitle(userMbti.getFirstTitle())
+                .firstContent(userMbti.getFirstContent().replaceAll(System.getProperty("line.separator"), " "))
+                .secondTitle(userMbti.getSecondTitle())
+                .secondContent(userMbti.getSecondContent().replaceAll(System.getProperty("line.separator"), " "))
+                .build();
+    }
 }
