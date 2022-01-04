@@ -158,6 +158,8 @@ public class HomeService {
             posts.add(PostResponseDto.builder()
                                 .postId(onePost.getId())
                                 .nickname(onePost.getUser().getNickname())
+                                .profileImage(onePost.getUser().getProfileImage())
+                                .location(onePost.getUser().getLocation().getLocation())
                                 .mbti(onePost.getUser().getMbti().getMbti())
                                 .content(onePost.getContent())
                                 .tag(onePost.getTag())
