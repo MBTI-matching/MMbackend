@@ -122,7 +122,7 @@ public class HomeService {
 
     // 전체 게시글
     @Transactional
-    public List<PostResponseDto> getAllposts(Pageable pageable) {
+    public List<PostResponseDto> getAllposts(Pageable pageable, User user) {
         // page, size, 내림차순으로 페이징한 게시글 리스트
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
         // 반환할 게시글 리스트
@@ -130,6 +130,8 @@ public class HomeService {
         for (Post onePost : postList) {
             // 게시글 좋아요 수
             int likesCount = (int)likesRepository.findAllByPost(onePost).size();
+            // 게시글 좋아요 여부
+            boolean likeStatus = likesRepository.existsByUserAndPost(user, onePost);
             // 게시글 이미지 리스트
             List<Image> imageList = imageRepository.findAllByPost(onePost);
             // 반환할 이미지 리스트
@@ -149,6 +151,7 @@ public class HomeService {
                 comments.add(CommentResopnseDto.builder()
                                             .commentId(oneComment.getId())
                                             .nickname(oneComment.getUser().getNickname())
+                                            .image(oneComment.getUser().getProfileImage())
                                             .mbti(oneComment.getUser().getMbti().getMbti())
                                             .comment(oneComment.getComment())
                                             .createdAt(oneComment.getCreatedAt())
@@ -164,6 +167,7 @@ public class HomeService {
                                 .content(onePost.getContent())
                                 .tag(onePost.getTag())
                                 .likesCount(likesCount)
+                                .likeStatus(likeStatus)
                                 .imageList(images)
                                 .commentList(comments)
                                 .createdAt(onePost.getCreatedAt())

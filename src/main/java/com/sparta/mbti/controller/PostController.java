@@ -28,8 +28,9 @@ public class PostController {
 
     // 게시글 상세 조회
     @GetMapping("/api/post/{postId}")
-    public PostResponseDto detailPost(@PathVariable Long postId) {
-        return postService.detailPost(postId);
+    public PostResponseDto detailPost(@PathVariable Long postId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.detailPost(postId, userDetails.getUser());
     }
 
     // 게시글 수정
