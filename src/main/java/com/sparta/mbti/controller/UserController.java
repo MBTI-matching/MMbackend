@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,9 +34,12 @@ public class UserController {
 
     // 내정보 입력 / 수정
     @PutMapping("/api/profile")
-    public UserResponseDto updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UserRequestDto userRequestDto) {
+    public UserResponseDto updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                         @RequestPart(value = "data") UserRequestDto userRequestDto,
+                                         @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile
+    ) throws IOException {
         // 추가 정보 입력
-        return userService.updateProfile(userDetails.getUser(), userRequestDto);
+        return userService.updateProfile(userDetails.getUser(), userRequestDto, multipartFile);
     }
 
     // 내가 쓴 글 조회
