@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -31,13 +32,13 @@ public class ChatController {
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message")
-    public void message(ChatMessageDto message, @Header("token") String token) {
+    public void message(@Payload ChatMessageDto message, @Header("token") String token) {
 
         String username = jwtDecoder.decodeUsername(token);
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다.")
         );
-
+        System.out.println("chatcontroller sender: " + message.getSender());
         // 로그인 회원 정보로 대화명 설정
         message.setSender(username);
 
@@ -49,9 +50,10 @@ public class ChatController {
                 .type(message.getType())
                 .sender(username)
                 .build();
+
         System.out.println("ChatController : " + message.getMessage());
         chatMessageRepository.save(newMessage);
-        redisTemplate.convertAndSend(channelTopic.getTopic(), newMessage);
+        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
 
     }
 }
