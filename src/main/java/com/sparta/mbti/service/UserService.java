@@ -186,7 +186,7 @@ public class UserService {
         int ageRangeTemp = Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2));  // 정수 변환
         String ageRange;
         if (ageRangeTemp >= 50) {
-            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대 이상");
+            ageRange = "50대 이상";
         } else {
             ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");
         }
