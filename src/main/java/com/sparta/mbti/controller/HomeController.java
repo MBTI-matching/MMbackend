@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -37,8 +38,9 @@ public class HomeController {
     // 커뮤니티 (전체)
     @GetMapping("/api/post")
     public List<PostResponseDto> getAllPosts(@RequestParam int page,
-                                             @RequestParam int size) {
+                                             @RequestParam int size,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return homeService.getAllposts(pageable);
+        return homeService.getAllposts(pageable, userDetails.getUser());
     }
 }
