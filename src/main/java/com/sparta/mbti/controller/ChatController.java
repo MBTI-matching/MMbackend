@@ -49,7 +49,7 @@ public class ChatController {
                 .type(message.getType())
                 .sender(username)
                 .build();
-
+        System.out.println("ChatController : " + message.getMessage());
         chatMessageRepository.save(newMessage);
         redisTemplate.convertAndSend(channelTopic.getTopic(), newMessage);
 

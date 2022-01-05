@@ -26,6 +26,7 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
+        System.out.println("intercepter " + registration);
         registration.interceptors(stompHandler);
     }
 }

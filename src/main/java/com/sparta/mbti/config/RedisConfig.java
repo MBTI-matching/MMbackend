@@ -48,6 +48,7 @@ public class RedisConfig {
 
     /**
      * 실제 메시지를 처리하는 subscriber 설정 추가
+     * subscriber와 연결
      */
     @Bean
     public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {

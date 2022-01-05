@@ -177,7 +177,12 @@ public class UserService {
         // nullable = true
         String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지 (이미지 객체에 저장)
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
-        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
+        String ageRange;
+
+        if(Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2)) >= 50)
+            ageRange = "50대 이상";
+        else
+            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
 
         // 가입 여부
         if (kakaoUser == null) {
@@ -319,6 +324,7 @@ public class UserService {
                 .latitude(findUser.getLocation().getLatitude())
                 .mbti(findUser.getMbti().getMbti())
                 .interestList(interestListDtos)
+                .username(findUser.getUsername())
                 .signStatus(true)
                 .build();
     }

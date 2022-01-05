@@ -23,6 +23,7 @@ public class RedisSubscriber {
             // ChatMessage 객채로 맵핑
             ChatMessageDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageDto.class);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
+            System.out.println("subscriber : " + publishMessage);
             messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
         } catch (Exception e) {
             log.error("Exception {}", e);
