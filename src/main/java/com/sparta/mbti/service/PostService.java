@@ -11,16 +11,13 @@ import com.sparta.mbti.repository.LikesRepository;
 import com.sparta.mbti.repository.PostRepository;
 import com.sparta.mbti.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -70,14 +67,16 @@ public class PostService {
 
     // 게시글 상세 조회
     @Transactional
-    public PostResponseDto detailPost(Long postId) {
+    public PostResponseDto detailPost(Long postId, User user) {
         // 게시글 조회
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 
         // 게시글 좋아요 수
-        int likesCount = (int)likesRepository.findAllByPost(post).size();
+        int likesCount = likesRepository.findAllByPost(post).size();
+        // 게시글 좋아요 여부
+        boolean likeStatus = likesRepository.existsByUserAndPost(user, post);
         // 게시글 이미지 리스트
         List<Image> imageList = imageRepository.findAllByPost(post);
         // 반환할 이미지 리스트
@@ -96,6 +95,7 @@ public class PostService {
             comments.add(CommentResopnseDto.builder()
                             .commentId(oneComment.getId())
                             .nickname(oneComment.getUser().getNickname())
+                            .image(oneComment.getUser().getProfileImage())
                             .mbti(oneComment.getUser().getMbti().getMbti())
                             .comment(oneComment.getComment())
                             .createdAt(oneComment.getCreatedAt())
@@ -112,6 +112,7 @@ public class PostService {
                 .content(post.getContent())
                 .tag(post.getTag())
                 .likesCount(likesCount)
+                .likeStatus(likeStatus)
                 .imageList(images)
                 .commentList(comments)
                 .createdAt(post.getCreatedAt())
@@ -172,18 +173,6 @@ public class PostService {
                     .build());
         } else {
             likesRepository.delete(findLikes);
-        }
-    }
-
-    private String createFileName(String fileName) { // 먼저 파일 업로드 시, 파일명을 난수화하기 위해 random으로 돌립니다.
-        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
-    }
-
-    private String getFileExtension(String fileName) { // file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기 위해 .의 존재 유무만 판단하였습니다.
-        try {
-            return fileName.substring(fileName.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일(" + fileName + ") 입니다.");
         }
     }
 }

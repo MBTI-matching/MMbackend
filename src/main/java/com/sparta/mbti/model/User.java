@@ -60,10 +60,10 @@ public class User {
     private boolean status;
 
     // 추가 입력 정보
-    public void update(UserRequestDto userRequestDto, Location location, Mbti mbti, boolean status) {
+    public void update(UserRequestDto userRequestDto, String imgUrl, Location location, Mbti mbti, boolean status) {
         this.nickname = userRequestDto.getNickname();
         this.intro = userRequestDto.getIntro();
-        this.profileImage = userRequestDto.getProfileImage();
+        this.profileImage = imgUrl;
         this.location = location;
         this.mbti = mbti;
         this.status = status;

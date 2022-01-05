@@ -184,11 +184,19 @@ public class UserService {
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
 
         String ageRange;
+<<<<<<< HEAD
 
         if(Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2)) >= 50)
             ageRange = "50대 이상";
         else
             ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
+=======
+        if (ageRangeTemp >= 50) {
+            ageRange = "50대 이상";
+        } else {
+            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");
+        }
+>>>>>>> develop
 
         // 가입 여부
         if (kakaoUser == null) {
@@ -281,8 +289,10 @@ public class UserService {
         // 카카오 이미지 초기화
         String imgUrl = findUser.getProfileImage();
         // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
-        if (multipartFile.getSize() != 0) {
-            imgUrl = s3Uploader.upload(multipartFile, imageDirName);
+        if (!multipartFile.isEmpty()) {
+            if (multipartFile.getSize() != 0) {
+                imgUrl = s3Uploader.upload(multipartFile, imageDirName);
+            }
         }
 
         // 추가정보 설정하여 업데이트 (닉네임, 프로필, 소개글, 위치, 관심사, mbti)
@@ -296,7 +306,7 @@ public class UserService {
                 () -> new IllegalArgumentException("해당 MBTI 가 존재하지 않습니다.")
         );
 
-        findUser.update(userRequestDto, location, mbti, true);
+        findUser.update(userRequestDto, imgUrl, location, mbti, true);
 
         // DB 저장
         userRepository.save(findUser);
