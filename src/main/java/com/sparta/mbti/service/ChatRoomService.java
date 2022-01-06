@@ -84,7 +84,7 @@ public class ChatRoomService{
     public ChatRoom createChatRoom(Long guestId, Long hostId) {
         ChatRoom chatRoom = new ChatRoom(guestId, hostId);
 
-        opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+        //opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
         chatRoomRepository.save(chatRoom);
 
