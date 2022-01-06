@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDto {
+public class UserProfileDto {
     private String nickname;            // 닉네임
     private String profileImage;        // 프로필
     private String gender;              // 성별
@@ -20,7 +20,7 @@ public class UserResponseDto {
     private String location;            // 위치 (서울 특별시 구)
     private String longitude;           // 경도
     private String latitude;            // 위도
-    private String mbti;                // mbti
+    private MbtiDto mbtiDto;            // mbti
     List<InterestListDto> interestList; // 관심사 리스트
-    private boolean signStatus;         // 가입된 상태 (가입: true, 미가입: false)
+    private boolean signStatus;
 }

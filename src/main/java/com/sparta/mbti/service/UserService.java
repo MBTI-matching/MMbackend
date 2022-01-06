@@ -3,15 +3,15 @@ package com.sparta.mbti.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.mbti.dto.KakaoUserInfoDto;
-import com.sparta.mbti.dto.UserRequestDto;
-import com.sparta.mbti.dto.UserResponseDto;
-import com.sparta.mbti.model.User;
-import com.sparta.mbti.repository.UserRepository;
+import com.sparta.mbti.dto.*;
+import com.sparta.mbti.model.*;
+import com.sparta.mbti.repository.*;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.security.jwt.JwtTokenUtils;
+import com.sparta.mbti.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,8 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -34,8 +38,18 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LocationRepository locationRepository;
+    private final MbtiRepository mbtiRepository;
+    private final InterestRepository interestRepository;
+    private final UserInterestRepository userInterestRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final ImageRepository imageRepository;
+    private final LikesRepository likesRepository;
+    private final S3Uploader s3Uploader;
 
-    static boolean signStatus;      // 회원가입 상태
+    private final String imageDirName = "user";   // S3 폴더 경로
+    static boolean signStatus = false;      // 회원가입 상태
 
     public UserResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -61,7 +75,7 @@ public class UserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -104,7 +118,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
-
+        System.out.println(body);
         // ID (카카오 기본키)
         Long id = body.getLong("id");
         // 아이디 (이메일)
@@ -122,19 +136,23 @@ public class UserService {
             profileImage = body.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");
         }
 
+        // has_gender: false (성별 선택 안함), true (성별 선택)
         // gender_needs_agreement: true (성별 동의 안함), false (성별 동의)
-        // 성별
+        // 성별 (male, female, unchecked)
         String gender = "";
-        // 이미지 동의 및 등록 되었으면
-        if (!body.getJSONObject("kakao_account").getBoolean("gender_needs_agreement")) {
+        // 성별 선택 및 성별 동의 되었으면
+        if (body.getJSONObject("kakao_account").getBoolean("has_gender") &&
+                !body.getJSONObject("kakao_account").getBoolean("gender_needs_agreement")) {
             gender = body.getJSONObject("kakao_account").getString("gender");
         }
 
+        // has_age_range: false (연령대 선택 안함), true (연령대 선택)
         // age_range_needs_agreement: true (연령대 동의 안함), false (연령대 동의)
         // 연령대
         String ageRange = "";
         // 이미지 동의 및 등록 되었으면
-        if (!body.getJSONObject("kakao_account").getBoolean("age_range_needs_agreement")) {
+        if (body.getJSONObject("kakao_account").getBoolean("has_age_range") &&
+                !body.getJSONObject("kakao_account").getBoolean("age_range_needs_agreement")) {
             ageRange = body.getJSONObject("kakao_account").getString("age_range");
         }
 
@@ -162,23 +180,33 @@ public class UserService {
         String nickname = kakaoUserInfo.getNickname();                  // 카카오 닉네임
 
         // nullable = true
-        String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지
+        String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지 (이미지 객체에 저장)
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
-        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2);  // 카카오 연령대
+        // 카카오 연령대
+        int ageRangeTemp = Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2));  // 정수 변환
+        String ageRange;
+        if (ageRangeTemp >= 50) {
+            ageRange = "50대 이상";
+        } else {
+            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");
+        }
 
         // 가입 여부
         if (kakaoUser == null) {
+            // 사용자 저장
             kakaoUser = User.builder()
-                    .kakaoId(kakaoId)
-                    .username(username)
-                    .password(encodedPassword)
-                    .nickname(nickname)
-                    .profileImage(profileImage)
-                    .gender(gender)
-                    .ageRange(ageRange)
-                    .build();
+                        .kakaoId(kakaoId)
+                        .username(username)
+                        .password(encodedPassword)
+                        .nickname(nickname)
+                        .profileImage(profileImage)
+                        .gender(gender)
+                        .ageRange(ageRange)
+                        .build();
             userRepository.save(kakaoUser);
             signStatus = false;                 // 처음 가입하면 false => 추가 정보 입력 페이지로 이동
+        } else if (!kakaoUser.isStatus()) {     // 카카오 가입은 되었으나, 추가정보 입력 안했으면 false
+            signStatus = false;
         } else {
             signStatus = true;                  // 이미 가입했으면 true => 메인 페이지로 이동
         }
@@ -195,25 +223,51 @@ public class UserService {
         // JWT 토큰 생성
         String token = JwtTokenUtils.generateJwtToken(userDetails);
 
-        // 헤더에 JWT 토큰 담아서 응답
+        // Header 에 JWT 토큰 담아서 응답
         response.addHeader("Authorization", "Bearer " + token);
 
+        // 추가정보입력 또는 가입한 사용자 (Location, Mbti NULL 값이 없어야함)
+        String intro = null;
+        String location = null;
+        String longitude = null;
+        String latitude = null;
+        String mbti = null;
+        List<InterestListDto> interestListDtos = new ArrayList<>();
+        if (signStatus) {
+            intro = userDetails.getUser().getIntro();
+            location = userDetails.getUser().getLocation().getLocation();
+            longitude =userDetails.getUser().getLocation().getLongitude();
+            latitude = userDetails.getUser().getLocation().getLatitude();
+            mbti = userDetails.getUser().getMbti().getMbti();
+            for (int i = 0; i < userDetails.getUser().getUserInterestList().size(); i++) {
+                interestListDtos.add(InterestListDto.builder()
+                                                .interest(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest())
+                                                .build());
+            }
+        }
+
+        // Body 에 반환
         return UserResponseDto.builder()
                 .nickname(userDetails.getUser().getNickname())
-                .profileImage(userDetails.getUser().getProfileImage())
                 .gender(userDetails.getUser().getGender())
                 .ageRange(userDetails.getUser().getAgeRange())
-                .intro(userDetails.getUser().getIntro())
-                .location(userDetails.getUser().getLocation())
-                .interest(userDetails.getUser().getInterest())
-                .mbti(userDetails.getUser().getMbti())
+                .profileImage(userDetails.getUser().getProfileImage())
+                .intro(intro)
+                .location(location)
+                .longitude(longitude)
+                .latitude(latitude)
+                .mbti(mbti)
+                .interestList(interestListDtos)
                 .signStatus(signStatus)
                 .build();
     }
 
     // 추가 정보 입력
     @Transactional
-    public void updateProfile(User user, UserRequestDto userRequestDto) {
+    public UserResponseDto updateProfile(User user,
+                                         UserRequestDto userRequestDto,
+                                         MultipartFile multipartFile
+    ) throws IOException {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
@@ -224,10 +278,134 @@ public class UserService {
             userRequestDto.setNickname(user.getNickname());
         }
 
+        // 카카오 이미지 초기화
+        String imgUrl = findUser.getProfileImage();
+        // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
+        if (!multipartFile.isEmpty()) {
+            if (multipartFile.getSize() != 0) {
+                imgUrl = s3Uploader.upload(multipartFile, imageDirName);
+            }
+        }
+
         // 추가정보 설정하여 업데이트 (닉네임, 프로필, 소개글, 위치, 관심사, mbti)
-        findUser.update(userRequestDto);
+        // 위치 조회
+        Location location = locationRepository.findByLocation(userRequestDto.getLocation()).orElseThrow(
+                () -> new IllegalArgumentException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // mbti 조회
+        Mbti mbti = mbtiRepository.findByMbti(userRequestDto.getMbti()).orElseThrow(
+                () -> new IllegalArgumentException("해당 MBTI 가 존재하지 않습니다.")
+        );
+
+        findUser.update(userRequestDto, imgUrl, location, mbti, true);
 
         // DB 저장
         userRepository.save(findUser);
+
+        // 기존 관심사 삭제
+        List<UserInterest> deleteUserInterest = userInterestRepository.findAllByUser(findUser);
+        userInterestRepository.deleteAllInBatch(deleteUserInterest);
+
+        // 관심사 리스트 조회
+        List<UserInterest> userInterest = new ArrayList<>();
+        for (int i = 0; i < userRequestDto.getInterestList().size(); i++) {
+            Interest interest = interestRepository.findByInterest(userRequestDto.getInterestList().get(i).getInterest()).orElseThrow(
+                    () -> new IllegalArgumentException("해당 관심사가 존재하지 않습니다.")
+            );
+
+            userInterest.add(UserInterest.builder()
+                                        .user(findUser)
+                                        .interest(interest)
+                                        .build());
+        }
+
+        // DB 저장
+        userInterestRepository.saveAll(userInterest);
+
+        List<InterestListDto> interestListDtos = new ArrayList<>();
+        for (int i = 0; i < findUser.getUserInterestList().size(); i++) {
+            interestListDtos.add(InterestListDto.builder()
+                    .interest(findUser.getUserInterestList().get(i).getInterest().getInterest())
+                    .build());
+        }
+
+        // Body 에 반환
+        return UserResponseDto.builder()
+                .nickname(findUser.getNickname())
+                .gender(findUser.getGender())
+                .ageRange(findUser.getAgeRange())
+                .profileImage(imgUrl)
+                .intro(findUser.getIntro())
+                .location(findUser.getLocation().getLocation())
+                .longitude(findUser.getLocation().getLongitude())
+                .latitude(findUser.getLocation().getLatitude())
+                .mbti(findUser.getMbti().getMbti())
+                .interestList(interestListDtos)
+                .signStatus(true)
+                .build();
+    }
+
+    // 내가 쓴 글 조회
+    @Transactional
+    public List<PostResponseDto> getMyposts(Pageable pageable, User user) {
+        // page, size, 내림차순으로 페이징한 내가 쓴 게시글 리스트
+        List<Post> postList = postRepository.findAllByUserOrderByCreatedAtDesc(pageable, user).getContent();
+        // 반환할 게시글 리스트
+        List<PostResponseDto> posts = new ArrayList<>();
+        for (Post onePost : postList) {
+            // 게시글 좋아요 수
+            int likesCount = likesRepository.findAllByPost(onePost).size();
+            // 게시글 이미지 리스트
+            List<Image> imageList = imageRepository.findAllByPost(onePost);
+            // 반환할 이미지 리스트
+            List<ImageResponseDto> images = new ArrayList<>();
+            for (Image oneImage : imageList) {
+                images.add(ImageResponseDto.builder()
+                        .imageId(oneImage.getId())
+                        .imageLink(oneImage.getImageLink())
+                        .build());
+            }
+
+            // 게시글에 달린 댓글 리스트 (작성일자 오름차순)
+            List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtAsc(onePost);
+            // 반환할 댓글 리스트
+            List<CommentResopnseDto> comments = new ArrayList<>();
+            for (Comment oneComment : commentList) {
+                comments.add(CommentResopnseDto.builder()
+                        .commentId(oneComment.getId())
+                        .nickname(oneComment.getUser().getNickname())
+                        .mbti(oneComment.getUser().getMbti().getMbti())
+                        .comment(oneComment.getComment())
+                        .createdAt(oneComment.getCreatedAt())
+                        .build());
+            }
+            // 내가 쓴 게시글 리스트
+            posts.add(PostResponseDto.builder()
+                    .postId(onePost.getId())
+                    .nickname(onePost.getUser().getNickname())
+                    .mbti(onePost.getUser().getMbti().getMbti())
+                    .content(onePost.getContent())
+                    .tag(onePost.getTag())
+                    .likesCount(likesCount)
+                    .imageList(images)
+                    .commentList(comments)
+                    .createdAt(onePost.getCreatedAt())
+                    .build());
+        }
+        return posts;
+    }
+
+    public MbtiDto viewProfile(User user) {
+        // 해당 유저의 mbti와 동일한 mbti
+        Mbti userMbti = user.getMbti();
+
+        return MbtiDto.builder()
+                .name(userMbti.getMbti()) // 해당 MBTI 명칭
+                .firstTitle(userMbti.getFirstTitle())
+                .firstContent(userMbti.getFirstContent().replaceAll(System.getProperty("line.separator"), " "))
+                .secondTitle(userMbti.getSecondTitle())
+                .secondContent(userMbti.getSecondContent().replaceAll(System.getProperty("line.separator"), " "))
+                .build();
     }
 }
