@@ -1,0 +1,18 @@
+version: 0.0 # CodeDeploy 버전을 명시한다. # Make sure your AppSpec file specifies "0.0" as the version, and then try again
+os: linux
+files:
+  - source: / # 전체 파일을 나타낸다.
+    destination: /home/ubuntu/experiment/ # source로 지정된 전체 파일이 받을 위치이다.
+    overwrite: yes # 기존 파일들이 있으면 덮어 쓸지를 결정한다.
+# 출처: https://velog.io/@tigger/%EB%B0%B0%ED%8F%AC-%EC%9E%90%EB%8F%99%ED%99%94-%EA%B5%AC%EC%84%B1
+permissions: # CodeDeploy에서 EC2 서버로 넘겨준 파일들이 모두 ubuntu 권한을 갖게끔 한다(owner, group 참고)
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
+hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> ApplicationStart 단계에서 deploy.sh를 ubuntu권한으로 실행하게끔 한다.
+  ApplicationStart:
+    - location: deploy.sh
+      timeout: 180 # 제한시간(스크립트 실행 시간 한도)
+      runas: ubuntu
