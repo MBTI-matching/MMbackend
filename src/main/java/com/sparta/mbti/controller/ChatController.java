@@ -38,7 +38,8 @@ public class ChatController {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다.")
         );
-        System.out.println("chatcontroller sender: " + message.getSender());
+        System.out.println("chatcontroller token: " + token);
+        System.out.println("chatController message : " + message.getMessage());
         // 로그인 회원 정보로 대화명 설정
         message.setSender(username);
 

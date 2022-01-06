@@ -184,19 +184,11 @@ public class UserService {
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
 
         String ageRange;
-<<<<<<< HEAD
 
         if(Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2)) >= 50)
             ageRange = "50대 이상";
         else
             ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
-=======
-        if (ageRangeTemp >= 50) {
-            ageRange = "50대 이상";
-        } else {
-            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");
-        }
->>>>>>> develop
 
         // 가입 여부
         if (kakaoUser == null) {
