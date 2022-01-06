@@ -28,6 +28,4 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-# shellcheck disable=SC1083
-# shellcheck disable=SC2086
-nohup java -jar $JAR_NAME --jasypt.encryptor.password=${{ secrets.JASYPT_PASSWORD }} > $REPOSITORY/nohup.out 2>&1 &
+nohup java -jar $JAR_NAME --jasypt.encryptor.password=5678 > $REPOSITORY/nohup.out 2>&1 &
