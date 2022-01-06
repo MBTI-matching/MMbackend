@@ -14,11 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChemyController {
     private final ChemyService chemyService;
 
-    @GetMapping("/")
-    public String forTest() {
-        return "test success";
-    }
-
     // 자동 매칭
     @GetMapping("/api/chemy/auto")
     public ChemyUserResponseDto chemyAuto(@AuthenticationPrincipal UserDetailsImpl userDetails) {
