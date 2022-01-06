@@ -10,7 +10,7 @@ name: Spring Boot & Gradle CI/CD
 on:
   push:
     branches: [ develop ]
-    
+
 jobs:
   build:
     # 실행 환경 지정
@@ -37,11 +37,11 @@ jobs:
       # 전송할 파일을 담을 디렉토리 생성
       - name: Make Directory for deliver
         run: mkdir deploy
-        
+
       # appspec.yml 파일 복사
       - name: Copy appspec.yml
         run: cp appspec.yml ./deploy
-        
+
       # script files 복사
       - name: Copy script
         run: cp ./scripts/*.sh ./deploy
@@ -64,6 +64,6 @@ jobs:
 
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 --acl private ./experiment.zip s3://sixzombiesbucket/
-        
+
       - name: CodeDeploy
         run: aws deploy create-deployment --application-name bizchemy --deployment-group-name travis2 --s3-location bucket=sixzombiesbucket,key=experiment.zip,bundleType=zip

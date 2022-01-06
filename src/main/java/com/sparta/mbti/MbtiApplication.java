@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class MbtiApplication {
 
-//    static {
+    //    static {
 //        System.setProperty("jasypt.encryptor.password", "5678");
 //    }
 
