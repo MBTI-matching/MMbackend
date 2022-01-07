@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 REPOSITORY=/home/ubuntu/experiment
+JASYPT_PASSWORD=5678
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 
@@ -28,4 +29,4 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-nohup java -jar $JAR_NAME --jasypt.encryptor.password=5678 > $REPOSITORY/nohup.out 2>&1 &
+nohup java -jar $JAR_NAME --jasypt.encryptor.password=${JASYPT_PASSWORD} > $REPOSITORY/nohup.out 2>&1 &
