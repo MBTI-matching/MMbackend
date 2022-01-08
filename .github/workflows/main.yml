@@ -31,8 +31,8 @@ jobs:
         run: chmod +x gradlew
 
        # 셸 파일에 실행 권한 주기
-      - name: Grant execute permission for shell
-        run: chmod +x deploy.sh
+#      - name: Grant execute permission for shell
+#        run: chmod +x deploy.sh
 
       # Build
       - name: Build with Gradle
