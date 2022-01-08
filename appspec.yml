@@ -8,8 +8,8 @@ files:
 permissions: # CodeDeploy에서 EC2 서버로 넘겨준 파일들이 모두 ubuntu 권한을 갖게끔 한다(owner, group 참고)
   - object: /
     pattern: "**"
-    owner: root
-    group: root
+    owner: ubuntu
+    group: ubuntu
     mode: 755 # 이 mode는 반드시 필요한 수치일까?
 
 hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> ApplicationStart 단계에서 deploy.sh를 ubuntu권한 -> 사용자 권한으로 실행하게끔 한다.
