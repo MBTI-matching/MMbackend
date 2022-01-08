@@ -16,4 +16,4 @@ hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> Applicatio
   ApplicationStart: # 다음엔 AfterInstall 시도해보자
     - location: deploy.sh
       timeout: 60 # 제한시간(스크립트 실행 시간 한도)
-      runas: root # runas root 과 runas ubuntu는 뭐가 다를까?
+      runas: ubuntu # runas root 과 runas ubuntu는 뭐가 다를까?
