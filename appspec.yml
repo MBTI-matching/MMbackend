@@ -8,12 +8,12 @@ files:
 permissions: # CodeDeploy에서 EC2 서버로 넘겨준 파일들이 모두 ubuntu 권한을 갖게끔 한다(owner, group 참고)
   - object: /
     pattern: "**"
-    owner: ubuntu
-    group: ubuntu
+    owner: root
+    group: root
     mode: 755 # 이 mode는 반드시 필요한 수치일까?
 
 hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> ApplicationStart 단계에서 deploy.sh를 ubuntu권한 -> 사용자 권한으로 실행하게끔 한다.
   ApplicationStart: # 다음엔 AfterInstall 시도해보자
     - location: deploy.sh
       timeout: 60 # 제한시간(스크립트 실행 시간 한도)
-      runas: ubuntu # runas root 과 runas ubuntu는 뭐가 다를까?
+      runas: rootr # runas root 과 runas ubuntu는 뭐가 다를까?
