@@ -51,8 +51,8 @@ jobs:
         run: cp ./scripts/deploy.sh ./deploy
 
       # 셸 파일에 실행 권한 주기
-#      - name: Grant execute permission for shell
-#        run: chmod +x ./deploy/deploy.sh
+      - name: Grant execute permission for shell
+        run: chmod +x ./deploy/deploy.sh
 
       # Jar 파일 Copy
       - name: Copy Jar
