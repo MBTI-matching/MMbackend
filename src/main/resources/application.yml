@@ -17,7 +17,7 @@ spring:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
-#    password: ${JASYPT_ENCRYPTOR_PASSWORD}
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}
 
 cloud:
   aws:
