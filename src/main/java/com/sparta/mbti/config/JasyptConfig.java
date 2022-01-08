@@ -13,7 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class JasyptConfig {
 
     // 시스템에서 지정한 변수로 설정("시스템 환경 변수 편집" -> IntelliJ의 경우 재부팅해야 적용)
-    @Value("${JASYPT_PASSWORD}")
+    // Run -> Edit Configurations -> MbtiApplication -> VM Options: -Djasypt.encryptor.password=5678
+    @Value("${jasypt.encryptor.password}")
     private String PASSWORD;
 
     // jasypt 3.0 version 이상에서는 encryptorBean 대신 jasyptStringEncryptor를 써야 오류가 나지 않는다. // jasypt.encryptor.password
@@ -22,6 +23,7 @@ public class JasyptConfig {
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         config.setPassword(PASSWORD);
+        System.out.println(PASSWORD);
         config.setPoolSize("1");
         config.setAlgorithm("PBEWithMD5AndDES");
         config.setStringOutputType("base64");
