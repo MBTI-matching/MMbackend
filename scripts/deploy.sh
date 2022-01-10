@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ~/.bash_profile
+
 REPOSITORY=/home/ubuntu/experiment
 cd $REPOSITORY
 
