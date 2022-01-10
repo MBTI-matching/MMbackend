@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,6 +25,12 @@ public class HomeController {
     @GetMapping("/api/chemy/list")
     public ChemyAllResponseDto chemyList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return homeService.chemyList(userDetails.getUser());
+    }
+
+    // 둘러보기
+    @GetMapping("/api/chemy/guest")
+    public ChemyAllResponseDto chemyGuest() {
+        return homeService.chemyGuest();
     }
 
     // 지역 케미 리스트 (위치 / MBTI)
