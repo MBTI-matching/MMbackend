@@ -32,13 +32,13 @@ public class Post extends Timestamped{
     private User user;                      // 사용자
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Likes> likesList = new ArrayList<>();          // 게시글 삭제 => 해당 게시글 좋아요 모두 삭제
+    private final List<Likes> likesList = new ArrayList<>();          // 게시글 삭제 => 해당 게시글 좋아요 모두 삭제
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Image> imageList = new ArrayList<>();          // 게시글 삭제 => 해당 게시글 이미지 모두 삭제
+    private final List<Image> imageList = new ArrayList<>();          // 게시글 삭제 => 해당 게시글 이미지 모두 삭제
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)    // 게시글 삭제 => 해당 게시글 댓글 모두 삭제
-    private List<Comment> commentList = new ArrayList<>();
+    private final List<Comment> commentList = new ArrayList<>();
 
     public void update(PostRequestDto postRequestDto) {
         this.content = postRequestDto.getContent();

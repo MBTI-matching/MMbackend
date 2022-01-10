@@ -54,7 +54,7 @@ public class User {
     private Mbti mbti;                          // mbti
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)    // 사용자 삭제 => 해당 사용자관심사리스트 모두 삭제
-    List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
+    private final List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
 
     @Column
     private boolean status;
