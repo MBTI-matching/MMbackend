@@ -6,6 +6,7 @@ source ~/.bash_profile
 REPOSITORY=/home/ubuntu/experiment
 cd $REPOSITORY
 
+# 실행될 앱 이름
 APP_NAME=MBTI
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
@@ -21,16 +22,8 @@ then
 else
   echo ">>>> PID: $CURRENT_PID kill."
   kill -15 $CURRENT_PID
-  sleep 15
+  sleep 15 # 좀더 넉넉한 게 좋을까? 출처: https://platanus.me/post/1665
 fi
-
-#if [ -z "$CURRENT_PID" ]; then
-#  echo "현재 구동 중인 애플리케이션이 없으므로 종료하지 않습니다."
-#else
-#  echo "> kill -15 $CURRENT_PID"
-#  kill -15 $CURRENT_PID
-#  sleep 60
-#fi
 
 echo "> 새 애플리케이션 배포"
 
