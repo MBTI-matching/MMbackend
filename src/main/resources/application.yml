@@ -6,9 +6,10 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://springboot-database.chdsre5u3jj3.ap-northeast-2.rds.amazonaws.com:3306/bizchemy
-    username: admin
-    password: 1qazxsw2
+    url: ENC(/EuZtzFTcrvpL4YaEMN4qiF18s3ht8/aX8fMRHikzre2DxGVTAhMI6AGYuUL2Q17WAFdWVDeivIoMC1/nPsYnTKJx97c8L1ZSNWZ26JckZn/zAjPw7VrHXYMm+ofCAx/IWd2ZVN03pU=)
+    username: ENC(AxC0v+DOPG8HW0hwaP93UA==)
+    password: ENC(QGWtjq/KUQGj4FUeAu06wYT1QISnhAXh)
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -27,13 +28,12 @@ spring:
 cloud:
   aws:
     credentials:
-      accessKey: AKIAYKSSJWNXNUMOHSOG
-      secretKey: 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
+      accessKey: ENC(/5EGL3hSUR/WlHl596vqssRjCUYXAwAqDHYxXiOpJxc=)
+      secretKey: ENC(1+yW5uZkg2LR9Qci32fAjQnnS5UjAdy0H/LeiJo7H6PBqmNHxr/vl1+nkEG3M8etMGd3wn/g4bA=)
     s3:
       bucket: bizchemy-bucket-s3
     region:
       static: ap-northeast-2
     stack:
       auto: false
-
 
