@@ -50,6 +50,7 @@ public class ChemyService {
 
             // 랜덤 사용자 반환
             return ChemyUserResponseDto.builder()
+                    .username(findUserList.get(size).getUsername())
                     .userId(findUserList.get(size).getId())
                     .nickname(findUserList.get(size).getNickname())
                     .profileImage(findUserList.get(size).getProfileImage())
@@ -83,6 +84,7 @@ public class ChemyService {
 
         // 반환
         return ChemyUserResponseDto.builder()
+                .username(findUser.getUsername())
                 .userId(findUser.getId())
                 .nickname(findUser.getNickname())
                 .profileImage(findUser.getProfileImage())

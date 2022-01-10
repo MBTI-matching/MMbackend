@@ -1,7 +1,10 @@
 package com.sparta.mbti.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.mbti.dto.*;
+
+import com.sparta.mbti.dto.MbtiDto;
+import com.sparta.mbti.dto.PostResponseDto;
+import com.sparta.mbti.dto.UserRequestDto;
+import com.sparta.mbti.dto.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +26,10 @@ public class UserController {
 
     // 카카오 로그인
     @GetMapping("/user/kakao/callback")
-    public UserResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    public UserResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException {
         // 카카오 서버로부터 받은 인가 코드, JWT 토큰
         return userService.kakaoLogin(code, response);
+        //response.sendRedirect("http://localhost:8080/chat/room");
     }
 
     // 내정보 입력 / 수정
@@ -54,3 +58,4 @@ public class UserController {
     }
 
 }
+
