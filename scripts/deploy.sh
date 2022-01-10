@@ -1,23 +1,36 @@
 #!/usr/bin/env bash
 
 source ~/.bash_profile
+# ~ 표시는 home 주소 /home/ubuntu
 
 REPOSITORY=/home/ubuntu/experiment
 cd $REPOSITORY
 
+APP_NAME=MBTI
+
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 
-CURRENT_PID=$(pgrep -fl action | grep java | awk '{print $1}')
+CURRENT_PID=$(pgrep -f $APP_NAME)
+#CURRENT_PID=$(pgrep -fl action | grep java | awk '{print $1}')
 
 echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
 
-if [ -z "$CURRENT_PID" ]; then
-  echo "현재 구동 중인 애플리케이션이 없으므로 종료하지 않습니다."
+if [ -z $CURRENT_PID ]
+then
+  echo ">>>> java process not found."
 else
-  echo "> kill -15 $CURRENT_PID"
+  echo ">>>> PID: $CURRENT_PID kill."
   kill -15 $CURRENT_PID
-  sleep 60
+  sleep 15
 fi
+
+#if [ -z "$CURRENT_PID" ]; then
+#  echo "현재 구동 중인 애플리케이션이 없으므로 종료하지 않습니다."
+#else
+#  echo "> kill -15 $CURRENT_PID"
+#  kill -15 $CURRENT_PID
+#  sleep 60
+#fi
 
 echo "> 새 애플리케이션 배포"
 
