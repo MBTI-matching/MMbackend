@@ -11,6 +11,9 @@ on:
   push:
     branches: [ develop ]
 
+env:
+  JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
+
 jobs:
   build:
     # 실행 환경 지정
