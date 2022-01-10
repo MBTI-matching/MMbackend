@@ -1,0 +1,39 @@
+spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://springboot-database.chdsre5u3jj3.ap-northeast-2.rds.amazonaws.com:3306/bizchemy
+    username: admin
+    password: 1qazxsw2
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  redis:
+    host: localhost
+    password:
+    port: 6379
+
+#    properties:
+#      hibernate:
+#        show_sql: true
+#        format_sql: true
+#        default_batch_fetch_size: 1000
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAYKSSJWNXNUMOHSOG
+      secretKey: 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
+    s3:
+      bucket: bizchemy-bucket-s3
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+
