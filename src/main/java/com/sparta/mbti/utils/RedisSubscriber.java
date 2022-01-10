@@ -1,4 +1,4 @@
-package com.sparta.mbti.util;
+package com.sparta.mbti.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.mbti.dto.ChatMessageRequestDto;

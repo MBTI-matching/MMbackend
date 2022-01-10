@@ -8,4 +8,5 @@ import java.util.List;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     List<ChatRoom> findAllByHostIdOrGuestId(Long hostId, Long guestId);
     ChatRoom findByRoomId(String roomId);
+    Boolean existsByHostIdAndGuestId(Long hostId, Long guestId);
 }
