@@ -27,6 +27,12 @@ public class HomeController {
         return homeService.chemyList(userDetails.getUser());
     }
 
+    // 둘러보기
+    @GetMapping("/api/chemy/guest")
+    public ChemyAllResponseDto chemyGuest() {
+        return homeService.chemyGuest();
+    }
+
     // 지역 케미 리스트 (위치 / MBTI)
     @GetMapping("/api/chemy/list/{locationId}")
     public ChemyAllResponseDto locationList(@PathVariable Long locationId,
