@@ -1,6 +1,6 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.dto.ChatMessageDto;
+import com.sparta.mbti.dto.ChatMessageRequestDto;
 import com.sparta.mbti.model.ChatMessage;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatMessageRepository;
@@ -13,9 +13,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.Objects;
 
 // import 생략...
 
@@ -32,15 +29,22 @@ public class ChatController {
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message")
-    public void message(@Payload ChatMessageDto message, @Header("token") String token) {
+    public void message(@Payload ChatMessageRequestDto message, @Header("token") String token) {
 
         String username = jwtDecoder.decodeUsername(token);
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다.")
         );
+        if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
+            message.setMessage("[알림] " + user.getNickname() + " 님이 입장하셨습니다.");
+        }else if(ChatMessage.MessageType.QUIT.equals(message.getType())){
+            message.setMessage("[알림] " + user.getNickname() + "님이 퇴장하셨습니다.");
+        }
 
-        // 로그인 회원 정보로 대화명 설정
-        message.setSender(username);
+        message.setSenderId(user.getId());
+        message.setSenderImg(user.getProfileImage());
+        message.setSenderNick(user.getNickname());
+        message.setSenderName(user.getUsername());
 
         // Websocket에 발행된 메시지를 redis로 발행(publish)
 
@@ -48,10 +52,15 @@ public class ChatController {
                 .message(message.getMessage())
                 .roomId(message.getRoomId())
                 .type(message.getType())
-                .sender(username)
+                .date(message.getDate())
+                .senderId(message.getSenderId())
+                .senderImg(message.getSenderImg())
+                .senderName(message.getSenderName())
+                .senderNick(message.getSenderNick())
                 .build();
+        if (ChatMessage.MessageType.TALK.equals(message.getType()))
+            chatMessageRepository.save(newMessage);
 
-        chatMessageRepository.save(newMessage);
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
 
     }

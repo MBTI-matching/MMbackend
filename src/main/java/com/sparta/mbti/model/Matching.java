@@ -12,14 +12,14 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchingRequest {
+public class Matching {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
-    private Long userId;
+    private Long hostId;
 
     @Column
-    private Long inviterId;
+    private Long guestId;
 }

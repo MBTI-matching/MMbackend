@@ -1,6 +1,5 @@
 package com.sparta.mbti.dto;
 
-import com.sparta.mbti.model.Interest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +20,6 @@ public class ChemyUserResponseDto {
     private String intro;               // 소개글
     private String location;            // 위치
     private String mbti;                // MBTI
+    private String username;            // 유저 이메일
     List<InterestListDto> interestList; // 관심사 리스트
 }

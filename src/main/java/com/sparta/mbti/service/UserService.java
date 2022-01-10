@@ -118,7 +118,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
-        System.out.println(body);
+
         // ID (카카오 기본키)
         Long id = body.getLong("id");
         // 아이디 (이메일)

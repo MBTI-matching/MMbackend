@@ -1,7 +1,7 @@
 package com.sparta.mbti.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.mbti.dto.ChatMessageDto;
+import com.sparta.mbti.dto.ChatMessageRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -21,7 +21,7 @@ public class RedisSubscriber {
     public void sendMessage(String publishMessage) {
         try {
             // ChatMessage 객채로 맵핑
-            ChatMessageDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageDto.class);
+            ChatMessageRequestDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDto.class);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
             messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
         } catch (Exception e) {

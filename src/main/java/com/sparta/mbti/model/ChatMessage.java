@@ -12,10 +12,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChatMessage extends Timestamped {
+public class ChatMessage {
 
     public enum MessageType {
-        ENTER, TALK
+        ENTER, TALK, QUIT
     }
 
     @Id
@@ -33,6 +33,18 @@ public class ChatMessage extends Timestamped {
     private String message;
 
     @Column
-    private String sender;
+    private Long senderId;
+
+    @Column
+    private String senderName;
+
+    @Column
+    private String senderNick;
+
+    @Column
+    private String senderImg;
+
+    @Column
+    private String date;
 
 }

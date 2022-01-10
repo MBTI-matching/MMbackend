@@ -12,19 +12,16 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class ChatRoomDto implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ChatRoomRequestDto {
     @Column
-    private Long id;
+    private String guestId;
 
     @Column
-    private String roomId;
+    private String guestMbti;
 
     @Column
-    private Long hostId;
+    private String guestNick;
 
     @Column
-    private Long guestId;
+    private String guestImg;
 }
