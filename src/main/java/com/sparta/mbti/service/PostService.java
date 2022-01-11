@@ -5,12 +5,10 @@ import com.sparta.mbti.dto.ImageResponseDto;
 import com.sparta.mbti.dto.PostRequestDto;
 import com.sparta.mbti.dto.PostResponseDto;
 import com.sparta.mbti.model.*;
-import com.sparta.mbti.repository.CommentRepository;
-import com.sparta.mbti.repository.ImageRepository;
-import com.sparta.mbti.repository.LikesRepository;
-import com.sparta.mbti.repository.PostRepository;
+import com.sparta.mbti.repository.*;
 import com.sparta.mbti.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +21,7 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final InterestRepository interestRepository;
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
@@ -174,5 +173,70 @@ public class PostService {
         } else {
             likesRepository.delete(findLikes);
         }
+    }
+
+    // 관심사별 게시글 목록 불러오기
+    @Transactional
+    public List<PostResponseDto> getIntPosts(Long interestId, Pageable pageable, User user) {
+
+        // page, size, 내림차순으로 페이징한 게시글 리스트
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
+
+        Interest interest = interestRepository.findById(interestId).orElseThrow(
+                () -> new NullPointerException("해당 관심사는 다루지 않습니다.")
+        );
+
+        // 반환할 게시글 리스트 설정
+        List<PostResponseDto> posts = new ArrayList<>();
+        for (Post onePost : postList) {
+
+            // 게시글 좋아요 수
+            int likesCount = (int)likesRepository.findAllByPost(onePost).size();
+            // 게시글 좋아요 여부
+            boolean likeStatus = likesRepository.existsByUserAndPost(user, onePost);
+            // 게시글 이미지 리스트
+            List<Image> imageList = imageRepository.findAllByPost(onePost);
+            // 반환할 이미지 리스트
+            List<ImageResponseDto> images = new ArrayList<>();
+            for (Image oneImage : imageList) {
+                images.add(ImageResponseDto.builder()
+                        .imageId(oneImage.getId())
+                        .imageLink(oneImage.getImageLink())
+                        .build());
+            }
+
+            // 게시글에 달린 댓글 리스트 (작성일자 오름차순)
+            List<Comment> commentList = commentRepository.findAllByPostOrderByCreatedAtAsc(onePost);
+            // 반환할 댓글 리스트
+            List<CommentResopnseDto> comments = new ArrayList<>();
+            for (Comment oneComment : commentList) {
+                comments.add(CommentResopnseDto.builder()
+                        .commentId(oneComment.getId())
+                        .nickname(oneComment.getUser().getNickname())
+                        .image(oneComment.getUser().getProfileImage())
+                        .mbti(oneComment.getUser().getMbti().getMbti())
+                        .comment(oneComment.getComment())
+                        .createdAt(oneComment.getCreatedAt())
+                        .build());
+            }
+
+            // 태그명, 관심사 항목 일치 여부
+            if(onePost.getTag().equals(interest.getInterest()))
+                posts.add(PostResponseDto.builder()
+                        .postId(onePost.getId())
+                        .nickname(onePost.getUser().getNickname())
+                        .profileImage(onePost.getUser().getProfileImage())
+                        .location(onePost.getUser().getLocation().getLocation())
+                        .mbti(onePost.getUser().getMbti().getMbti())
+                        .content(onePost.getContent())
+                        .tag(onePost.getTag())
+                        .likesCount(likesCount)
+                        .likeStatus(likeStatus)
+                        .imageList(images)
+                        .commentList(comments)
+                        .createdAt(onePost.getCreatedAt())
+                        .build());
+        }
+        return posts;
     }
 }

@@ -5,6 +5,9 @@ import com.sparta.mbti.dto.PostResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,5 +56,15 @@ public class PostController {
     public void likesOnOff(@PathVariable Long postId,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         postService.likesOnOff(postId, userDetails.getUser());
+    }
+
+    // 관심사별 게시글 목록 불러오기
+    @GetMapping("/api/post/interest/{interestId}")
+    public List<PostResponseDto> getIntPosts(@PathVariable Long interestId,
+                                             @RequestParam int page,
+                                             @RequestParam int size,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return postService.getIntPosts(interestId, pageable, userDetails.getUser());
     }
 }
