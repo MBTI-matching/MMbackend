@@ -40,6 +40,21 @@ public class HomeController {
         return homeService.locationList(locationId, userDetails.getUser());
     }
 
+    // 지역 & 관심사별 케미 리스트: (위치 / 관심사)
+    @GetMapping("/api/chemy/{locationId}/{interestId}")
+    public ChemyAllResponseDto interestList(@PathVariable Long locationId,
+                                            @PathVariable Long interestId) {
+        return homeService.interestList(locationId, interestId);
+    }
+
+    // 지역 & 관심사별 케미 리스트: (위치 / 관심사 / MBTI)
+    @GetMapping("/api/chemy/list/{locationId}/{interestId}")
+    public ChemyAllResponseDto chemyInterest(@PathVariable Long locationId,
+                                             @PathVariable Long interestId,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return homeService.chemyInterest(locationId, interestId, userDetails.getUser());
+    }
+
     // 커뮤니티 (전체)
     @GetMapping("/api/post")
     public List<PostResponseDto> getAllPosts(@RequestParam int page,
