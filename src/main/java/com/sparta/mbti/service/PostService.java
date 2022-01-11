@@ -9,10 +9,13 @@ import com.sparta.mbti.repository.CommentRepository;
 import com.sparta.mbti.repository.ImageRepository;
 import com.sparta.mbti.repository.LikesRepository;
 import com.sparta.mbti.repository.PostRepository;
+import com.sparta.mbti.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,44 +26,57 @@ public class PostService {
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
+    private final S3Uploader s3Uploader;
+
+    private final String imageDirName = "post";   // S3 폴더 경로
 
     // 게시글 작성
     @Transactional
-    public void createPost(User user, PostRequestDto postRequestDto) {
+    public void createPost(User user,
+                           PostRequestDto postRequestDto,
+                           List<MultipartFile> multipartFile
+    ) throws IOException {
         // 요청한 정보로 게시글 객체 생성
         Post post = Post.builder()
-                    .content(postRequestDto.getContent())
-                    .tag(postRequestDto.getTag())
-                    .user(user)
-                    .build();
+                .content(postRequestDto.getContent())
+                .tag(postRequestDto.getTag())
+                .user(user)
+                .build();
 
         // DB 저장
         postRepository.save(post);
 
         // 이미지 리스트
         List<Image> imageList = new ArrayList<>();
-        for (int i = 0; i < postRequestDto.getImageList().size(); i++) {
+        for (int i = 0; i < multipartFile.size(); i++) {
+            String imgUrl = "";
+
+            // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
+            if (multipartFile.get(i).getSize() != 0) {
+                imgUrl = s3Uploader.upload(multipartFile.get(i), imageDirName);
+            }
             imageList.add(Image.builder()
-                            .imageLink(postRequestDto.getImageList().get(i).getImageLink())
+                            .imageLink(imgUrl)
                             .post(post)
                             .build());
         }
 
         // DB 저장
         imageRepository.saveAll(imageList);
-
     }
 
     // 게시글 상세 조회
     @Transactional
-    public PostResponseDto detailPost(Long postId) {
+    public PostResponseDto detailPost(Long postId, User user) {
         // 게시글 조회
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 
         // 게시글 좋아요 수
-        int likesCount = (int)likesRepository.findAllByPost(post).size();
+        int likesCount = likesRepository.findAllByPost(post).size();
+        // 게시글 좋아요 여부
+        boolean likeStatus = likesRepository.existsByUserAndPost(user, post);
         // 게시글 이미지 리스트
         List<Image> imageList = imageRepository.findAllByPost(post);
         // 반환할 이미지 리스트
@@ -79,6 +95,7 @@ public class PostService {
             comments.add(CommentResopnseDto.builder()
                             .commentId(oneComment.getId())
                             .nickname(oneComment.getUser().getNickname())
+                            .image(oneComment.getUser().getProfileImage())
                             .mbti(oneComment.getUser().getMbti().getMbti())
                             .comment(oneComment.getComment())
                             .createdAt(oneComment.getCreatedAt())
@@ -89,10 +106,13 @@ public class PostService {
         return PostResponseDto.builder()
                 .postId(post.getId())
                 .nickname(post.getUser().getNickname())
+                .profileImage(post.getUser().getProfileImage())
+                .location(post.getUser().getLocation().getLocation())
                 .mbti(post.getUser().getMbti().getMbti())
                 .content(post.getContent())
                 .tag(post.getTag())
                 .likesCount(likesCount)
+                .likeStatus(likeStatus)
                 .imageList(images)
                 .commentList(comments)
                 .createdAt(post.getCreatedAt())

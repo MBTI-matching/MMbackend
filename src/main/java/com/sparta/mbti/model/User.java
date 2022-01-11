@@ -54,16 +54,16 @@ public class User {
     private Mbti mbti;                          // mbti
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)    // 사용자 삭제 => 해당 사용자관심사리스트 모두 삭제
-    List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
+    private final List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
 
     @Column
     private boolean status;
 
     // 추가 입력 정보
-    public void update(UserRequestDto userRequestDto, Location location, Mbti mbti, boolean status) {
+    public void update(UserRequestDto userRequestDto, String imgUrl, Location location, Mbti mbti, boolean status) {
         this.nickname = userRequestDto.getNickname();
         this.intro = userRequestDto.getIntro();
-        this.profileImage = userRequestDto.getProfileImage();
+        this.profileImage = imgUrl;
         this.location = location;
         this.mbti = mbti;
         this.status = status;

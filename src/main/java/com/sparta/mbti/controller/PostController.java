@@ -7,6 +7,10 @@ import com.sparta.mbti.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,14 +20,17 @@ public class PostController {
     // 게시글 작성
     @PostMapping("/api/post")
     public void createPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                           @RequestBody PostRequestDto postRequestDto) {
-        postService.createPost(userDetails.getUser(), postRequestDto);
+                           @RequestPart(value = "data") PostRequestDto postRequestDto,
+                           @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFile
+    ) throws IOException {
+        postService.createPost(userDetails.getUser(), postRequestDto, multipartFile);
     }
 
     // 게시글 상세 조회
     @GetMapping("/api/post/{postId}")
-    public PostResponseDto detailPost(@PathVariable Long postId) {
-        return postService.detailPost(postId);
+    public PostResponseDto detailPost(@PathVariable Long postId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.detailPost(postId, userDetails.getUser());
     }
 
     // 게시글 수정

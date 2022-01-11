@@ -8,6 +8,7 @@ import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.security.jwt.JwtTokenUtils;
+import com.sparta.mbti.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,7 +46,9 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final ImageRepository imageRepository;
     private final LikesRepository likesRepository;
+    private final S3Uploader s3Uploader;
 
+    private final String imageDirName = "user";   // S3 폴더 경로
     static boolean signStatus = false;      // 회원가입 상태
 
     public UserResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -113,7 +118,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
-        System.out.println(body);
+
         // ID (카카오 기본키)
         Long id = body.getLong("id");
         // 아이디 (이메일)
@@ -177,7 +182,13 @@ public class UserService {
         // nullable = true
         String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지 (이미지 객체에 저장)
         String gender = kakaoUserInfo.getGender();                      // 카카오 성별
-        String ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
+
+        String ageRange;
+
+        if(Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2)) >= 50)
+            ageRange = "50대 이상";
+        else
+            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
 
         // 가입 여부
         if (kakaoUser == null) {
@@ -236,6 +247,7 @@ public class UserService {
 
         // Body 에 반환
         return UserResponseDto.builder()
+                .username(userDetails.getUser().getUsername())
                 .nickname(userDetails.getUser().getNickname())
                 .gender(userDetails.getUser().getGender())
                 .ageRange(userDetails.getUser().getAgeRange())
@@ -252,7 +264,10 @@ public class UserService {
 
     // 추가 정보 입력
     @Transactional
-    public void updateProfile(User user, UserRequestDto userRequestDto) {
+    public UserResponseDto updateProfile(User user,
+                                         UserRequestDto userRequestDto,
+                                         MultipartFile multipartFile
+    ) throws IOException {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
@@ -261,6 +276,15 @@ public class UserService {
         // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
         if (userRequestDto.getNickname() == null) {
             userRequestDto.setNickname(user.getNickname());
+        }
+
+        // 카카오 이미지 초기화
+        String imgUrl = findUser.getProfileImage();
+        // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
+        if (!multipartFile.isEmpty()) {
+            if (multipartFile.getSize() != 0) {
+                imgUrl = s3Uploader.upload(multipartFile, imageDirName);
+            }
         }
 
         // 추가정보 설정하여 업데이트 (닉네임, 프로필, 소개글, 위치, 관심사, mbti)
@@ -274,10 +298,14 @@ public class UserService {
                 () -> new IllegalArgumentException("해당 MBTI 가 존재하지 않습니다.")
         );
 
-        findUser.update(userRequestDto, location, mbti, true);
+        findUser.update(userRequestDto, imgUrl, location, mbti, true);
 
         // DB 저장
         userRepository.save(findUser);
+
+        // 기존 관심사 삭제
+        List<UserInterest> deleteUserInterest = userInterestRepository.findAllByUser(findUser);
+        userInterestRepository.deleteAllInBatch(deleteUserInterest);
 
         // 관심사 리스트 조회
         List<UserInterest> userInterest = new ArrayList<>();
@@ -294,6 +322,29 @@ public class UserService {
 
         // DB 저장
         userInterestRepository.saveAll(userInterest);
+
+        List<InterestListDto> interestListDtos = new ArrayList<>();
+        for (int i = 0; i < findUser.getUserInterestList().size(); i++) {
+            interestListDtos.add(InterestListDto.builder()
+                    .interest(findUser.getUserInterestList().get(i).getInterest().getInterest())
+                    .build());
+        }
+
+        // Body 에 반환
+        return UserResponseDto.builder()
+                .nickname(findUser.getNickname())
+                .gender(findUser.getGender())
+                .ageRange(findUser.getAgeRange())
+                .profileImage(imgUrl)
+                .intro(findUser.getIntro())
+                .location(findUser.getLocation().getLocation())
+                .longitude(findUser.getLocation().getLongitude())
+                .latitude(findUser.getLocation().getLatitude())
+                .mbti(findUser.getMbti().getMbti())
+                .interestList(interestListDtos)
+                .username(findUser.getUsername())
+                .signStatus(true)
+                .build();
     }
 
     // 내가 쓴 글 조회
@@ -344,5 +395,18 @@ public class UserService {
                     .build());
         }
         return posts;
+    }
+
+    public MbtiDto viewProfile(User user) {
+        // 해당 유저의 mbti와 동일한 mbti
+        Mbti userMbti = user.getMbti();
+
+        return MbtiDto.builder()
+                .name(userMbti.getMbti()) // 해당 MBTI 명칭
+                .firstTitle(userMbti.getFirstTitle())
+                .firstContent(userMbti.getFirstContent().replaceAll(System.getProperty("line.separator"), " "))
+                .secondTitle(userMbti.getSecondTitle())
+                .secondContent(userMbti.getSecondContent().replaceAll(System.getProperty("line.separator"), " "))
+                .build();
     }
 }
