@@ -76,6 +76,120 @@ class PostServiceTest {
     private PostRequestDto postRequestDto01;
     private List<MultipartFile> multipartFileList01 = new ArrayList<>();
 
+    @BeforeEach
+        // 테스트 실행 이전에 수행
+    void setUp() throws IOException {
+        // 사용자 Null
+        userDetailsNull = null;
+        // 사용자 존재 user01
+        location01 = Location.builder()
+                .id(1L)
+                .location("종로구")
+                .longitude("37.59708565")
+                .latitude("126.9706197")
+                .build();
+        mbti01 = Mbti.builder()
+                .id(1L)
+                .mbti("ENTJ")
+                .build();
+        interest01 = Interest.builder()
+                .id(1L)
+                .interest("운동")
+                .build();
+        user01 = User.builder()
+                .id(100L)
+                .kakaoId(100L)
+                .username("test100@naver.com")
+                .password("password")
+                .nickname("손흥민")
+                .profileImage("https://gorokke.shop/image/profileDefaultImg.jpg")
+                .gender("male")
+                .ageRange("30대")
+                .intro("안녕하세요~!")
+                .location(location01)
+                .mbti(mbti01)
+                .status(true)
+                .build();
+        userInterest01 = UserInterest.builder()
+                .id(100L)
+                .user(user01)
+                .interest(interest01)
+                .build();
+        userDetails01 = new UserDetailsImpl(user01);
+        // 사용자 user01 의 post01
+        post01 = Post.builder()
+                .id(1L)
+                .content("축구 차러 가실분~~!")
+                .tag("운동")
+                .user(userDetails01.getUser())
+                .build();
+        image01 = Image.builder()
+                .imageLink("https://dimg.donga.com/wps/NEWS/IMAGE/2021/04/12/106357558.1.jpg")
+                .post(post01)
+                .build();
+
+        // 사용자 존재 user02
+        location02 = Location.builder()
+                .id(1L)
+                .location("종로구")
+                .longitude("37.59708565")
+                .latitude("126.9706197")
+                .build();
+        mbti02 = Mbti.builder()
+                .id(1L)
+                .mbti("ENTJ")
+                .build();
+        interest02 = Interest.builder()
+                .id(1L)
+                .interest("운동")
+                .build();
+        user02 = User.builder()
+                .id(200L)
+                .kakaoId(200L)
+                .username("test200@naver.com")
+                .password("password")
+                .nickname("이민아")
+                .profileImage("https://gorokke.shop/image/profileDefaultImg.jpg")
+                .gender("female")
+                .ageRange("20대")
+                .intro("ㅎㅇㄹ~!")
+                .location(location02)
+                .mbti(mbti02)
+                .status(true)
+                .build();
+        userInterest02 = UserInterest.builder()
+                .id(200L)
+                .user(user02)
+                .interest(interest02)
+                .build();
+        userDetails02 = new UserDetailsImpl(user02);
+        // 사용자 user01 의 post01
+        post02 = Post.builder()
+                .id(2L)
+                .content("헬스 하러 가실분~~!")
+                .tag("운동")
+                .user(userDetails02.getUser())
+                .build();
+        image02 = Image.builder()
+                .imageLink("https://dimg.donga.com/wps/NEWS/IMAGE/2021/04/12/106357558.1.jpg")
+                .post(post02)
+                .build();
+
+        // 게시글 요청 dto
+        postRequestDto01 = PostRequestDto.builder()
+                .content("재테크 공부 하실분~~!")
+                .tag("재테크")
+                .build();
+
+        // 게시글 이미지 리스트
+        MultipartFile multipartFile = new MockMultipartFile(
+                "multipartFile",
+                "TIL.png",
+                "multipart/form-data",
+                new FileInputStream("/Users/gimjong-ug/Desktop/TIL.png"));
+        multipartFileList01.add(multipartFile);
+    }
+
     @Test
     @DisplayName("게시글 작성_사용자 NULL 일 때")
     public void createPostTest01() {
@@ -265,27 +379,27 @@ class PostServiceTest {
                 "해당 관심사는 다루지 않습니다.");
     }
 
-    @Test
-    @DisplayName("관심사별 게시글")
-    public void getIntPost02() throws IOException {
-        // given
-        postService.createPost(userDetails01.getUser(), postRequestDto01, multipartFileList01);
-        postRepository.save(post01);
-        System.out.println(post01.getId());
-        System.out.println(post01.getContent());
-        System.out.println(post01.getTag());
-        System.out.println(post01.getCreatedAt());
-        Long interestId = interest01.getId();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
-        // mocking
-        when(interestRepository.findById(interestId)).thenReturn(Optional.ofNullable(interest01));
-
-        // when
-        List<PostResponseDto> postResponseDtoList = postService.getIntPosts(interestId, pageable, userDetails01.getUser());
-
-        // then
-        assertThat(postResponseDtoList.get(0).getPostId()).isEqualTo(post01.getId());
-        assertThat(postResponseDtoList.get(0).getContent()).isEqualTo(post01.getContent());
-        assertThat(postResponseDtoList.get(0).getNickname()).isEqualTo(post01.getUser().getNickname());
-    }
+//    @Test
+//    @DisplayName("관심사별 게시글")
+//    public void getIntPost02() throws IOException {
+//        // given
+//        postService.createPost(userDetails01.getUser(), postRequestDto01, multipartFileList01);
+//        postRepository.save(post01);
+//        System.out.println(post01.getId());
+//        System.out.println(post01.getContent());
+//        System.out.println(post01.getTag());
+//        System.out.println(post01.getCreatedAt());
+//        Long interestId = interest01.getId();
+//        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+//        // mocking
+//        when(interestRepository.findById(interestId)).thenReturn(Optional.ofNullable(interest01));
+//
+//        // when
+//        List<PostResponseDto> postResponseDtoList = postService.getIntPosts(interestId, pageable, userDetails01.getUser());
+//
+//        // then
+//        assertThat(postResponseDtoList.get(0).getPostId()).isEqualTo(post01.getId());
+//        assertThat(postResponseDtoList.get(0).getContent()).isEqualTo(post01.getContent());
+//        assertThat(postResponseDtoList.get(0).getNickname()).isEqualTo(post01.getUser().getNickname());
+//    }
 }

@@ -7,10 +7,7 @@ import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.utils.S3Uploader;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,12 +20,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -129,10 +128,22 @@ class UserServiceTest {
                     "해당 사용자가 존재하지 않습니다.");
         }
 
-        @Test
-        @DisplayName("지원하지 않는 파일")
-        public void updateProfile_fail02() {
-
-        }
+//        @Test
+//        @DisplayName("지원하지 않는 파일")
+//        @Disabled
+//        public void updateProfile_fail02() throws FileNotFoundException {
+//            // given
+////            MultipartFile files = new MockMultipartFile("files", "test.rtf", "text/rtf", new FileInputStream("image/test.rtf"));
+//
+//            // mocking
+//            when(userRepository.findById(user01.getId())).thenReturn(Optional.of(user01));
+//
+//            // when
+//            Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+//            });
+//
+//            // then
+//            assertEquals("파일 업로드에 실패하였습니다.", exception.getMessage());
+//        }
     }
 }
