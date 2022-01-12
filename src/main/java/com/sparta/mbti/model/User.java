@@ -62,6 +62,8 @@ public class User {
     // 추가 입력 정보
     public void update(UserRequestDto userRequestDto, String imgUrl, Location location, Mbti mbti, boolean status) {
         this.nickname = userRequestDto.getNickname();
+        this.gender = userRequestDto.getGender();
+        this.ageRange = userRequestDto.getAgeRange();
         this.intro = userRequestDto.getIntro();
         this.profileImage = imgUrl;
         this.location = location;
