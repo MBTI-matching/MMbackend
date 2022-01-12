@@ -35,33 +35,37 @@ public class PostService {
                            PostRequestDto postRequestDto,
                            List<MultipartFile> multipartFile
     ) throws IOException {
-        // 요청한 정보로 게시글 객체 생성
-        Post post = Post.builder()
-                .content(postRequestDto.getContent())
-                .tag(postRequestDto.getTag())
-                .user(user)
-                .build();
+        if (user != null) {
+            // 요청한 정보로 게시글 객체 생성
+            Post post = Post.builder()
+                    .content(postRequestDto.getContent())
+                    .tag(postRequestDto.getTag())
+                    .user(user)
+                    .build();
 
-        // DB 저장
-        postRepository.save(post);
+            // DB 저장
+            postRepository.save(post);
 
-        // 이미지 리스트
-        List<Image> imageList = new ArrayList<>();
-        for (int i = 0; i < multipartFile.size(); i++) {
-            String imgUrl = "";
+            // 이미지 리스트
+            List<Image> imageList = new ArrayList<>();
+            for (int i = 0; i < multipartFile.size(); i++) {
+                String imgUrl = "";
 
-            // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
-            if (multipartFile.get(i).getSize() != 0) {
-                imgUrl = s3Uploader.upload(multipartFile.get(i), imageDirName);
+                // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
+                if (multipartFile.get(i).getSize() != 0) {
+                    imgUrl = s3Uploader.upload(multipartFile.get(i), imageDirName);
+                }
+                imageList.add(Image.builder()
+                        .imageLink(imgUrl)
+                        .post(post)
+                        .build());
             }
-            imageList.add(Image.builder()
-                            .imageLink(imgUrl)
-                            .post(post)
-                            .build());
-        }
 
-        // DB 저장
-        imageRepository.saveAll(imageList);
+            // DB 저장
+            imageRepository.saveAll(imageList);
+        } else {
+            throw new NullPointerException("로그인하지 않았습니다.");
+        }
     }
 
     // 게시글 상세 조회
