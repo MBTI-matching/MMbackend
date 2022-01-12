@@ -179,12 +179,12 @@ public class PostService {
     @Transactional
     public List<PostResponseDto> getIntPosts(Long interestId, Pageable pageable, User user) {
 
-        // page, size, 내림차순으로 페이징한 게시글 리스트
-        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
-
         Interest interest = interestRepository.findById(interestId).orElseThrow(
                 () -> new NullPointerException("해당 관심사는 다루지 않습니다.")
         );
+
+        // 태그(관심사명), page, size, 내림차순으로 페이징한 게시글 리스트
+        List<Post> postList = postRepository.findAllByTagOrderByCreatedAtDesc(pageable, interest.getInterest()).getContent();
 
         // 반환할 게시글 리스트 설정
         List<PostResponseDto> posts = new ArrayList<>();
@@ -220,22 +220,20 @@ public class PostService {
                         .build());
             }
 
-            // 태그명, 관심사 항목 일치 여부
-            if(onePost.getTag().equals(interest.getInterest()))
-                posts.add(PostResponseDto.builder()
-                        .postId(onePost.getId())
-                        .nickname(onePost.getUser().getNickname())
-                        .profileImage(onePost.getUser().getProfileImage())
-                        .location(onePost.getUser().getLocation().getLocation())
-                        .mbti(onePost.getUser().getMbti().getMbti())
-                        .content(onePost.getContent())
-                        .tag(onePost.getTag())
-                        .likesCount(likesCount)
-                        .likeStatus(likeStatus)
-                        .imageList(images)
-                        .commentList(comments)
-                        .createdAt(onePost.getCreatedAt())
-                        .build());
+            posts.add(PostResponseDto.builder()
+                    .postId(onePost.getId())
+                    .nickname(onePost.getUser().getNickname())
+                    .profileImage(onePost.getUser().getProfileImage())
+                    .location(onePost.getUser().getLocation().getLocation())
+                    .mbti(onePost.getUser().getMbti().getMbti())
+                    .content(onePost.getContent())
+                    .tag(onePost.getTag())
+                    .likesCount(likesCount)
+                    .likeStatus(likeStatus)
+                    .imageList(images)
+                    .commentList(comments)
+                    .createdAt(onePost.getCreatedAt())
+                    .build());
         }
         return posts;
     }
