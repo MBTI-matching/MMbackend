@@ -27,7 +27,6 @@ public class ChatRoomController{
     }
 
     // 채팅방 생성
-    // guestId가 채팅방 제목
     @PostMapping("/room")
     public ChatRoom createRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                @RequestBody ChatRoomRequestDto chatRoomRequestDto) {

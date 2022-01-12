@@ -36,4 +36,20 @@ public class MatchingService {
         return "신청이 완료되었습니다.";
     }
 
+    public String receiveMatching(User user, Long hostId, boolean accept) {
+
+        User host = userRepository.findById(hostId).orElseThrow(
+                () -> new NullPointerException("해당 신청을 주신 유저분은 존재하지 않습니다.")
+        );
+
+        matchingRepository.delete(Matching.builder()
+                .hostId(hostId)
+                .guestId(user.getId())
+                .build());
+
+        if (!accept) {
+            return user.getNickname() + "님이 " + host.getNickname() + "님의 신청을 거절하셨습니다.";
+        }
+        return user.getNickname() + "님이 " + host.getNickname() + "님의 신청을 수락하셨습니다.";
+    }
 }
