@@ -270,7 +270,7 @@ public class UserService {
     ) throws IOException {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
+                () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
         );
 
         // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
