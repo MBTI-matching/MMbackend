@@ -3,7 +3,9 @@ package com.sparta.mbti.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.mbti.dto.*;
+import com.sparta.mbti.dto.request.KakaoUserRequestDto;
+import com.sparta.mbti.dto.request.UserRequestDto;
+import com.sparta.mbti.dto.response.*;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import com.sparta.mbti.security.UserDetailsImpl;
@@ -56,10 +58,10 @@ public class UserService {
         String accessToken = getAccessToken(code);
 
         // 2. "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-        KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
+        KakaoUserRequestDto kakaoUserRequestDto = getKakaoUserInfo(accessToken);
 
         // 3. "카카오 사용자 정보"로 필요시 회원가입
-        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
+        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserRequestDto);
 
         // 4. 강제 로그인 처리
         return forceLogin(kakaoUser, response);
@@ -98,7 +100,7 @@ public class UserService {
     }
 
     // 2. "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-    private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    private KakaoUserRequestDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);      // JWT 토큰
@@ -156,7 +158,7 @@ public class UserService {
             ageRange = body.getJSONObject("kakao_account").getString("age_range");
         }
 
-        return KakaoUserInfoDto.builder()
+        return KakaoUserRequestDto.builder()
                 .id(id)
                 .username(username)
                 .nickname(nickname)
@@ -167,28 +169,28 @@ public class UserService {
     }
 
     // 3. "카카오 사용자 정보"로 필요시 회원가입
-    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+    private User registerKakaoUserIfNeeded(KakaoUserRequestDto kakaoUserRequestDto) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
-        Long kakaoId = kakaoUserInfo.getId();
+        Long kakaoId = kakaoUserRequestDto.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
 
         // nullable = false
-        String username = kakaoUserInfo.getUsername();                  // 카카오 아이디 (이메일)
+        String username = kakaoUserRequestDto.getUsername();                  // 카카오 아이디 (이메일)
         String password = UUID.randomUUID().toString();                 // 카카오 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
-        String nickname = kakaoUserInfo.getNickname();                  // 카카오 닉네임
+        String nickname = kakaoUserRequestDto.getNickname();                  // 카카오 닉네임
 
         // nullable = true
-        String profileImage = kakaoUserInfo.getProfileImage();          // 카카오 프로필 이미지 (이미지 객체에 저장)
-        String gender = kakaoUserInfo.getGender();                      // 카카오 성별
+        String profileImage = kakaoUserRequestDto.getProfileImage();          // 카카오 프로필 이미지 (이미지 객체에 저장)
+        String gender = kakaoUserRequestDto.getGender();                      // 카카오 성별
 
         String ageRange;
 
-        if(Integer.parseInt(kakaoUserInfo.getAgeRange().substring(0, 2)) >= 50)
+        if(Integer.parseInt(kakaoUserRequestDto.getAgeRange().substring(0, 2)) >= 50)
             ageRange = "50대 이상";
         else
-            ageRange = kakaoUserInfo.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
+            ageRange = kakaoUserRequestDto.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
 
         // 가입 여부
         if (kakaoUser == null) {
@@ -231,7 +233,7 @@ public class UserService {
         String longitude = null;
         String latitude = null;
         String mbti = null;
-        List<InterestListDto> interestListDtos = new ArrayList<>();
+        List<String> interestListDtos = new ArrayList<>();
         if (signStatus) {
             intro = userDetails.getUser().getIntro();
             location = userDetails.getUser().getLocation().getLocation();
@@ -239,9 +241,7 @@ public class UserService {
             latitude = userDetails.getUser().getLocation().getLatitude();
             mbti = userDetails.getUser().getMbti().getMbti();
             for (int i = 0; i < userDetails.getUser().getUserInterestList().size(); i++) {
-                interestListDtos.add(InterestListDto.builder()
-                                                .interest(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest())
-                                                .build());
+                interestListDtos.add(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest());
             }
         }
 
@@ -270,7 +270,7 @@ public class UserService {
     ) throws IOException {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
-                () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
+                () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
         );
 
         // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
@@ -310,7 +310,7 @@ public class UserService {
         // 관심사 리스트 조회
         List<UserInterest> userInterest = new ArrayList<>();
         for (int i = 0; i < userRequestDto.getInterestList().size(); i++) {
-            Interest interest = interestRepository.findByInterest(userRequestDto.getInterestList().get(i).getInterest()).orElseThrow(
+            Interest interest = interestRepository.findByInterest(userRequestDto.getInterestList().get(i)).orElseThrow(
                     () -> new IllegalArgumentException("해당 관심사가 존재하지 않습니다.")
             );
 
@@ -323,11 +323,9 @@ public class UserService {
         // DB 저장
         userInterestRepository.saveAll(userInterest);
 
-        List<InterestListDto> interestListDtos = new ArrayList<>();
+        List<String> interestListDtos = new ArrayList<>();
         for (int i = 0; i < findUser.getUserInterestList().size(); i++) {
-            interestListDtos.add(InterestListDto.builder()
-                    .interest(findUser.getUserInterestList().get(i).getInterest().getInterest())
-                    .build());
+            interestListDtos.add(findUser.getUserInterestList().get(i).getInterest().getInterest());
         }
 
         // Body 에 반환
@@ -397,11 +395,11 @@ public class UserService {
         return posts;
     }
 
-    public MbtiDto viewProfile(User user) {
+    public MbtiResponseDto viewProfile(User user) {
         // 해당 유저의 mbti와 동일한 mbti
         Mbti userMbti = user.getMbti();
 
-        return MbtiDto.builder()
+        return MbtiResponseDto.builder()
                 .name(userMbti.getMbti()) // 해당 MBTI 명칭
                 .firstTitle(userMbti.getFirstTitle())
                 .firstContent(userMbti.getFirstContent().replaceAll(System.getProperty("line.separator"), " "))

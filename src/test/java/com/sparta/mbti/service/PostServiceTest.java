@@ -381,17 +381,17 @@
 //                () -> postService.getIntPosts(null, pageable, userDetails01.getUser()),
 //                "해당 관심사는 다루지 않습니다.");
 //    }
+
+//    @Test
+//    @DisplayName("관심사별 게시글")
+//    public void getIntPost02() throws IOException {
+//        // given
+//        Long interestId = interest01.getId();
+//        Pageable pageable = PageRequest.of(0, 500, Sort.by("createdAt").descending());
+//        // mocking
+////        when(interestRepository.findById(interestId)).thenReturn(Optional.ofNullable(interest01));
 //
-////    @Test
-////    @DisplayName("관심사별 게시글")
-////    public void getIntPost02() throws IOException {
-////        // given
-////        Long interestId = interest01.getId();
-////        Pageable pageable = PageRequest.of(0, 500, Sort.by("createdAt").descending());
-////        // mocking
-//////        when(interestRepository.findById(interestId)).thenReturn(Optional.ofNullable(interest01));
-////
-////        // when
-////        postService.getIntPosts(interestId, pageable, userDetails01.getUser());
-////    }
+//        // when
+//        postService.getIntPosts(interestId, pageable, userDetails01.getUser());
+//    }
 //}

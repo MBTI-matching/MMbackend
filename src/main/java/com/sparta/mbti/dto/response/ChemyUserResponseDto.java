@@ -1,5 +1,6 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 @Data
 @AllArgsConstructor
@@ -21,5 +23,5 @@ public class ChemyUserResponseDto {
     private String location;            // 위치
     private String mbti;                // MBTI
     private String username;            // 유저 이메일
-    List<InterestListDto> interestList; // 관심사 리스트
+    List<String> interestList; // 관심사 리스트
 }
