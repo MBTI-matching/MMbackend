@@ -1,8 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.PostRequestDto;
-import com.sparta.mbti.dto.PostResponseDto;
-import com.sparta.mbti.dto.UserRequestDto;
+import com.sparta.mbti.dto.request.UserRequestDto;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import com.sparta.mbti.security.UserDetailsImpl;
@@ -11,25 +9,16 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class) // @Mock 사용하기 위해 Mockito 테스트 실행을 확장
 class UserServiceTest {
