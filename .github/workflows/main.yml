@@ -33,10 +33,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-       # 셸 파일에 실행 권한 주기
-#      - name: Grant execute permission for shell
-#        run: chmod +x deploy.sh
-
       # Build
       - name: Build with Gradle
         run: ./gradlew clean build -Pjasypt.encryptor.password=${{ secrets.JASYPT_PASSWORD }}
@@ -49,13 +45,13 @@ jobs:
       - name: Copy appspec.yml
         run: cp appspec.yml ./deploy
 
-      # script files 복사
+      # script files 복사: deploy.sh -> * 변경
       - name: Copy script
-        run: cp ./scripts/deploy.sh ./deploy
+        run: cp ./scripts/* ./deploy
 
-      # 셸 파일에 실행 권한 주기
-      - name: Grant execute permission for shell
-        run: chmod +x ./deploy/deploy.sh
+      #      # 셸 파일에 실행 권한 주기
+      #      - name: Grant execute permission for shell
+      #        run: chmod +x ./deploy/deploy.sh
 
       # Jar 파일 Copy
       - name: Copy Jar
