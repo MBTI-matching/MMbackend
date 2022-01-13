@@ -82,13 +82,12 @@ public class ChatRoomService{
     // 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다. -> redis hash는 보류
     public ChatRoom createChatRoom(Long hostId, ChatRoomRequestDto chatRoomRequestDto) {
 
-        // guestId가 아니라 guestName, guestUsername이라고 하던지... 변수명을 바꾸던지 아니면 repository에서 찾는 걸 바꾸던지. findById가 맞지 않나?
-        // entity에 guestId가 long이라고 적혀있어서 그에 맞게.
+        // entity에 guestId가 Long이라고 적혀있어서 그에 맞게 변경(dto쪽의 자료형도 변경)
         User guest = userRepository.findById(chatRoomRequestDto.getGuestId()).orElse(null);
 
+        // roomId: entity에서 작성하는 것보단 service에서 만들고 entity에서는 연결만 하는 게 더 좋아보임. 밀착 참고.
         String roomId = UUID.randomUUID().toString();
 
-        // roomId를 entity에 지정했으면서 왜 roomId 언급은 없을까?
         ChatRoom chatRoom = new ChatRoom(
                 hostId,
                 guest.getId(),

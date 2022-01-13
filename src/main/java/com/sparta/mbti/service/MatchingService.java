@@ -7,6 +7,7 @@ import com.sparta.mbti.repository.MatchingRepository;
 import com.sparta.mbti.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +37,8 @@ public class MatchingService {
         return "신청이 완료되었습니다.";
     }
 
+    // 매칭 신청 거절 혹은 수락 -> 매칭 리스트에서 지우기
+    @Transactional
     public String receiveMatching(User user, Long hostId, boolean accept) {
 
         User host = userRepository.findById(hostId).orElseThrow(

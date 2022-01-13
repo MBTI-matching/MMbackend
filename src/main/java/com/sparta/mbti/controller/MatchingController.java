@@ -18,7 +18,7 @@ public class MatchingController {
         return matchingService.requestMatching(userDetails.getUser(), guestId);
     }
 
-    // 매칭 신청 수락/거절 뒤 요청 목록에서 삭제 & 매칭 신청때와 다르게 userDetails.getUser()를 guest쪽이라고 설정
+    // 매칭 신청 수락/거절 뒤 요청 목록에서 삭제: userDetails.getUser()를 guest로 설정
     @GetMapping("/matching/receive/{hostId}")
     public String deleteMatching(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long hostId, @RequestParam(value = "accept") boolean accept) {
         return matchingService.receiveMatching(userDetails.getUser(), hostId, accept);
