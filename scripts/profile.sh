@@ -10,17 +10,17 @@ function find_idle_profile()
 
     if [ ${RESPONSE_CODE} -ge 400 ] # 400 보다 크면 (즉, 40x/50x 에러 모두 포함)
     then
-        CURRENT_PROFILE=real2
+        CURRENT_PROFILE=set2
     else
         CURRENT_PROFILE=$(curl -s http://localhost/profile)
     fi
 
     # IDLE_PROFILE : nginx와 연결되지 않은 profile
-    if [ ${CURRENT_PROFILE} == real1 ]
+    if [ ${CURRENT_PROFILE} == set1 ]
     then
-      IDLE_PROFILE=real2
+      IDLE_PROFILE=set2
     else
-      IDLE_PROFILE=real1
+      IDLE_PROFILE=set1
     fi
 
     # bash script는 값의 반환이 안된다.
@@ -33,7 +33,7 @@ function find_idle_port()
 {
     IDLE_PROFILE=$(find_idle_profile)
 
-    if [ ${IDLE_PROFILE} == real1 ]
+    if [ ${IDLE_PROFILE} == set1 ]
     then
       echo "8081"
     else
