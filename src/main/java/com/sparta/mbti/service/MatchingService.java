@@ -1,5 +1,6 @@
 package com.sparta.mbti.service;
 
+import com.sparta.mbti.dto.response.MatchResponseDto;
 import com.sparta.mbti.model.Matching;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatRoomRepository;
@@ -8,6 +9,9 @@ import com.sparta.mbti.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +61,43 @@ public class MatchingService {
         matchingRepository.delete(matching);
 
         return user.getNickname() + "님이 " + host.getNickname() + "님의 신청을 수락하셨습니다.";
+    }
+
+    public List<MatchResponseDto> sentMatching(User user) {
+        List<Matching> matchList = matchingRepository.findAllByHostId(user.getId());
+
+        List<MatchResponseDto> sentList = new ArrayList<>();
+        for (Matching oneMatch : matchList ) {
+            sentList.add(MatchResponseDto.builder()
+                    .matchingId(oneMatch.getId())
+                    .hostId(oneMatch.getHostId())
+                    .guestId(oneMatch.getGuestId())
+                    .build());
+        }
+        return sentList;
+    }
+
+    public List<MatchResponseDto> invitedMatching(User user) {
+        List<Matching> matchList = matchingRepository.findAllByGuestId(user.getId());
+
+        List<MatchResponseDto> invitations = new ArrayList<>();
+        for (Matching oneMatch : matchList) {
+            invitations.add(MatchResponseDto.builder()
+                    .matchingId(oneMatch.getId())
+                    .hostId(oneMatch.getHostId())
+                    .guestId(oneMatch.getGuestId())
+                    .build());
+        }
+        return invitations;
+    }
+
+    public String deleteMatching(User user, Long guestId) {
+        Matching matching = matchingRepository.findByHostIdAndGuestId(user.getId(), guestId).orElseThrow(
+                () -> new IllegalArgumentException("잘못된 정보입니다.")
+        );
+
+        matchingRepository.delete(matching);
+
+        return "신청이 취소되었습니다.";
     }
 }
