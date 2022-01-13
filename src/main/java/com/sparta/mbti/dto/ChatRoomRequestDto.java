@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ChatRoomRequestDto {
     @Column
-    private String guestId;
+    private Long guestId; // entity에 guestId가 long이라고 되어있어서 entity쪽에 맞춤
 
     @Column
     private String guestMbti;

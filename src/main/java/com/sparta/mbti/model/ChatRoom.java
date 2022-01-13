@@ -38,12 +38,12 @@ public class ChatRoom implements Serializable {
     @Column
     private String roomId;
 
-    public ChatRoom(Long hostId, Long guestId, String guestImg, String guestMbti, String guestNick) {
-        this.roomId = UUID.randomUUID().toString();
+    public ChatRoom(Long hostId, Long guestId, String guestImg, String guestMbti, String guestNick, String roomId) {
         this.hostId = hostId;
         this.guestId = guestId;
         this.guestMbti = guestMbti;
         this.guestImg = guestImg;
         this.guestNick = guestNick;
+        this.roomId = roomId;
     }
 }
