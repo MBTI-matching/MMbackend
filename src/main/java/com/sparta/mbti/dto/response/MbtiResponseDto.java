@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MbtiDto {
+public class MbtiResponseDto {
     private String name;
     private String firstTitle;
     private String firstContent;

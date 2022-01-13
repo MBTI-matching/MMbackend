@@ -1,6 +1,6 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.dto.ChemyUserResponseDto;
+import com.sparta.mbti.dto.response.ChemyUserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.ChemyService;
 import lombok.RequiredArgsConstructor;

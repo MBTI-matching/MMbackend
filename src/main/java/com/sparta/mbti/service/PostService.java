@@ -1,9 +1,9 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.CommentResopnseDto;
-import com.sparta.mbti.dto.ImageResponseDto;
-import com.sparta.mbti.dto.PostRequestDto;
-import com.sparta.mbti.dto.PostResponseDto;
+import com.sparta.mbti.dto.response.CommentResopnseDto;
+import com.sparta.mbti.dto.response.ImageResponseDto;
+import com.sparta.mbti.dto.request.PostRequestDto;
+import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import com.sparta.mbti.utils.S3Uploader;

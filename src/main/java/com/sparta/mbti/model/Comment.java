@@ -1,6 +1,6 @@
 package com.sparta.mbti.model;
 
-import com.sparta.mbti.dto.CommentRequestDto;
+import com.sparta.mbti.dto.request.CommentRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

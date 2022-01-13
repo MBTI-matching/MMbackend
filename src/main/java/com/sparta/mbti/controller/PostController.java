@@ -1,7 +1,7 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.dto.PostRequestDto;
-import com.sparta.mbti.dto.PostResponseDto;
+import com.sparta.mbti.dto.request.PostRequestDto;
+import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.PostService;
 import lombok.RequiredArgsConstructor;

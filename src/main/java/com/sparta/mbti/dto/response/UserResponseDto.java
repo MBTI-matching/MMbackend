@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +22,6 @@ public class UserResponseDto {
     private String longitude;           // 경도
     private String latitude;            // 위도
     private String mbti;                // mbti
-    List<InterestListDto> interestList; // 관심사 리스트
+    List<String> interestList; // 관심사 리스트
     private boolean signStatus;         // 가입된 상태 (가입: true, 미가입: false)
 }

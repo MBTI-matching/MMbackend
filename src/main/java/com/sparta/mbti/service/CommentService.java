@@ -1,6 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.CommentRequestDto;
+import com.sparta.mbti.dto.request.CommentRequestDto;
 import com.sparta.mbti.model.Comment;
 import com.sparta.mbti.model.Post;
 import com.sparta.mbti.model.User;
