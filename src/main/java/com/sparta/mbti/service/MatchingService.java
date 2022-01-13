@@ -63,29 +63,53 @@ public class MatchingService {
         return user.getNickname() + "님이 " + host.getNickname() + "님의 신청을 수락하셨습니다.";
     }
 
+    // host가 guest내역 조회
+    @Transactional
     public List<MatchResponseDto> sentMatching(User user) {
         List<Matching> matchList = matchingRepository.findAllByHostId(user.getId());
 
+
+
         List<MatchResponseDto> sentList = new ArrayList<>();
         for (Matching oneMatch : matchList ) {
+
+            User guest = userRepository.findById(oneMatch.getGuestId()).orElseThrow(
+                    () -> new NullPointerException("유저의 정보가 없습니다.")
+            );
+
             sentList.add(MatchResponseDto.builder()
                     .matchingId(oneMatch.getId())
                     .hostId(oneMatch.getHostId())
-                    .guestId(oneMatch.getGuestId())
+                    .guestId(guest.getId())
+                    .partnerNick(guest.getNickname())
+                    .partnerImg(guest.getProfileImage())
+                    .partnerMbti(guest.getMbti().getMbti())
+                    .partnerIntro(guest.getIntro())
                     .build());
         }
         return sentList;
     }
 
+    // guest가 host내역 조회
+    @Transactional
     public List<MatchResponseDto> invitedMatching(User user) {
         List<Matching> matchList = matchingRepository.findAllByGuestId(user.getId());
 
         List<MatchResponseDto> invitations = new ArrayList<>();
         for (Matching oneMatch : matchList) {
+
+            User host = userRepository.findById(oneMatch.getHostId()).orElseThrow(
+                    () -> new NullPointerException("유저의 정보가 없습니다.")
+            );
+
             invitations.add(MatchResponseDto.builder()
                     .matchingId(oneMatch.getId())
                     .hostId(oneMatch.getHostId())
                     .guestId(oneMatch.getGuestId())
+                    .partnerNick(host.getNickname())
+                    .partnerImg(host.getProfileImage())
+                    .partnerMbti(host.getMbti().getMbti())
+                    .partnerIntro(host.getIntro())
                     .build());
         }
         return invitations;

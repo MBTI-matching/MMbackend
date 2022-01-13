@@ -13,4 +13,8 @@ public class MatchResponseDto {
     private Long matchingId;
     private Long hostId;
     private Long guestId;
+    private String partnerNick;
+    private String partnerImg;
+    private String partnerMbti;
+    private String partnerIntro;
 }
