@@ -19,7 +19,7 @@ public class Comment extends Timestamped {
     @Column(name = "COMMENT_ID")
     private Long id;                         // 테이블 기본키
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TINYTEXT") // TINYTEXT는 256bytes, 최대 255문자까지 저장
     private String comment;                 // 댓글
 
     @ManyToOne(fetch = FetchType.LAZY)
