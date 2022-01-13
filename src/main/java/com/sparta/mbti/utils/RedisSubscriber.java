@@ -1,7 +1,7 @@
 package com.sparta.mbti.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.mbti.dto.ChatMessageRequestDto;
+import com.sparta.mbti.dto.response.ChatMessageRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;

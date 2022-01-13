@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

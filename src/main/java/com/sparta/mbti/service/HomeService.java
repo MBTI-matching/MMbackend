@@ -1,6 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.*;
+import com.sparta.mbti.dto.response.*;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -39,19 +39,17 @@ public class HomeService {
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(user.getLocation(), findMbtiList);
         // 반환 사용자 리스트
-        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             for (UserInterest userInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(userInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(userInterest.getInterest().getInterest());
             }
 
 
-            chemyUserListDtos.add(ChemyUserListDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                                                 .userId(oneUser.getId())
                                                 .nickname(oneUser.getNickname())
                                                 .profileImage(oneUser.getProfileImage())
@@ -95,7 +93,7 @@ public class HomeService {
             }
             // 사용자 존재하면
             if (maxCount > 0) {
-                List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+                List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
                 // 사용자 리스트 인덱스 값 저장
                 int[] userSize = new int[maxCount];
                 for (int i = 0; i < maxCount; i++) {
@@ -114,14 +112,12 @@ public class HomeService {
 
                     // 관심사 리스트 조회
                     List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
-                    List<InterestListDto> interestList = new ArrayList<>();
+                    List<String> interestList = new ArrayList<>();
                     for (UserInterest userInterest : userInterestList) {
-                        interestList.add(InterestListDto.builder()
-                                .interest(userInterest.getInterest().getInterest())
-                                .build());
+                        interestList.add(userInterest.getInterest().getInterest());
                     }
 
-                    chemyUserListDtos.add(ChemyUserListDto.builder()
+                    chemyUserListDtos.add(ChemyUserResponseDto.builder()
                             .userId(findUser.getId())
                             .nickname(findUser.getNickname())
                             .profileImage(findUser.getProfileImage())
@@ -163,18 +159,16 @@ public class HomeService {
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(location, findMbtiList);
         // 반환 사용자 리스트
-        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             for (UserInterest userInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(userInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserListDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                     .userId(oneUser.getId())
                     .nickname(oneUser.getNickname())
                     .profileImage(oneUser.getProfileImage())
@@ -285,7 +279,7 @@ public class HomeService {
             maxCount = 10;
         }
 
-        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         // 사용자 리스트 인덱스 값 저장
         int[] userSize = new int[maxCount];
         for (int i = 0; i < maxCount; i++) {
@@ -303,15 +297,13 @@ public class HomeService {
             User findUser = interestedUser.get(i);
 
             // 관심사 리스트 조회
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
             for (UserInterest usersInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(usersInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(usersInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserListDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                     .userId(findUser.getId())
                     .nickname(findUser.getNickname())
                     .profileImage(findUser.getProfileImage())
@@ -373,7 +365,7 @@ public class HomeService {
             maxCount = 10;
         }
 
-        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         // 사용자 리스트 인덱스 값 저장
         int[] userSize = new int[maxCount];
         for (int i = 0; i < maxCount; i++) {
@@ -391,15 +383,13 @@ public class HomeService {
             User findUser = interestedUser.get(i);
 
             // 관심사 리스트 조회
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
             for (UserInterest userInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(userInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserListDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                     .userId(findUser.getId())
                     .nickname(findUser.getNickname())
                     .profileImage(findUser.getProfileImage())

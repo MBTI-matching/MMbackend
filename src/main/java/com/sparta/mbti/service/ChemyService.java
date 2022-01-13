@@ -1,7 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.ChemyUserResponseDto;
-import com.sparta.mbti.dto.InterestListDto;
+import com.sparta.mbti.dto.response.ChemyUserResponseDto;
 import com.sparta.mbti.model.Mbti;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.model.UserInterest;
@@ -41,11 +40,9 @@ public class ChemyService {
 
             // 랜덤 사용자 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUserList.get(size));
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             for (UserInterest userInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(userInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(userInterest.getInterest().getInterest());
             }
 
             // 랜덤 사용자 반환
@@ -75,11 +72,9 @@ public class ChemyService {
 
         // 관심사 리스트 조회
         List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
-        List<InterestListDto> interestList = new ArrayList<>();
+        List<String> interestList = new ArrayList<>();
         for (UserInterest userInterest : userInterestList) {
-            interestList.add(InterestListDto.builder()
-                                    .interest(userInterest.getInterest().getInterest())
-                                    .build());
+            interestList.add(userInterest.getInterest().getInterest());
         }
 
         // 반환
