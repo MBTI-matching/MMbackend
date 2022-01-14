@@ -15,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByLocation(Location location);
     List<User> findAllByLocationAndMbtiIn(Location location, List<Mbti> mbtiList);
     List<User> findAllByLocationAndMbti(Location location, Mbti mbti);
+
 }

@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import com.sparta.mbti.model.ChatMessage;
 import com.sparta.mbti.model.User;

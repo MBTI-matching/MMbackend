@@ -1,6 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.*;
+import com.sparta.mbti.dto.response.*;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import java.util.Random;
 @Service
 public class HomeService {
     private final UserRepository userRepository;
+    private final InterestRepository interestRepository;
     private final LocationRepository locationRepository;
     private final MbtiRepository mbtiRepository;
     private final PostRepository postRepository;
@@ -38,19 +39,17 @@ public class HomeService {
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(user.getLocation(), findMbtiList);
         // 반환 사용자 리스트
-        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             for (UserInterest userInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(userInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(userInterest.getInterest().getInterest());
             }
 
 
-            chemyUserListDtos.add(ChemyUserListDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                                                 .userId(oneUser.getId())
                                                 .nickname(oneUser.getNickname())
                                                 .profileImage(oneUser.getProfileImage())
@@ -94,7 +93,7 @@ public class HomeService {
             }
             // 사용자 존재하면
             if (maxCount > 0) {
-                List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+                List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
                 // 사용자 리스트 인덱스 값 저장
                 int[] userSize = new int[maxCount];
                 for (int i = 0; i < maxCount; i++) {
@@ -113,14 +112,12 @@ public class HomeService {
 
                     // 관심사 리스트 조회
                     List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
-                    List<InterestListDto> interestList = new ArrayList<>();
+                    List<String> interestList = new ArrayList<>();
                     for (UserInterest userInterest : userInterestList) {
-                        interestList.add(InterestListDto.builder()
-                                .interest(userInterest.getInterest().getInterest())
-                                .build());
+                        interestList.add(userInterest.getInterest().getInterest());
                     }
 
-                    chemyUserListDtos.add(ChemyUserListDto.builder()
+                    chemyUserListDtos.add(ChemyUserResponseDto.builder()
                             .userId(findUser.getId())
                             .nickname(findUser.getNickname())
                             .profileImage(findUser.getProfileImage())
@@ -162,18 +159,16 @@ public class HomeService {
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(location, findMbtiList);
         // 반환 사용자 리스트
-        List<ChemyUserListDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
-            List<InterestListDto> interestList = new ArrayList<>();
+            List<String> interestList = new ArrayList<>();
             for (UserInterest userInterest : userInterestList) {
-                interestList.add(InterestListDto.builder()
-                        .interest(userInterest.getInterest().getInterest())
-                        .build());
+                interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserListDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                     .userId(oneUser.getId())
                     .nickname(oneUser.getNickname())
                     .profileImage(oneUser.getProfileImage())
@@ -249,4 +244,168 @@ public class HomeService {
         }
         return posts;
     }
+
+    // 관심사별 케미 리스트 #1 (지역 / 관심사)
+    public ChemyAllResponseDto interestList(Long locationId, Long interestId) {
+        // 위치 조회
+        Location location = locationRepository.findById(locationId).orElseThrow(
+                () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // 관심사 조회
+        Interest interest =interestRepository.findById(interestId).orElseThrow(
+                () -> new NullPointerException("해당 관심사는 존재하지 않습니다.")
+        );
+
+        // 지역별 사용자 리스트
+        List<User> userList = userRepository.findAllByLocation(location);
+
+        // 같은 관심사를 지닌 유저 골라내기
+        List<User> interestedUser = new ArrayList<>();
+        for (User user : userList) {
+
+            int maxInterest = user.getUserInterestList().size();
+            for (int i = 0; i < maxInterest; i++)
+
+            if (user.getUserInterestList().get(i).getInterest().getInterest().equals(interest.getInterest())) {
+                interestedUser.add(user);
+            }
+        }
+
+        // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
+        Random generatorUser = new Random();
+        int maxCount = interestedUser.size();
+        if (maxCount >= 10) {
+            maxCount = 10;
+        }
+
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+        // 사용자 리스트 인덱스 값 저장
+        int[] userSize = new int[maxCount];
+        for (int i = 0; i < maxCount; i++) {
+            userSize[i] = generatorUser.nextInt(maxCount);  // 랜덤 변수 생성
+            // 중복 제거
+            for (int j = 0; j < i; j++) {
+                if (userSize[i] == userSize[j]) {
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < maxCount; i++) {
+            User findUser = interestedUser.get(i);
+
+            // 관심사 리스트 조회
+            List<String> interestList = new ArrayList<>();
+            List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
+            for (UserInterest usersInterest : userInterestList) {
+                interestList.add(usersInterest.getInterest().getInterest());
+            }
+
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
+                    .userId(findUser.getId())
+                    .nickname(findUser.getNickname())
+                    .profileImage(findUser.getProfileImage())
+                    .intro(findUser.getIntro())
+                    .location(findUser.getLocation().getLocation())
+                    .mbti(findUser.getMbti().getMbti())
+                    .interestList(interestList)
+                    .build());
+        }
+        return ChemyAllResponseDto.builder()
+                .location(location.getLocation())
+                .longitude(location.getLongitude())
+                .latitude(location.getLatitude())
+                .userCount(interestedUser.size())
+                .userList(chemyUserListDtos)
+                .build();
+    }
+
+    // 관심사별 케미 리스트 #2 (지역 / 관심사 / MBTI)
+    public ChemyAllResponseDto chemyInterest(Long locationId, Long interestId, User user) {
+
+        // 위치 조회
+        Location location = locationRepository.findById(locationId).orElseThrow(
+                () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // 관심사 조회
+        Interest interest =interestRepository.findById(interestId).orElseThrow(
+                () -> new NullPointerException("해당 관심사는 존재하지 않습니다.")
+        );
+
+        // MBTI 이상적 궁합 리스트 4개까지 조회
+        String mbtiChemy = user.getMbti().getMbti();
+        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy);
+
+        // 지역별 사용자 리스트
+        List<User> userList = userRepository.findAllByLocationAndMbtiIn(location, findMbtiList);
+
+        // 같은 관심사를 지닌 유저 골라내기
+        List<User> interestedUser = new ArrayList<>();
+        for (User someUser : userList) {
+
+            int maxInterest = someUser.getUserInterestList().size();
+            for (int i = 0; i < maxInterest; i++)
+
+                if (someUser.getUserInterestList().get(i).getInterest().getInterest().equals(interest.getInterest())) {
+                    interestedUser.add(someUser);
+                }
+        }
+
+        // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
+        Random generatorUser = new Random();
+        int maxCount = interestedUser.size();
+        if (maxCount >= 10) {
+            maxCount = 10;
+        }
+
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+        // 사용자 리스트 인덱스 값 저장
+        int[] userSize = new int[maxCount];
+        for (int i = 0; i < maxCount; i++) {
+            userSize[i] = generatorUser.nextInt(maxCount);  // 랜덤 변수 생성
+            // 중복 제거
+            for (int j = 0; j < i; j++) {
+                if (userSize[i] == userSize[j]) {
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < maxCount; i++) {
+            User findUser = interestedUser.get(i);
+
+            // 관심사 리스트 조회
+            List<String> interestList = new ArrayList<>();
+            List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
+            for (UserInterest userInterest : userInterestList) {
+                interestList.add(userInterest.getInterest().getInterest());
+            }
+
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
+                    .userId(findUser.getId())
+                    .nickname(findUser.getNickname())
+                    .profileImage(findUser.getProfileImage())
+                    .intro(findUser.getIntro())
+                    .location(findUser.getLocation().getLocation())
+                    .mbti(findUser.getMbti().getMbti())
+                    .interestList(interestList)
+                    .build());
+        }
+        return ChemyAllResponseDto.builder()
+                .location(location.getLocation())
+                .longitude(location.getLongitude())
+                .latitude(location.getLatitude())
+                .userCount(interestedUser.size())
+                .userList(chemyUserListDtos)
+                .build();
+    }
 }
+

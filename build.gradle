@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.sparta'
-version = '0.0.1-SNAPSHOT'
+version = new Date().format("yyyyMMddHHmmss") + '-0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
@@ -67,6 +67,11 @@ dependencies {
 
     // 개인정보 숨기기
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
+    //nginx - health check
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.6.1'
+
+
 }
 
 test {

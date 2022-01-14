@@ -1,7 +1,7 @@
 package com.sparta.mbti.controller;
 
 
-import com.sparta.mbti.dto.CommentRequestDto;
+import com.sparta.mbti.dto.request.CommentRequestDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.CommentService;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.dto.ChemyAllResponseDto;
-import com.sparta.mbti.dto.PostResponseDto;
+import com.sparta.mbti.dto.response.ChemyAllResponseDto;
+import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.HomeService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +38,21 @@ public class HomeController {
     public ChemyAllResponseDto locationList(@PathVariable Long locationId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return homeService.locationList(locationId, userDetails.getUser());
+    }
+
+    // 지역 & 관심사별 케미 리스트: (위치 / 관심사)
+    @GetMapping("/api/chemy/{locationId}/{interestId}")
+    public ChemyAllResponseDto interestList(@PathVariable Long locationId,
+                                            @PathVariable Long interestId) {
+        return homeService.interestList(locationId, interestId);
+    }
+
+    // 지역 & 관심사별 케미 리스트: (위치 / 관심사 / MBTI)
+    @GetMapping("/api/chemy/list/{locationId}/{interestId}")
+    public ChemyAllResponseDto chemyInterest(@PathVariable Long locationId,
+                                             @PathVariable Long interestId,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return homeService.chemyInterest(locationId, interestId, userDetails.getUser());
     }
 
     // 커뮤니티 (전체)

@@ -45,9 +45,10 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
+        // nginx 확인용으로 .antMatchers에 "/profile" 추가
         web
                 .ignoring()
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**", "/profile");
     }
 
     @Override
@@ -89,7 +90,6 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> skipPathList = new ArrayList<>();
         // 이 부분은 JWT 토큰이 불필요한 API 만 넣어주는 곳 (JWT 필터를 안거치므로 토큰 생성안됨)
 
-        skipPathList.add("GET,/ws-stomp/**");
         // 카카오 로그인 페이지 허용
         skipPathList.add("GET,/user/kakao/callback");
 
@@ -97,7 +97,6 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/api/chemy/guest");
 
         // 채팅
-        skipPathList.add("GET,/ws-stomp/**");
         skipPathList.add("GET,/chat/room/**");
         skipPathList.add("GET,/sub/chat/room/**");
         skipPathList.add("GET,/pub/chat/room/**");

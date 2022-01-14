@@ -27,12 +27,12 @@ public class ChatRoomController{
     }
 
     // 채팅방 생성
-    // guestId가 채팅방 제목
     @PostMapping("/room")
     public ChatRoom createRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                @RequestBody ChatRoomRequestDto chatRoomRequestDto) {
         return chatRoomService.createChatRoom(userDetails.getUser().getId(), chatRoomRequestDto);
     }
+
     //채팅방 입장 시 메세지 조회
     @GetMapping("/room/{roomId}")
     public ResponseEntity<List<ChatMessageResponseDto>> readAllMessage(@PathVariable String roomId){

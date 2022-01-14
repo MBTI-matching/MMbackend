@@ -11,7 +11,9 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
+
     private final StompHandler stompHandler;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/sub");
@@ -24,9 +26,10 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        System.out.println("intercepter " + registration);
+        System.out.println("interceptor " + registration);
         //registration.interceptors(stompHandler);
     }
 }

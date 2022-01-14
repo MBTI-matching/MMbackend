@@ -13,9 +13,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Matching {
+
     @Id
+<<<<<<< HEAD
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
+=======
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MATCHING_ID")
+>>>>>>> develop
     private Long id;
 
     @Column
@@ -23,4 +29,5 @@ public class Matching {
 
     @Column
     private Long guestId;
+
 }

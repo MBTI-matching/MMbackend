@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +16,5 @@ public class ChemyAllResponseDto {
     private String longitude;               // 경도
     private String latitude;                // 위도
     private int userCount;                  // 케미 사용자 수
-    List<ChemyUserListDto> userList;        // 케미 사용자 리스트
+    List<ChemyUserResponseDto> userList;        // 케미 사용자 리스트
 }
