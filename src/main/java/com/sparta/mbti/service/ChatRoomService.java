@@ -8,6 +8,7 @@ import com.sparta.mbti.model.ChatRoom;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatMessageRepository;
 import com.sparta.mbti.repository.ChatRoomRepository;
+import com.sparta.mbti.repository.MatchingRepository;
 import com.sparta.mbti.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
@@ -24,6 +25,8 @@ public class ChatRoomService{
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final MatchingRepository matchingRepository;
+    private final MatchingService matchingService;
 
     // Redis repo
     private static final String CHAT_ROOMS = "CHAT_ROOM";
@@ -87,7 +90,7 @@ public class ChatRoomService{
         //opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
         chatRoomRepository.save(chatRoom);
-
+        matchingService.deleteMatching(guest, hostId);
         return chatRoom;
     }
 }

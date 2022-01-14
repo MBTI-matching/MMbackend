@@ -22,9 +22,12 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         // websocket 연결시 헤더의 jwt token 검증
-        System.out.println("Handler : " + message);
+
         if (StompCommand.CONNECT == accessor.getCommand()) {
             jwtTokenUtils.validateToken(accessor.getFirstNativeHeader("token"));
+        }
+        else if(StompCommand.SUBSCRIBE == accessor.getCommand()){
+            System.out.println(message.getHeaders());
         }
         return message;
     }

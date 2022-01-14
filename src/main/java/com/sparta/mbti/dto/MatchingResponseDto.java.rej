@@ -1,0 +1,4 @@
+diff a/src/main/java/com/sparta/mbti/dto/MatchingResponseDto.java b/src/main/java/com/sparta/mbti/dto/MatchingResponseDto.java	(rejected hunks)
+@@ -0,0 +1,2 @@
++package com.sparta.mbti.dto;public class MatchingResponseDto {
++}

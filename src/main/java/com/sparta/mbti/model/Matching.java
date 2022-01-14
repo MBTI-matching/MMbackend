@@ -14,7 +14,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Matching {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
     private Long id;
 
     @Column
