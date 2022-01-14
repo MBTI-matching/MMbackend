@@ -1,7 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.ChemyUserResponseDto;
-import com.sparta.mbti.dto.InterestListDto;
+import com.sparta.mbti.dto.response.ChemyUserResponseDto;
 import com.sparta.mbti.model.Mbti;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.model.UserInterest;
@@ -35,28 +34,33 @@ public class ChemyService {
         List<User> findUserList = userRepository.findAllByLocationAndMbti(user.getLocation(), findMbti);
         // 사용자 리스트 수 범위만큼 랜덤 생성 (10 이면 0~9 랜덤 생성)
         Random generator = new Random();
-        int size = generator.nextInt(findUserList.size());
+        int size = 0;
+        if (findUserList.size() > 0) {
+            size = generator.nextInt(findUserList.size());
 
-        // 랜덤 사용자 관심사 리스트 조회
-        List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUserList.get(size));
-        List<InterestListDto> interestList = new ArrayList<>();
-        for (UserInterest userInterest : userInterestList) {
-            interestList.add(InterestListDto.builder()
-                    .interest(userInterest.getInterest().getInterest())
-                    .build());
+            // 랜덤 사용자 관심사 리스트 조회
+            List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUserList.get(size));
+            List<String> interestList = new ArrayList<>();
+            for (UserInterest userInterest : userInterestList) {
+                interestList.add(userInterest.getInterest().getInterest());
+            }
+
+            // 랜덤 사용자 반환
+            return ChemyUserResponseDto.builder()
+                    .username(findUserList.get(size).getUsername())
+                    .userId(findUserList.get(size).getId())
+                    .nickname(findUserList.get(size).getNickname())
+                    .profileImage(findUserList.get(size).getProfileImage())
+                    .gender(findUserList.get(size).getGender())
+                    .ageRange(findUserList.get(size).getAgeRange())
+                    .intro(findUserList.get(size).getIntro())
+                    .location(findUserList.get(size).getLocation().getLocation())
+                    .mbti(findUserList.get(size).getMbti().getMbti())
+                    .interestList(interestList)
+                    .build();
         }
-
-        // 랜덤 사용자 반환
         return ChemyUserResponseDto.builder()
-                .userId(findUserList.get(size).getId())
-                .nickname(findUserList.get(size).getNickname())
-                .profileImage(findUserList.get(size).getProfileImage())
-                .gender(findUserList.get(size).getGender())
-                .ageRange(findUserList.get(size).getAgeRange())
-                .intro(findUserList.get(size).getIntro())
-                .location(findUserList.get(size).getLocation().getLocation())
-                .mbti(findUserList.get(size).getMbti().getMbti())
-                .interestList(interestList)
+                .userId(-1L)
                 .build();
     }
 
@@ -68,15 +72,14 @@ public class ChemyService {
 
         // 관심사 리스트 조회
         List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
-        List<InterestListDto> interestList = new ArrayList<>();
+        List<String> interestList = new ArrayList<>();
         for (UserInterest userInterest : userInterestList) {
-            interestList.add(InterestListDto.builder()
-                                    .interest(userInterest.getInterest().getInterest())
-                                    .build());
+            interestList.add(userInterest.getInterest().getInterest());
         }
 
         // 반환
         return ChemyUserResponseDto.builder()
+                .username(findUser.getUsername())
                 .userId(findUser.getId())
                 .nickname(findUser.getNickname())
                 .profileImage(findUser.getProfileImage())

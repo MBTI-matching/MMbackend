@@ -1,6 +1,8 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.mbti.dto.response.CommentResopnseDto;
+import com.sparta.mbti.dto.response.ImageResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +18,13 @@ import java.util.List;
 public class PostResponseDto {
     private Long postId;            // 게시글 ID
     private String nickname;        // 닉네임
+    private String profileImage;    // 프로필 이미지
+    private String location;        // 위치
     private String mbti;            // mbti
     private String content;         // 게시글 내용
     private String tag;             // 게시글 태그
     private int likesCount;         // 게시글 좋아요 수
+    private boolean likeStatus;     // 게시글 좋아요 여부
     private List<ImageResponseDto> imageList;    // 이미지 리스트
     private List<CommentResopnseDto> commentList;    // 댓글 리스트
 

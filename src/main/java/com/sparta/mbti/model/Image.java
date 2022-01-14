@@ -18,7 +18,7 @@ public class Image {
     @Column(name = "IMAGE_ID")
     private Long id;                            // 테이블 기본키
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String imageLink;                   // Amazon S3 링크
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
-package com.sparta.mbti.security;
+package com.sparta.mbti.config;
 
+import com.sparta.mbti.security.FilterSkipMatcher;
 import com.sparta.mbti.security.filter.JwtAuthFilter;
 import com.sparta.mbti.security.jwt.HeaderTokenExtractor;
 import com.sparta.mbti.security.provider.JWTAuthProvider;
@@ -25,7 +26,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
 
@@ -44,9 +45,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
+        // nginx 확인용으로 .antMatchers에 "/profile" 추가
         web
                 .ignoring()
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**", "/profile");
     }
 
     @Override
@@ -74,18 +76,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // 어떤 요청이든 허용
                 .anyRequest().permitAll()
-//                .and()
-//                // [로그인 기능]
-//                .formLogin()
-//                // 로그인 View 제공 (GET /user/login)
-//                .loginPage("/user/login")
-//                // 로그인 처리 (POST /user/login)
-//                .loginProcessingUrl("/user/login")
-//                // 로그인 처리 후 성공 시 URL
-//                .defaultSuccessUrl("/")
-//                // 로그인 처리 후 실패 시 URL
-//                .failureUrl("/user/login?error")
-//                .permitAll()
                 .and()
                 // [로그아웃 기능]
                 .logout()
@@ -100,12 +90,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         List<String> skipPathList = new ArrayList<>();
         // 이 부분은 JWT 토큰이 불필요한 API 만 넣어주는 곳 (JWT 필터를 안거치므로 토큰 생성안됨)
 
-        // h2-console 허용
-        skipPathList.add("GET,/h2-console/**");
-        skipPathList.add("POST,/h2-console/**");
-
         // 카카오 로그인 페이지 허용
         skipPathList.add("GET,/user/kakao/callback");
+
+        // 둘러보기 허용
+        skipPathList.add("GET,/api/chemy/guest");
+
+        // 채팅
+        skipPathList.add("GET,/chat/room/**");
+        skipPathList.add("GET,/sub/chat/room/**");
+        skipPathList.add("GET,/pub/chat/room/**");
+        skipPathList.add("GET,/ws-stomp/pub/chat/room/**");
+        skipPathList.add("GET,/ws-stompAlarm/pub/chat/room/**");
+        skipPathList.add("GET,**/pub/chat/room/**");
+        skipPathList.add("GET,**/sub/chat/room/**");
+        skipPathList.add("GET,/ws-stomp/**");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
@@ -130,12 +129,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // local 테스트 시
-//        configuration.addAllowedOrigin("http://"); // 배포 주소
+        configuration.addAllowedOrigin("http://localhost:3000"); // 배포 주소
 //        configuration.addAllowedOrigin("http://"); // S3 주소
+        configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization");
+        configuration.addAllowedOriginPattern("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

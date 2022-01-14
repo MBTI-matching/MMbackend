@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class CommentResopnseDto {
     private Long commentId;             // 댓글 ID
     private String nickname;            // 닉네임
+    private String image;               // 이미지
     private String mbti;                // mbti
     private String comment;             // 댓글
 
