@@ -16,6 +16,7 @@ public class JasyptConfig {
     // Run -> Edit Configurations -> MbtiApplication -> VM Options: -Djasypt.encryptor.password=
     @Value("${jasypt.encryptor.password}")
 //    private String PASSWORD = "5678";
+    private String PASSWORD;
 
     // jasypt 3.0 version 이상에서는 encryptorBean 대신 jasyptStringEncryptor를 써야 오류가 나지 않는다. // jasypt.encryptor.password
     @Bean("jasyptStringEncryptor")
