@@ -82,7 +82,7 @@ public class ChatRoomService{
     // 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다. -> redis hash는 보류
     public ChatRoom createChatRoom(Long hostId, ChatRoomRequestDto chatRoomRequestDto) {
 
-        User guest = userRepository.findByUsername(chatRoomRequestDto.getGuestId()).orElse(null);
+        User guest = userRepository.findByUsername(chatRoomRequestDto.getGuestEmail()).orElse(null);
 
         // roomId: entity에서 작성하는 것보단 service에서 만들고 entity에서는 연결만 하는 게 더 좋아보임. 밀착 참고.
         String roomId = UUID.randomUUID().toString();
