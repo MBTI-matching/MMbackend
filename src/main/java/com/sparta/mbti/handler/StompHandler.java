@@ -28,6 +28,7 @@ public class StompHandler implements ChannelInterceptor {
         }
         else if(StompCommand.SUBSCRIBE == accessor.getCommand()){
             System.out.println(message.getHeaders());
+            String jwtToken = accessor.getFirstNativeHeader("token");
         }
         return message;
     }

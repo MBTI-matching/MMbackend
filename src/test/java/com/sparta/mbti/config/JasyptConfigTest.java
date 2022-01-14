@@ -44,5 +44,4 @@ class JasyptConfigTest {
         encryptor.setPassword(key);
         return encryptor.decrypt(input);
     }
-
 }
