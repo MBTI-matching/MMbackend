@@ -3,7 +3,7 @@
 source ~/.bash_profile
 # ~ 표시는 home 주소 /home/ubuntu
 
-REPOSITORY=/home/ubuntu/experiment
+REPOSITORY=/home/ubuntu/experiment/deploy
 cd $REPOSITORY
 
 # 실행될 앱 이름
