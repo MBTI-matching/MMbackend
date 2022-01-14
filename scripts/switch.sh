@@ -2,6 +2,7 @@
 
 # switch.sh
 # nginx 연결 설정 스위치
+source ~/.bash_profile
 
 ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
