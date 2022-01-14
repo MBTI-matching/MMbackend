@@ -131,7 +131,7 @@ public class UserService {
         // profile_image_needs_agreement: true (이미지 동의 안함), false (이미지 동의)
         // is_default_image: true (기본 이미지), false (이미지 등록됨)
         // 프로필 이미지
-        String profileImage = "";
+        String profileImage = "https://bizchemy-bucket-s3.s3.ap-northeast-2.amazonaws.com/default/default.png";
         // 이미지 동의 및 등록 되었으면
         if (!body.getJSONObject("kakao_account").getBoolean("profile_image_needs_agreement") &&
                 !body.getJSONObject("kakao_account").getJSONObject("profile").getBoolean("is_default_image")) {
