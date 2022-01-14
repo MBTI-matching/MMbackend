@@ -4,9 +4,9 @@ plugins {
     id 'java'
 }
 
-//jar {
-//    enabled = false
-//}
+jar {
+    enabled = false
+}
 
 group = 'com.sparta'
 version = new Date().format("yyyyMMddHHmmss") + '-0.0.1-SNAPSHOT'
