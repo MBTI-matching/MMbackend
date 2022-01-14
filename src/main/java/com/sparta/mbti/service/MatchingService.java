@@ -59,7 +59,6 @@ public class MatchingService {
         }
 
         matchingRepository.delete(matching);
-
         return user.getNickname() + "님이 " + host.getNickname() + "님의 신청을 수락하셨습니다.";
     }
 
