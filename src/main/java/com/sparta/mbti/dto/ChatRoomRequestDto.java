@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ChatRoomRequestDto {
     @Column
-    private String guestId; // guestEmail로 바꿔쓰길 제의
+    private String guestEmail; // guestEmail로 바꿔쓰길 제의
 
     @Column
     private String guestMbti;

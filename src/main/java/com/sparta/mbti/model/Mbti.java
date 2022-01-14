@@ -36,12 +36,12 @@ public class Mbti {
     @Column
     private String firstTitle;                  // 제목 #1
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String firstContent;                // 설명 #1
 
     @Column
     private String secondTitle;                 // 제목 #2
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String secondContent;               // 설명 #2
 }

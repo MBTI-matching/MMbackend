@@ -18,10 +18,10 @@ sleep 10
 for RETRY_COUNT in {1..10}
 do
   RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
-  UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
+  UP_COUNT=$(echo ${RESPONSE} | grep 'set' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
-  then # $up_count >= 1 ("real" 문자열이 있는지 검증)
+  then # $up_count >= 1 ("set" 문자열이 있는지 검증)
       echo "> Health check 성공"
       switch_proxy
       break

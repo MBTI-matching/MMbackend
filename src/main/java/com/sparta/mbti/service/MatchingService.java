@@ -68,8 +68,6 @@ public class MatchingService {
     public List<MatchResponseDto> sentMatching(User user) {
         List<Matching> matchList = matchingRepository.findAllByHostId(user.getId());
 
-
-
         List<MatchResponseDto> sentList = new ArrayList<>();
         for (Matching oneMatch : matchList ) {
 

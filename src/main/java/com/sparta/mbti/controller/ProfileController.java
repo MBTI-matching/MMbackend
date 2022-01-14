@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 public class ProfileController {
@@ -16,24 +17,15 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public String getProfile() {
-        System.out.println(Arrays.asList(env.getActiveProfiles())
-                .stream()
-                .findFirst()
-                .orElse(""));
-        System.out.println(Arrays.asList(env.getDefaultProfiles())
-                .stream()
-                .findFirst()
-                .orElse(""));
-        return Arrays.stream(env.getActiveProfiles())
-                .findFirst()
-                .orElse("");
-    }
+    public String profile() {
+        List<String> profiles = Arrays.asList(env.getActiveProfiles());
+        List<String> realProfiles = Arrays.asList("set1", "set2");
+        String defaultProfile = profiles.isEmpty()? "default" : profiles.get(0);
 
-    @GetMapping("/profile/default")
-    public String getDefault() {
-        return Arrays.stream(env.getDefaultProfiles())
-                .findFirst()
-                .orElse("");
+        // set, set1, set2 중 하나라도 있으면 그 값 반환
+        return profiles.stream()
+                .filter(realProfiles::contains)
+                .findAny()
+                .orElse(defaultProfile);
     }
 }

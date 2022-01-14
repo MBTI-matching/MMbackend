@@ -42,7 +42,7 @@ public class User {
     @Column
     private String ageRange;                    // 카카오 연령대
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String intro;                       // 소개글
 
     @ManyToOne
