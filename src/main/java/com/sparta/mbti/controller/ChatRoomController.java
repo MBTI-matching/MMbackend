@@ -32,6 +32,7 @@ public class ChatRoomController{
                                @RequestBody ChatRoomRequestDto chatRoomRequestDto) {
         return chatRoomService.createChatRoom(userDetails.getUser().getId(), chatRoomRequestDto);
     }
+
     //채팅방 입장 시 메세지 조회
     @GetMapping("/room/{roomId}")
     public ResponseEntity<List<ChatMessageResponseDto>> readAllMessage(@PathVariable String roomId){

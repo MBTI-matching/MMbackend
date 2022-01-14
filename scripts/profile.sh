@@ -19,16 +19,8 @@ function find_idle_profile()
     if [ ${CURRENT_PROFILE} == set1 ]
     then
       IDLE_PROFILE=set2
-      IDLE_PORT=8082
-    elif [ ${CURRENT_PROFILE} == set2 ]
-    then
-      IDLE_PROFILE=set1
-      IDLE_PORT=8081
     else
-      echo "> 일치하는 profile이 없습니다. Profile: $CURRENT_PROFILE"
-      echo "> 8081을 할당합니다. IDLE_PROFILE: set1"
       IDLE_PROFILE=set1
-      IDLE_PORT=8081
     fi
 
     # bash script는 값의 반환이 안된다.
