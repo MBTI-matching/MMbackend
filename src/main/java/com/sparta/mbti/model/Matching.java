@@ -15,13 +15,8 @@ import javax.persistence.*;
 public class Matching {
 
     @Id
-<<<<<<< HEAD
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
-=======
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MATCHING_ID")
->>>>>>> develop
     private Long id;
 
     @Column

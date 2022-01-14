@@ -1,6 +1,6 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.ChatMessageRequestDto;
+import com.sparta.mbti.dto.response.ChatMessageRequestDto;
 import com.sparta.mbti.model.ChatMessage;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatMessageRepository;
