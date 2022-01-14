@@ -4,6 +4,7 @@ plugins {
     id 'java'
 }
 
+// plain 파일 생성 막기
 jar {
     enabled = false
 }
