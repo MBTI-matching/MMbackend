@@ -96,26 +96,35 @@ public class ChatRoomService{
     }
 
     // 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다. -> redis hash는 보류
-    public ChatRoom createChatRoom(Long hostId, ChatRoomRequestDto chatRoomRequestDto) {
+    public ChatRoom createChatRoom(Long hostId, ChatRoomRequestDto chatRoomDto) {
 
-        User guest = userRepository.findByUsername(chatRoomRequestDto.getGuestEmail()).orElse(null);
+        User guest = userRepository.findByUsername(chatRoomDto.getGuestEmail())
+                .orElseThrow(()->new NullPointerException("존재하지 않는 유저입니다."));
 
-        // roomId: entity에서 작성하는 것보단 service에서 만들고 entity에서는 연결만 하는 게 더 좋아보임. 밀착 참고.
         String roomId = UUID.randomUUID().toString();
 
-        ChatRoom chatRoom = new ChatRoom(
-                hostId,
-                guest.getId(),
-                chatRoomRequestDto.getGuestImg(),
-                chatRoomRequestDto.getGuestMbti(),
-                chatRoomRequestDto.getGuestNick(),
-                roomId
-        );
+        ChatRoom chatRoom = ChatRoom.builder().roomId(roomId)
+                .guestId(guest.getId())
+                .guestMbti(chatRoomDto.getGuestMbti())
+                .guestImg(chatRoomDto.getGuestImg())
+                .roomId(roomId)
+                .guestNick(chatRoomDto.getGuestNick())
+                .hostId(hostId)
+                .build();
+
+//        ChatRoom chatRoom = new ChatRoom(
+//                hostId,
+//                guest.getId(),
+//                chatRoomRequestDto.getGuestImg(),
+//                chatRoomRequestDto.getGuestMbti(),
+//                chatRoomRequestDto.getGuestNick(),
+//                roomId
+//        );
 
         //opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
         chatRoomRepository.save(chatRoom);
-        matchingService.deleteMatching(guest, hostId);
+        //matchingService.deleteMatching(guest, hostId);
         return chatRoom;
     }
 }
