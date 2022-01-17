@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/.bash_profile
+source /home/ubuntu/.bash_profile
 # ~ 표시는 home 주소 /home/ubuntu
 
 REPOSITORY=/home/ubuntu/experiment/deploy

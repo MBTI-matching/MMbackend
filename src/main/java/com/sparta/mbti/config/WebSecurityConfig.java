@@ -45,7 +45,7 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
-        // nginx: "/profile", /actuator/**, /health, /version 추가
+        // nginx: /profile, /actuator/**, /health, /version 추가
         web
                 .ignoring()
                 .antMatchers("/h2-console/**", "/profile", "/actuator/**", "/health", "/version");
