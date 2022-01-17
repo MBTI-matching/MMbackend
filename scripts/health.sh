@@ -2,7 +2,7 @@
 
 # health.sh
 # nginx 연결 설정 변경 전 health-check 용도
-source /home/ubuntu/.bash_profile
+# source /home/ubuntu/.bash_profile
 
 ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
