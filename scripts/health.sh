@@ -13,12 +13,12 @@ IDLE_PORT=$(find_idle_port)
 
 echo "> Health Check Start!"
 echo "> IDLE_PORT: $IDLE_PORT"
-echo "> curl -s https://sixzombies.shop:$IDLE_PORT/profile "
+echo "> curl -s https://sixzombies.shop/profile "
 sleep 10
 
 for RETRY_COUNT in {1..10}
 do
-  RESPONSE=$(curl -s https://sixzombies.shop:${IDLE_PORT}/profile)
+  RESPONSE=$(curl -s https://sixzombies.shop/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'set' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
