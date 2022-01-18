@@ -2,7 +2,7 @@
 
 # health.sh
 # nginx 연결 설정 변경 전 health-check 용도
-# source /home/ubuntu/.bash_profile
+source /home/ubuntu/.bash_profile
 
 ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
@@ -13,12 +13,12 @@ IDLE_PORT=$(find_idle_port)
 
 echo "> Health Check Start!"
 echo "> IDLE_PORT: $IDLE_PORT"
-echo "> curl -s https://sixzombies.shop/profile "
+echo "> curl -s http://localhost:$IDLE_PORT/profile "
 sleep 10
 
 for RETRY_COUNT in {1..10}
 do
-  RESPONSE=$(curl -s https://sixzombies.shop/profile)
+  RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'set' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]

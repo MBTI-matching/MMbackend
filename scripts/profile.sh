@@ -2,7 +2,7 @@
 
 # profile.sh
 # 미사용 중인 profile을 잡는다.
-# source /home/ubuntu/.bash_profile
+source /home/ubuntu/.bash_profile
 
 function find_idle_profile()
 {
