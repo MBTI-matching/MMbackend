@@ -27,7 +27,8 @@ fi
 
 echo "> 새 애플리케이션 배포"
 
-JAR_NAME=$(ls -tr $REPOSITORY/*SNAPSHOT.jar | tail -n 1)
+JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
+# plain.jar 생성될 땐 *SNAPSHOT.jar
 
 echo "> JAR NAME: $JAR_NAME"
 
