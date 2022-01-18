@@ -18,7 +18,7 @@ if [ $CURRENT_PROFILE == set1 ]
 then
   IDLE_PROFILE=set2
   IDLE_PORT=8082
-elif [ $CURRENT_PROFILE == set1 ]
+elif [ $CURRENT_PROFILE == set2 ]
 then
   IDLE_PROFILE=set1
   IDLE_PORT=8081
