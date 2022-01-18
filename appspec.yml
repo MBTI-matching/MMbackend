@@ -8,23 +8,23 @@ files:
 permissions: # CodeDeploy에서 EC2 서버로 넘겨준 파일들이 모두 ubuntu 권한을 갖게끔 한다(owner, group 참고)
   - object: /
     pattern: "**"
-    owner: www-data
-    group: www-data
+    owner: ubuntu
+    group: ubuntu
     mode: 755 # 이 mode는 반드시 필요한 수치일까?
 
 hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> ApplicationStart 단계에서 deploy.sh를 ubuntu권한 -> 사용자 권한으로 실행하게끔 한다.
   AfterInstall:
     - location: stop.sh # nginx와 연결되지 않은 스프링 부트 종료.
       timeout: 60
-      runas: www-data
+      runas: ubuntu
   ApplicationStart:
     - location: start.sh # nginx와 연결되어 있지 않은 포트로 스프링 부트 시작.
       timeout: 60
-      runas: www-data
+      runas: ubuntu
   ValidateService:
     - location: health.sh # 새 서비스 health check.
       timeout: 60
-      runas: www-data
+      runas: ubuntu
 #  ApplicationStart: # 다음엔 AfterInstall 시도해보자 ApplicationStart
 #    - location: deploy.sh
 #      timeout: 60 # 제한시간(스크립트 실행 시간 한도)
