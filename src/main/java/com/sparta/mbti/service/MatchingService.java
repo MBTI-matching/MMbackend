@@ -40,6 +40,8 @@ public class MatchingService {
             return "대화 중인 상대입니다.";
         }
 
+        if(guestId.equals(user.getId()))
+            return "본인과의 매칭은 불가능합니다.";
 
         Matching matching = Matching.builder()
                 .hostId(user.getId())

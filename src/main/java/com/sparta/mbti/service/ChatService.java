@@ -34,6 +34,21 @@ public class ChatService {
             message.setMessage("[알림] " + user.getNickname() + " 님이 입장하셨습니다.");
         }else if(ChatMessage.MessageType.QUIT.equals(message.getType())){
             message.setMessage("[알림] " + user.getNickname() + "님이 퇴장하셨습니다.");
+        }else if(ChatMessage.MessageType.EMO.equals(message.getType())){
+            message.setMessage("https://bizchemy-bucket-s3.s3.ap-northeast-2.amazonaws.com/emoticon/emoticon_"+message.getMessage()+".png");
+            ChatMessage emoMessage = ChatMessage.builder()
+                    .message(message.getMessage())
+                    .roomId(message.getRoomId())
+                    .type(message.getType())
+                    .date(message.getDate())
+                    .senderId(message.getSenderId())
+                    .senderImg(message.getSenderImg())
+                    .senderName(message.getSenderName())
+                    .senderNick(message.getSenderNick())
+                    .build();
+
+            chatMessageRepository.save(emoMessage);
+
         }
         else {
             ChatMessage newMessage = ChatMessage.builder()

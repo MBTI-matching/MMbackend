@@ -39,4 +39,9 @@ public class ChatRoomController{
         List<ChatMessageResponseDto> responseDto = chatRoomService.readAllMessage(roomId);
         return ResponseEntity.ok().body(responseDto);
     }
+    //채팅방 나가기
+    @PutMapping("/room/{roomId}")
+    public void quitRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String roomId){
+        chatRoomService.exitChatRoom(userDetails.getUser().getId(), roomId);
+    }
 }

@@ -74,7 +74,4 @@ public class User {
         this.status = status;
     }
 
-    public void setMatchingList(Matching matching) {
-        this.matchingList.add(matching);
-    }
 }

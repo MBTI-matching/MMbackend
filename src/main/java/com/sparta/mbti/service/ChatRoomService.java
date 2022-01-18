@@ -42,9 +42,19 @@ public class ChatRoomService{
     // 게스트로 있는 방도 조회
     public List<ChatRoomResponseDto> findAllRoom(Long hostId) {
         //사용자가 초대했을 때 채팅방 리스트
-        List<ChatRoom> chatRoomHostList = chatRoomRepository.findAllByHostId(hostId);
+        List<ChatRoom> chatRoomHostList = null;
+        try {
+            chatRoomHostList = chatRoomRepository.findAllByHostId(hostId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //사용자가 초대받았을 때 채팅방 리스트
-        List<ChatRoom> chatRoomGuestList = chatRoomRepository.findAllByGuestId(hostId);
+        List<ChatRoom> chatRoomGuestList = null;
+        try {
+            chatRoomGuestList = chatRoomRepository.findAllByGuestId(hostId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
         for(ChatRoom chatRoom : chatRoomHostList){
@@ -112,19 +122,24 @@ public class ChatRoomService{
                 .hostId(hostId)
                 .build();
 
-//        ChatRoom chatRoom = new ChatRoom(
-//                hostId,
-//                guest.getId(),
-//                chatRoomRequestDto.getGuestImg(),
-//                chatRoomRequestDto.getGuestMbti(),
-//                chatRoomRequestDto.getGuestNick(),
-//                roomId
-//        );
-
         //opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
         chatRoomRepository.save(chatRoom);
-        //matchingService.deleteMatching(guest, hostId);
+        matchingService.deleteMatching(guest, hostId);
         return chatRoom;
+    }
+
+    // 채팅방 나가기(유저가 호스트일때, 게스트일 때 나눠서)
+    public void exitChatRoom(Long userId, String roomId){
+        ChatRoom room = chatRoomRepository.findByRoomId(roomId)
+                .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
+        if(room.getGuestId().equals(userId)) {
+            room.deleteGuestId();
+            System.out.println("방 나가짐");
+        }
+        else if(room.getHostId().equals(userId)) {
+            room.deleteHostId();
+            System.out.println("방 나가짐");
+        }
     }
 }

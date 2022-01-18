@@ -41,8 +41,8 @@ public class MatchingController {
     }
 
     // 신청 취소
-    @DeleteMapping("/matching/{guestId}")
-    public String deleteMatching(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long guestId) {
-        return matchingService.deleteMatching(userDetails.getUser(), guestId);
+    @DeleteMapping("/matching/{hostId}")
+    public String deleteMatching(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long hostId) {
+        return matchingService.deleteMatching(userDetails.getUser(), hostId);
     }
 }
