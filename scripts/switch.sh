@@ -18,6 +18,6 @@ function switch_proxy() {
     echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
 
     echo "> 엔진엑스 Reload"
-    # nignx reload. restart와는 다르게 설정 값만 불러옴
+    # nginx reload. restart와는 다르게 설정 값만 불러옴
     sudo service nginx reload
 }
