@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.util.List;
 
 @Builder
@@ -19,6 +20,8 @@ public class UserRequestDto {
     private String intro;               // 소개글
     private String location;            // 위치 (서울 특별시 구)
     private String locDetail;           // 상세위치
+    private String longitude;
+    private String latitude;
     private String mbti;                // mbti
     List<String> interestList;          // 관심사 리스트
 }

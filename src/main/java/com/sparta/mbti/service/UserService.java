@@ -80,7 +80,7 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
         body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
         body.add("code", code);
 
@@ -125,6 +125,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
+        System.out.println(body);
 
         // ID (카카오 기본키)
         Long id = body.getLong("id");
@@ -236,12 +237,16 @@ public class UserService {
         String intro = null;
         String location = null;
         String locDetail = null;
+        String longitude = null;
+        String latitude = null;
         String mbti = null;
         List<String> interestListDtos = new ArrayList<>();
         if (signStatus) {
             intro = userDetails.getUser().getIntro();
             location = userDetails.getUser().getLocation().getLocation();
             locDetail = userDetails.getUser().getLocDetail().getLocDetail();
+            longitude = userDetails.getUser().getLongitude();
+            latitude = userDetails.getUser().getLatitude();
             mbti = userDetails.getUser().getMbti().getMbti();
             for (int i = 0; i < userDetails.getUser().getUserInterestList().size(); i++) {
                 interestListDtos.add(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest());
@@ -258,6 +263,8 @@ public class UserService {
                 .intro(intro)
                 .location(location)
                 .locDetail(locDetail)
+                .longitude(longitude)
+                .latitude(latitude)
                 .mbti(mbti)
                 .interestList(interestListDtos)
                 .signStatus(signStatus)
@@ -344,6 +351,8 @@ public class UserService {
                 .intro(findUser.getIntro())
                 .location(findUser.getLocation().getLocation())
                 .locDetail(findUser.getLocDetail().getLocDetail())
+                .longitude(findUser.getLongitude())
+                .latitude(findUser.getLatitude())
                 .mbti(findUser.getMbti().getMbti())
                 .interestList(interestListDtos)
                 .username(findUser.getUsername())

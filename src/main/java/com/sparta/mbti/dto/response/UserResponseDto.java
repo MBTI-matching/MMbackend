@@ -20,6 +20,8 @@ public class UserResponseDto {
     private String intro;               // 소개글
     private String location;            // 위치 (서울 특별시 구)
     private String locDetail;           // 상세위치
+    private String longitude;
+    private String latitude;
     private String mbti;                // mbti
     List<String> interestList; // 관심사 리스트
     private boolean signStatus;         // 가입된 상태 (가입: true, 미가입: false)

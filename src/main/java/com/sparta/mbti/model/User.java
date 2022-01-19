@@ -53,6 +53,12 @@ public class User {
     @JoinColumn(name = "LOC_DETAIL_ID")
     private LocDetail locDetail;                // 구
 
+    @Column
+    private String longitude;
+
+    @Column
+    private String latitude;
+
     @ManyToOne
     @JoinColumn(name = "MBTI_ID")
     private Mbti mbti;                          // mbti
@@ -69,6 +75,8 @@ public class User {
         this.gender = userRequestDto.getGender();
         this.ageRange = userRequestDto.getAgeRange();
         this.intro = userRequestDto.getIntro();
+        this.longitude = userRequestDto.getLongitude();
+        this.latitude = userRequestDto.getLatitude();
         this.profileImage = imgUrl;
         this.location = location;
         this.locDetail = locDetail;
