@@ -34,25 +34,28 @@ public class HomeController {
     }
 
     // 지역 케미 리스트 (위치 / MBTI)
-    @GetMapping("/api/chemy/list/{locationId}")
+    @GetMapping("/api/chemy/list/{locationId}/{locDetailId}")
     public ChemyAllResponseDto locationList(@PathVariable Long locationId,
+                                            @PathVariable Long locDetailId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return homeService.locationList(locationId, userDetails.getUser());
+        return homeService.locationList(locationId, locDetailId, userDetails.getUser());
     }
 
     // 지역 & 관심사별 케미 리스트: (위치 / 관심사)
-    @GetMapping("/api/chemy/{locationId}/{interestId}")
+    @GetMapping("/api/chemy/{locationId}/{locDetailId}/{interestId}")
     public ChemyAllResponseDto interestList(@PathVariable Long locationId,
+                                            @PathVariable Long locDetailId,
                                             @PathVariable Long interestId) {
-        return homeService.interestList(locationId, interestId);
+        return homeService.interestList(locationId, locDetailId, interestId);
     }
 
     // 지역 & 관심사별 케미 리스트: (위치 / 관심사 / MBTI)
-    @GetMapping("/api/chemy/list/{locationId}/{interestId}")
+    @GetMapping("/api/chemy/list/{locationId}/{locDetailId}/{interestId}")
     public ChemyAllResponseDto chemyInterest(@PathVariable Long locationId,
+                                             @PathVariable Long locDetailId,
                                              @PathVariable Long interestId,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return homeService.chemyInterest(locationId, interestId, userDetails.getUser());
+        return homeService.chemyInterest(locationId, locDetailId, interestId, userDetails.getUser());
     }
 
     // 커뮤니티 (전체)
