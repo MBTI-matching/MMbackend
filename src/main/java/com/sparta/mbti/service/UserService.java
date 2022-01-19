@@ -303,7 +303,7 @@ public class UserService {
         );
 
         // 위치 조회
-        LocDetail locDetail = locDetailRepository.findByLocDetail(userRequestDto.getLocDetail()).orElseThrow(
+        LocDetail locDetail = locDetailRepository.findByLocDetailAndLocation(userRequestDto.getLocDetail(), location).orElseThrow(
                 () -> new IllegalArgumentException("해당 상세 위치가 존재하지 않습니다.")
         );
 
