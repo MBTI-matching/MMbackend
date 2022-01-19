@@ -28,6 +28,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,6 +43,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LocationRepository locationRepository;
+    private final LocDetailRepository locDetailRepository;
     private final MbtiRepository mbtiRepository;
     private final InterestRepository interestRepository;
     private final UserInterestRepository userInterestRepository;
@@ -79,8 +82,8 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
-        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+//        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -233,15 +236,13 @@ public class UserService {
         // 추가정보입력 또는 가입한 사용자 (Location, Mbti NULL 값이 없어야함)
         String intro = null;
         String location = null;
-        String longitude = null;
-        String latitude = null;
+        String locDetail = null;
         String mbti = null;
         List<String> interestListDtos = new ArrayList<>();
         if (signStatus) {
             intro = userDetails.getUser().getIntro();
             location = userDetails.getUser().getLocation().getLocation();
-            longitude =userDetails.getUser().getLocation().getLongitude();
-            latitude = userDetails.getUser().getLocation().getLatitude();
+            locDetail = userDetails.getUser().getLocDetail().getLocDetail();
             mbti = userDetails.getUser().getMbti().getMbti();
             for (int i = 0; i < userDetails.getUser().getUserInterestList().size(); i++) {
                 interestListDtos.add(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest());
@@ -257,8 +258,7 @@ public class UserService {
                 .profileImage(userDetails.getUser().getProfileImage())
                 .intro(intro)
                 .location(location)
-                .longitude(longitude)
-                .latitude(latitude)
+                .locDetail(locDetail)
                 .mbti(mbti)
                 .interestList(interestListDtos)
                 .signStatus(signStatus)
@@ -296,12 +296,17 @@ public class UserService {
                 () -> new IllegalArgumentException("해당 위치가 존재하지 않습니다.")
         );
 
+        // 위치 조회
+        LocDetail locDetail = locDetailRepository.findByLocDetail(userRequestDto.getLocDetail()).orElseThrow(
+                () -> new IllegalArgumentException("해당 상세 위치가 존재하지 않습니다.")
+        );
+
         // mbti 조회
         Mbti mbti = mbtiRepository.findByMbti(userRequestDto.getMbti()).orElseThrow(
                 () -> new IllegalArgumentException("해당 MBTI 가 존재하지 않습니다.")
         );
 
-        findUser.update(userRequestDto, imgUrl, location, mbti, true);
+        findUser.update(userRequestDto, imgUrl, location, locDetail, mbti, true);
 
         // DB 저장
         userRepository.save(findUser);
@@ -339,8 +344,7 @@ public class UserService {
                 .profileImage(imgUrl)
                 .intro(findUser.getIntro())
                 .location(findUser.getLocation().getLocation())
-                .longitude(findUser.getLocation().getLongitude())
-                .latitude(findUser.getLocation().getLatitude())
+                .locDetail(findUser.getLocDetail().getLocDetail())
                 .mbti(findUser.getMbti().getMbti())
                 .interestList(interestListDtos)
                 .username(findUser.getUsername())
@@ -428,6 +432,9 @@ public class UserService {
             posts.add(PostResponseDto.builder()
                     .postId(onePost.getId())
                     .nickname(onePost.getUser().getNickname())
+                    .profileImage(onePost.getUser().getProfileImage())
+                    .location(onePost.getUser().getLocation().getLocation())
+                    .locDetail(onePost.getUser().getLocDetail().getLocDetail())
                     .mbti(onePost.getUser().getMbti().getMbti())
                     .content(onePost.getContent())
                     .tag(onePost.getTag())

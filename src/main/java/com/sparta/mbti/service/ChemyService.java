@@ -30,8 +30,8 @@ public class ChemyService {
                 () -> new IllegalArgumentException("해당 MBTI가 존재하지 않습니다.")
         );
 
-        // 위치 / MBTI 와 가장 이상적인 사용자 리스트 조회
-        List<User> findUserList = userRepository.findAllByLocationAndMbti(user.getLocation(), findMbti);
+        // 위치 / 상세위치 / MBTI 와 가장 이상적인 사용자 리스트 조회
+        List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbti(user.getLocation(), user.getLocDetail(), findMbti);
         // 사용자 리스트 수 범위만큼 랜덤 생성 (10 이면 0~9 랜덤 생성)
         Random generator = new Random();
         int size = 0;
@@ -55,6 +55,7 @@ public class ChemyService {
                     .ageRange(findUserList.get(size).getAgeRange())
                     .intro(findUserList.get(size).getIntro())
                     .location(findUserList.get(size).getLocation().getLocation())
+                    .locDetail(findUserList.get(size).getLocDetail().getLocDetail())
                     .mbti(findUserList.get(size).getMbti().getMbti())
                     .interestList(interestList)
                     .build();
@@ -87,6 +88,7 @@ public class ChemyService {
                 .ageRange(findUser.getAgeRange())
                 .intro(findUser.getIntro())
                 .location(findUser.getLocation().getLocation())
+                .locDetail(findUser.getLocDetail().getLocDetail())
                 .mbti(findUser.getMbti().getMbti())
                 .interestList(interestList)
                 .build();

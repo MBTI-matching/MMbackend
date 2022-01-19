@@ -18,8 +18,7 @@ public class UserProfileResponseDto {
     private String ageRange;            // 연령대
     private String intro;               // 소개글
     private String location;            // 위치 (서울 특별시 구)
-    private String longitude;           // 경도
-    private String latitude;            // 위도
+    private String locDetail;           // 상세위치
     private MbtiResponseDto mbtiDto;            // mbti
     List<String> interestList; // 관심사 리스트
     private boolean signStatus;

@@ -21,6 +21,7 @@ public class ChemyUserResponseDto {
     private String ageRange;            // 연령대
     private String intro;               // 소개글
     private String location;            // 위치
+    private String locDetail;           // 상세위치
     private String mbti;                // MBTI
     private String username;            // 유저 이메일
     List<String> interestList; // 관심사 리스트

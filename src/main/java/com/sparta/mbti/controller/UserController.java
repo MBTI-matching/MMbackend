@@ -1,9 +1,9 @@
 package com.sparta.mbti.controller;
 
 
+import com.sparta.mbti.dto.request.UserRequestDto;
 import com.sparta.mbti.dto.response.MbtiResponseDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
-import com.sparta.mbti.dto.request.UserRequestDto;
 import com.sparta.mbti.dto.response.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.UserService;

@@ -77,7 +77,8 @@ dependencies {
     //nginx - health check
     implementation 'org.springframework.boot:spring-boot-starter-actuator:2.6.1'
 
-
+    // webClient - 주소 API
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 test {
