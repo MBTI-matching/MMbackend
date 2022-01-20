@@ -18,7 +18,7 @@ import java.util.List;
 public class User {
 
     public enum Role {
-        BOT, ADMIN, USER
+        ROLE_BOT, ROLE_ADMIN, ROLE_USER
     }
 
     @Id
@@ -72,6 +72,10 @@ public class User {
     private final List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
 
     @Column
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
+    @Column
     private boolean status;                     // 카카오 추가정보 입력상태 체크
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -89,6 +93,7 @@ public class User {
         this.location = location;
         this.locDetail = locDetail;
         this.mbti = mbti;
+        this.role = Role.ROLE_USER;
         this.status = status;
     }
 
