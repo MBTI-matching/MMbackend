@@ -18,6 +18,7 @@ public class HomeService {
     private final UserRepository userRepository;
     private final InterestRepository interestRepository;
     private final LocationRepository locationRepository;
+    private final LocDetailRepository locDetailRepository;
     private final MbtiRepository mbtiRepository;
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
@@ -37,7 +38,7 @@ public class HomeService {
                 mbtiChemy);
 
         // 사용자 조회
-        List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(user.getLocation(), findMbtiList);
+        List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(user.getLocation(), user.getLocDetail(), findMbtiList);
         // 반환 사용자 리스트
         List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
@@ -55,6 +56,7 @@ public class HomeService {
                                                 .profileImage(oneUser.getProfileImage())
                                                 .intro(oneUser.getIntro())
                                                 .location(oneUser.getLocation().getLocation())
+                                                .locDetail(oneUser.getLocDetail().getLocDetail())
                                                 .mbti(oneUser.getMbti().getMbti())
                                                 .interestList(interestList)
                                                 .build());
@@ -63,8 +65,7 @@ public class HomeService {
         // 반환
         return ChemyAllResponseDto.builder()
                                 .location(user.getLocation().getLocation())
-                                .longitude(user.getLocation().getLongitude())
-                                .latitude(user.getLocation().getLatitude())
+                                .locDetail(user.getLocDetail().getLocDetail())
                                 .userCount(findUserList.size())
                                 .userList(chemyUserListDtos)
                                 .build();
@@ -74,17 +75,27 @@ public class HomeService {
     public ChemyAllResponseDto chemyGuest() {
         // 위치 랜덤 생성
         List<Location> locationList = locationRepository.findAll();
+        List<LocDetail> locDetailList = locDetailRepository.findAll();
+
         Random generatorLoc = new Random();
+        Random generatorLocDetail = new Random();
+
         int locSize = locationList.size();
+        int locDetailSize = locDetailList.size();
+
         // 위차가 존재하면
-        if (locSize > 0) {
+        if (locSize > 0 && locDetailSize > 0) {
             // 해당 위치 조회
             Location location = locationRepository.findById(locationList.get(generatorLoc.nextInt(locSize)).getId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 위치가 존재하지 않습니다.")
                     );
+            // 해당 상세위치 조회
+            LocDetail locDetail = locDetailRepository.findById(locDetailList.get(generatorLocDetail.nextInt(locDetailSize)).getId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 상세위치가 존재하지 않습니다.")
+                    );
 
             // 해당 위치에서 사용자 리스트
-            List<User> userList = userRepository.findAllByLocation(location);
+            List<User> userList = userRepository.findAllByLocationAndLocDetail(location, locDetail);
             Random generatorUser = new Random();
             // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
             int maxCount = userList.size();
@@ -123,6 +134,7 @@ public class HomeService {
                             .profileImage(findUser.getProfileImage())
                             .intro(findUser.getIntro())
                             .location(findUser.getLocation().getLocation())
+                            .locDetail(findUser.getLocDetail().getLocDetail())
                             .mbti(findUser.getMbti().getMbti())
                             .interestList(interestList)
                             .build());
@@ -130,8 +142,7 @@ public class HomeService {
                 // 반환
                 return ChemyAllResponseDto.builder()
                         .location(location.getLocation())
-                        .longitude(location.getLongitude())
-                        .latitude(location.getLatitude())
+                        .locDetail(locDetail.getLocDetail())
                         .userCount(userList.size())
                         .userList(chemyUserListDtos)
                         .build();
@@ -142,9 +153,14 @@ public class HomeService {
     }
 
     // 지역 케미 리스트 (위치 / MBTI)
-    public ChemyAllResponseDto locationList(Long locationId, User user) {
+    public ChemyAllResponseDto locationList(Long locationId, Long locDetailId, User user) {
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
+                () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // 상세위치 조회
+        LocDetail locDetail = locDetailRepository.findById(locDetailId).orElseThrow(
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
         );
 
@@ -157,7 +173,7 @@ public class HomeService {
                 mbtiChemy);
 
         // 사용자 조회
-        List<User> findUserList = userRepository.findAllByLocationAndMbtiIn(location, findMbtiList);
+        List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
         // 반환 사용자 리스트
         List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         for (User oneUser : findUserList) {
@@ -174,6 +190,7 @@ public class HomeService {
                     .profileImage(oneUser.getProfileImage())
                     .intro(oneUser.getIntro())
                     .location(oneUser.getLocation().getLocation())
+                    .locDetail(oneUser.getLocDetail().getLocDetail())
                     .mbti(oneUser.getMbti().getMbti())
                     .interestList(interestList)
                     .build());
@@ -182,8 +199,7 @@ public class HomeService {
         // 반환
         return ChemyAllResponseDto.builder()
                 .location(location.getLocation())
-                .longitude(location.getLongitude())
-                .latitude(location.getLatitude())
+                .locDetail(locDetail.getLocDetail())
                 .userCount(findUserList.size())
                 .userList(chemyUserListDtos)
                 .build();
@@ -232,6 +248,7 @@ public class HomeService {
                                 .nickname(onePost.getUser().getNickname())
                                 .profileImage(onePost.getUser().getProfileImage())
                                 .location(onePost.getUser().getLocation().getLocation())
+                                .locDetail(onePost.getUser().getLocDetail().getLocDetail())
                                 .mbti(onePost.getUser().getMbti().getMbti())
                                 .content(onePost.getContent())
                                 .tag(onePost.getTag())
@@ -246,10 +263,15 @@ public class HomeService {
     }
 
     // 관심사별 케미 리스트 #1 (지역 / 관심사)
-    public ChemyAllResponseDto interestList(Long locationId, Long interestId) {
+    public ChemyAllResponseDto interestList(Long locationId, Long locDetailId, Long interestId) {
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // 상세위치 조회
+        LocDetail locDetail = locDetailRepository.findById(locDetailId).orElseThrow(
+                () -> new NullPointerException("해당 상세위치가 존재하지 않습니다.")
         );
 
         // 관심사 조회
@@ -258,7 +280,7 @@ public class HomeService {
         );
 
         // 지역별 사용자 리스트
-        List<User> userList = userRepository.findAllByLocation(location);
+        List<User> userList = userRepository.findAllByLocationAndLocDetail(location, locDetail);
 
         // 같은 관심사를 지닌 유저 골라내기
         List<User> interestedUser = new ArrayList<>();
@@ -309,25 +331,30 @@ public class HomeService {
                     .profileImage(findUser.getProfileImage())
                     .intro(findUser.getIntro())
                     .location(findUser.getLocation().getLocation())
+                    .locDetail(findUser.getLocDetail().getLocDetail())
                     .mbti(findUser.getMbti().getMbti())
                     .interestList(interestList)
                     .build());
         }
         return ChemyAllResponseDto.builder()
                 .location(location.getLocation())
-                .longitude(location.getLongitude())
-                .latitude(location.getLatitude())
+                .locDetail(locDetail.getLocDetail())
                 .userCount(interestedUser.size())
                 .userList(chemyUserListDtos)
                 .build();
     }
 
     // 관심사별 케미 리스트 #2 (지역 / 관심사 / MBTI)
-    public ChemyAllResponseDto chemyInterest(Long locationId, Long interestId, User user) {
+    public ChemyAllResponseDto chemyInterest(Long locationId, Long locDetailId, Long interestId, User user) {
 
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
+        );
+
+        // 상세위치 조회
+        LocDetail locDetail = locDetailRepository.findById(locDetailId).orElseThrow(
+                () -> new NullPointerException("해당 상세위치가 존재하지 않습니다.")
         );
 
         // 관심사 조회
@@ -344,7 +371,7 @@ public class HomeService {
                 mbtiChemy);
 
         // 지역별 사용자 리스트
-        List<User> userList = userRepository.findAllByLocationAndMbtiIn(location, findMbtiList);
+        List<User> userList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
 
         // 같은 관심사를 지닌 유저 골라내기
         List<User> interestedUser = new ArrayList<>();
@@ -395,14 +422,14 @@ public class HomeService {
                     .profileImage(findUser.getProfileImage())
                     .intro(findUser.getIntro())
                     .location(findUser.getLocation().getLocation())
+                    .locDetail(findUser.getLocDetail().getLocDetail())
                     .mbti(findUser.getMbti().getMbti())
                     .interestList(interestList)
                     .build());
         }
         return ChemyAllResponseDto.builder()
                 .location(location.getLocation())
-                .longitude(location.getLongitude())
-                .latitude(location.getLatitude())
+                .locDetail(locDetail.getLocDetail())
                 .userCount(interestedUser.size())
                 .userList(chemyUserListDtos)
                 .build();

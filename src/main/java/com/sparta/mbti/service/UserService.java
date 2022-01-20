@@ -41,6 +41,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LocationRepository locationRepository;
+    private final LocDetailRepository locDetailRepository;
     private final MbtiRepository mbtiRepository;
     private final InterestRepository interestRepository;
     private final UserInterestRepository userInterestRepository;
@@ -79,9 +80,10 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
         body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
         body.add("code", code);
+
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
@@ -123,6 +125,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
+        System.out.println(body);
 
         // ID (카카오 기본키)
         Long id = body.getLong("id");
@@ -233,6 +236,7 @@ public class UserService {
         // 추가정보입력 또는 가입한 사용자 (Location, Mbti NULL 값이 없어야함)
         String intro = null;
         String location = null;
+        String locDetail = null;
         String longitude = null;
         String latitude = null;
         String mbti = null;
@@ -240,8 +244,9 @@ public class UserService {
         if (signStatus) {
             intro = userDetails.getUser().getIntro();
             location = userDetails.getUser().getLocation().getLocation();
-            longitude =userDetails.getUser().getLocation().getLongitude();
-            latitude = userDetails.getUser().getLocation().getLatitude();
+            locDetail = userDetails.getUser().getLocDetail().getLocDetail();
+            longitude = userDetails.getUser().getLongitude();
+            latitude = userDetails.getUser().getLatitude();
             mbti = userDetails.getUser().getMbti().getMbti();
             for (int i = 0; i < userDetails.getUser().getUserInterestList().size(); i++) {
                 interestListDtos.add(userDetails.getUser().getUserInterestList().get(i).getInterest().getInterest());
@@ -257,6 +262,7 @@ public class UserService {
                 .profileImage(userDetails.getUser().getProfileImage())
                 .intro(intro)
                 .location(location)
+                .locDetail(locDetail)
                 .longitude(longitude)
                 .latitude(latitude)
                 .mbti(mbti)
@@ -296,12 +302,17 @@ public class UserService {
                 () -> new IllegalArgumentException("해당 위치가 존재하지 않습니다.")
         );
 
+        // 위치 조회
+        LocDetail locDetail = locDetailRepository.findByLocDetailAndLocation(userRequestDto.getLocDetail(), location).orElseThrow(
+                () -> new IllegalArgumentException("해당 상세 위치가 존재하지 않습니다.")
+        );
+
         // mbti 조회
         Mbti mbti = mbtiRepository.findByMbti(userRequestDto.getMbti()).orElseThrow(
                 () -> new IllegalArgumentException("해당 MBTI 가 존재하지 않습니다.")
         );
 
-        findUser.update(userRequestDto, imgUrl, location, mbti, true);
+        findUser.update(userRequestDto, imgUrl, location, locDetail, mbti, true);
 
         // DB 저장
         userRepository.save(findUser);
@@ -339,8 +350,9 @@ public class UserService {
                 .profileImage(imgUrl)
                 .intro(findUser.getIntro())
                 .location(findUser.getLocation().getLocation())
-                .longitude(findUser.getLocation().getLongitude())
-                .latitude(findUser.getLocation().getLatitude())
+                .locDetail(findUser.getLocDetail().getLocDetail())
+                .longitude(findUser.getLongitude())
+                .latitude(findUser.getLatitude())
                 .mbti(findUser.getMbti().getMbti())
                 .interestList(interestListDtos)
                 .username(findUser.getUsername())
@@ -428,6 +440,9 @@ public class UserService {
             posts.add(PostResponseDto.builder()
                     .postId(onePost.getId())
                     .nickname(onePost.getUser().getNickname())
+                    .profileImage(onePost.getUser().getProfileImage())
+                    .location(onePost.getUser().getLocation().getLocation())
+                    .locDetail(onePost.getUser().getLocDetail().getLocDetail())
                     .mbti(onePost.getUser().getMbti().getMbti())
                     .content(onePost.getContent())
                     .tag(onePost.getTag())

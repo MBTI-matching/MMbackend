@@ -77,8 +77,6 @@ dependencies {
 
     //nginx - health check
     implementation 'org.springframework.boot:spring-boot-starter-actuator:2.6.1'
-
-
 }
 
 test {

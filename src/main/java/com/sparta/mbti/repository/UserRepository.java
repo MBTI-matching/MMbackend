@@ -1,5 +1,6 @@
 package com.sparta.mbti.repository;
 
+import com.sparta.mbti.model.LocDetail;
 import com.sparta.mbti.model.Location;
 import com.sparta.mbti.model.Mbti;
 import com.sparta.mbti.model.User;
@@ -12,8 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByKakaoId(Long kakaoId);
     Optional<User> findByUsername(String username);
     Optional<User> findByNickname(String nickname);
-    List<User> findAllByLocation(Location location);
-    List<User> findAllByLocationAndMbtiIn(Location location, List<Mbti> mbtiList);
-    List<User> findAllByLocationAndMbti(Location location, Mbti mbti);
+    List<User> findAllByLocationAndLocDetail(Location location, LocDetail locDetail);
+    List<User> findAllByLocationAndLocDetailAndMbtiIn(Location location, LocDetail locDetail, List<Mbti> mbtiList);
+    List<User> findAllByLocationAndLocDetailAndMbti(Location location, LocDetail locDetail, Mbti mbti);
 
 }
