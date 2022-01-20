@@ -18,7 +18,7 @@ import java.util.List;
 public class User {
 
     public enum Role {
-        BOT, ADMIN, USER
+        ROLE_BOT, ROLE_ADMIN, ROLE_USER
     }
 
     @Id
@@ -52,7 +52,17 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "LOCATION_ID")
-    private Location location;                  // 위치 (서울 특별시 구)
+    private Location location;                  // 위치 (특별시, 도)
+
+    @ManyToOne
+    @JoinColumn(name = "LOC_DETAIL_ID")
+    private LocDetail locDetail;                // 구
+
+    @Column
+    private String longitude;
+
+    @Column
+    private String latitude;
 
     @ManyToOne
     @JoinColumn(name = "MBTI_ID")
@@ -62,20 +72,28 @@ public class User {
     private final List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
 
     @Column
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
+    @Column
     private boolean status;                     // 카카오 추가정보 입력상태 체크
 
     @OneToMany(fetch = FetchType.EAGER)
     private final List<Matching> matchingList = new ArrayList<>();
 
     // 추가 입력 정보
-    public void update(UserRequestDto userRequestDto, String imgUrl, Location location, Mbti mbti, boolean status) {
+    public void update(UserRequestDto userRequestDto, String imgUrl, Location location, LocDetail locDetail, Mbti mbti, boolean status) {
         this.nickname = userRequestDto.getNickname();
         this.gender = userRequestDto.getGender();
         this.ageRange = userRequestDto.getAgeRange();
         this.intro = userRequestDto.getIntro();
+        this.longitude = userRequestDto.getLongitude();
+        this.latitude = userRequestDto.getLatitude();
         this.profileImage = imgUrl;
         this.location = location;
+        this.locDetail = locDetail;
         this.mbti = mbti;
+        this.role = Role.ROLE_USER;
         this.status = status;
     }
 

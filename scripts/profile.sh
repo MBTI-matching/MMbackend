@@ -2,17 +2,18 @@
 
 # profile.sh
 # 미사용 중인 profile을 잡는다.
+source /home/ubuntu/.bash_profile
 
 function find_idle_profile()
 {
     # curl 결과로 연결할 서비스 결정
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/profile)
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://sixzombies.shop/profile)
 
     if [ ${RESPONSE_CODE} -ge 400 ] # 400 보다 크면 (즉, 40x/50x 에러 모두 포함)
     then
         CURRENT_PROFILE=set2
     else
-        CURRENT_PROFILE=$(curl -s http://localhost/profile)
+        CURRENT_PROFILE=$(curl -s https://sixzombies.shop/profile)
     fi
 
     # IDLE_PROFILE : nginx와 연결되지 않은 profile

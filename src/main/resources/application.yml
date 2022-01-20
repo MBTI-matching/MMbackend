@@ -26,12 +26,6 @@ jasypt:
     bean: jasyptStringEncryptor
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
 
-#    properties:
-#      hibernate:
-#        show_sql: true
-#        format_sql: true
-#        default_batch_fetch_size: 1000
-
 cloud:
   aws:
     credentials:
@@ -44,13 +38,19 @@ cloud:
     stack:
       auto: false
 
+server:
+  port: 8080
+
 ---
+
 spring:
   profiles: set1
 
 server:
   port: 8081
+
 ---
+
 spring:
   profiles: set2
 

@@ -13,8 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ChemyAllResponseDto {
     private String location;                // 위치
-    private String longitude;               // 경도
-    private String latitude;                // 위도
+    private String locDetail;               // 상세위치
     private int userCount;                  // 케미 사용자 수
     List<ChemyUserResponseDto> userList;        // 케미 사용자 리스트
 }

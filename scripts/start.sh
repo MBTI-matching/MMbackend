@@ -3,7 +3,7 @@
 # start.sh
 # 서버 구동을 위한 스크립트
 
-source ~/.bash_profile
+source /home/ubuntu/.bash_profile
 
 ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)

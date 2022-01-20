@@ -1,9 +1,9 @@
 package com.sparta.mbti.controller;
 
 
+import com.sparta.mbti.dto.request.UserRequestDto;
 import com.sparta.mbti.dto.response.MbtiResponseDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
-import com.sparta.mbti.dto.request.UserRequestDto;
 import com.sparta.mbti.dto.response.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.UserService;
@@ -39,6 +39,11 @@ public class UserController {
     ) throws IOException {
         // 추가 정보 입력
         return userService.updateProfile(userDetails.getUser(), userRequestDto, multipartFile);
+    }
+
+    @DeleteMapping("/api/profile")
+    public void deleteProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteProfile(userDetails.getUser());
     }
 
     // 내가 쓴 글 조회

@@ -12,12 +12,16 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Location {
+public class LocDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LOCATION_ID")
+    @Column(name = "LOC_DETAIL_ID")
     private Long id;                            // 테이블 기본키
 
     @Column
-    private String location;                   // 위치
+    private String locDetail;                   // 위치
+
+    @ManyToOne
+    @JoinColumn(name = "LOCATION_ID")
+    private Location location;                  // 위치 (특별시, 도)
 }
