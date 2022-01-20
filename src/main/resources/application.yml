@@ -41,6 +41,17 @@ cloud:
 server:
   port: 8080
 
+sentry:
+  dsn: https://ce63463040a74b5e9c88b5499c256cf8@o1119561.ingest.sentry.io/6154130
+  logging:
+    enabled: true
+    minimum-event-level: info
+    minimum-breadcrumb-level: debug
+  debug: true
+  sample-rate: 1
+  traces-sample-rate: 1
+
+
 ---
 
 spring:

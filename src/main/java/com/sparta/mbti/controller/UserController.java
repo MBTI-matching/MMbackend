@@ -6,6 +6,7 @@ import com.sparta.mbti.dto.response.MbtiResponseDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.dto.response.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
+import com.sparta.mbti.sentry.SentrySupport;
 import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserService userService;
+    private final SentrySupport sentrySupport;
 
     // 카카오 로그인
     @GetMapping("/user/kakao/callback")
@@ -39,9 +41,11 @@ public class UserController {
                                          @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile
     ) throws IOException {
         // 추가 정보 입력
+        sentrySupport.logSimpleMessage("유저 정보 수정");
         return userService.updateProfile(userDetails.getUser(), userRequestDto, multipartFile);
     }
 
+    // 회원 탈퇴
     @DeleteMapping("/api/profile")
     public void deleteProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.deleteProfile(userDetails.getUser());

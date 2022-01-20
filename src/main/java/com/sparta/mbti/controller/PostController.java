@@ -3,6 +3,7 @@ package com.sparta.mbti.controller;
 import com.sparta.mbti.dto.request.PostRequestDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
+import com.sparta.mbti.sentry.SentrySupport;
 import com.sparta.mbti.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 public class PostController {
     private final PostService postService;
+    private final SentrySupport sentrySupport;
 
     // 게시글 작성
     @PostMapping("/api/post")
@@ -26,6 +28,7 @@ public class PostController {
                            @RequestPart(value = "data") PostRequestDto postRequestDto,
                            @RequestPart(value = "multipartFile", required = false) List<MultipartFile> multipartFile
     ) throws IOException {
+        sentrySupport.logSimpleMessage("게시글 작성");
         postService.createPost(userDetails.getUser(), postRequestDto, multipartFile);
     }
 
