@@ -4,9 +4,15 @@ plugins {
     id 'java'
 }
 
+// plain 파일 생성 막기
+jar {
+    enabled = false
+}
+
 group = 'com.sparta'
 //version = new Date().format("yyyyMMddHHmmss") + '-0.0.1-SNAPSHOT'
 version = '0.0.1-SNAPSHOT'
+
 sourceCompatibility = '1.8'
 
 configurations {

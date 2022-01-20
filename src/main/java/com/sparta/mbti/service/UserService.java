@@ -48,6 +48,7 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final ImageRepository imageRepository;
     private final LikesRepository likesRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final S3Uploader s3Uploader;
 
     private final String imageDirName = "user";   // S3 폴더 경로
@@ -77,7 +78,9 @@ public class UserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
-        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
+//        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -343,6 +346,48 @@ public class UserService {
                 .username(findUser.getUsername())
                 .signStatus(true)
                 .build();
+    }
+
+    // 회원탈퇴
+    @Transactional
+    public void deleteProfile(User user) {
+        // 사용자 조회
+        User findUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
+        );
+        // 사용자 관심사 리스트 조회
+        List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
+        // 사용자 게시글 리스트 조회
+        List<Post> postList = postRepository.findAllByUser(findUser);
+        List<Image> imageList = new ArrayList<>();
+        List<Comment> commentList = new ArrayList<>();
+        List<Likes> likesList = new ArrayList<>();
+        for (int i = 0; i < postList.size(); i++) {
+            // 게시글 이미지 리스트 조회
+            imageList = imageRepository.findAllByPost(postList.get(i));
+            // 게시글 댓글 리스트 조회
+            commentList = commentRepository.findAllByPost(postList.get(i));
+            // 게시글 좋아요 조회
+            likesList = likesRepository.findAllByPost(postList.get(i));
+        }
+
+        // 채팅방 조회
+        List<ChatRoom> chatRoomList = chatRoomRepository.findAllByGuestId(findUser.getId());
+
+        // 채팅방 삭제
+        chatRoomRepository.deleteAll(chatRoomList);
+        // 게시글 좋아요 삭제
+        likesRepository.deleteAll(likesList);
+        // 게시글 댓글 삭제
+        commentRepository.deleteAll(commentList);
+        // 게시글 이미지 삭제
+        imageRepository.deleteAll(imageList);
+        // 게시글 삭제
+        postRepository.deleteAll(postList);
+        // 사용자 관심사 삭제
+        userInterestRepository.deleteAll(userInterestList);
+        // 사용자 삭제
+        userRepository.delete(findUser);
     }
 
     // 내가 쓴 글 조회

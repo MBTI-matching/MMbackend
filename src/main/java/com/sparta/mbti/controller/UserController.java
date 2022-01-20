@@ -41,6 +41,11 @@ public class UserController {
         return userService.updateProfile(userDetails.getUser(), userRequestDto, multipartFile);
     }
 
+    @DeleteMapping("/api/profile")
+    public void deleteProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteProfile(userDetails.getUser());
+    }
+
     // 내가 쓴 글 조회
     @GetMapping("/api/profile/mywrite")
     public List<PostResponseDto> getMyPosts(@RequestParam int page,

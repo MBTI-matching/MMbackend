@@ -22,12 +22,6 @@ public class MatchingController {
         return matchingService.requestMatching(userDetails.getUser(), guestId);
     }
 
-    // 매칭 신청 수락/거절 뒤 요청 목록에서 삭제: userDetails.getUser()를 guest로 설정
-    @DeleteMapping("/matching/receive/{hostId}")
-    public String receiveMatching(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long hostId, @RequestParam(value = "accept") boolean accept) {
-        return matchingService.receiveMatching(userDetails.getUser(), hostId, accept);
-    }
-
     // 신청한 내역 조회
     @GetMapping("/matching/send")
     public List<MatchResponseDto> sentMatching(@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -44,5 +38,13 @@ public class MatchingController {
     @DeleteMapping("/matching/{hostId}")
     public String deleteMatching(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long hostId) {
         return matchingService.deleteMatching(userDetails.getUser(), hostId);
+    }
+
+    // 매칭 신청 수락/거절 뒤 요청 목록에서 삭제: userDetails.getUser()를 guest로 설정
+    @DeleteMapping("/matching/receive/{hostId}")
+    public String receiveMatching(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                  @PathVariable Long hostId,
+                                  @RequestParam(value = "accept") boolean accept) {
+        return matchingService.receiveMatching(userDetails.getUser(), hostId, accept);
     }
 }
