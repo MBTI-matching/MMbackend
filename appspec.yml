@@ -17,10 +17,10 @@ hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> Applicatio
 #    - location: beforeInstall.sh
 #      timeout: 60
 #      runas: ubuntu
-  AfterInstall:
-    - location: Ndeploy.sh
-      timeout: 60
-      runas: root
+#  AfterInstall:
+#    - location: Ndeploy.sh
+#      timeout: 60
+#      runas: ubuntu
 #  AfterInstall:
 #    - location: stop.sh # nginx와 연결되지 않은 스프링 부트 종료.
 #      timeout: 60
@@ -33,7 +33,7 @@ hooks: # CodeDeploy 배포 단계에서 실행할 명령어 지정 -> Applicatio
 #    - location: health.sh # 새 서비스 health check.
 #      timeout: 60
 #      runas: ubuntu
-#  ApplicationStart: # 다음엔 AfterInstall 시도해보자 ApplicationStart
-#    - location: deploy.sh
-#      timeout: 60 # 제한시간(스크립트 실행 시간 한도)
-#      runas: ubuntu # runas root 과 runas ubuntu는 뭐가 다를까?
+  ApplicationStart: # 다음엔 AfterInstall 시도해보자 ApplicationStart
+    - location: deploy.sh
+      timeout: 60 # 제한시간(스크립트 실행 시간 한도)
+      runas: ubuntu # runas root 과 runas ubuntu는 뭐가 다를까?
