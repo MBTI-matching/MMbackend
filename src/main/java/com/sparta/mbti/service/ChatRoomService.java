@@ -59,6 +59,7 @@ public class ChatRoomService{
 
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
 
+
         for(ChatRoom chatRoom : chatRoomHostList){
             ChatMessage msg = new ChatMessage();
             if(chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
@@ -106,7 +107,10 @@ public class ChatRoomService{
     //특정 채팅방의 모든 채팅 조회
     public List<ChatMessageResponseDto> readAllMessage(Pageable pageable, String roomId){
         List<ChatMessage> chatMessageList = chatMessageRepository.findAllByRoomIdOrderByIdDesc(pageable, roomId);
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomId(roomId);
+
         List<ChatMessageResponseDto> chatMessageResponseDtoList = new ArrayList<>();
+
 
         for (int i = chatMessageList.toArray().length - 1; 0 <= i; i--) {
             chatMessageResponseDtoList.add(ChatMessageResponseDto.builder()
@@ -117,6 +121,7 @@ public class ChatRoomService{
                     .senderImg(chatMessageList.get(i).getSenderImg())
                     .senderNick(chatMessageList.get(i).getSenderNick())
                     .date(chatMessageList.get(i).getDate())
+                    .totalMessage(chatMessages.size())
                     .build());
         }
 

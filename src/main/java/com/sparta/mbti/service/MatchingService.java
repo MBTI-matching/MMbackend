@@ -28,8 +28,10 @@ public class MatchingService {
      3. 매치 신청 보내기*/
     @Transactional
     public String requestMatching (User user, Long guestId){
-        userRepository.findById(guestId).orElseThrow(
+        User guest = userRepository.findById(guestId).orElseThrow(
                 () -> new NullPointerException("유저 정보가 존재하지 않습니다."));
+        List<User> admin = userRepository.findAllByRole("ROLE_ADMIN");
+
         if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
                 matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
             return "신청 대기 상태입니다.";
@@ -43,15 +45,21 @@ public class MatchingService {
         if(guestId.equals(user.getId()))
             return "본인과의 매칭은 불가능합니다.";
 
-        Matching matching = Matching.builder()
-                .hostId(user.getId())
-                .guestId(guestId)
-                .build();
-
+        Matching matching;
+        // 0 ~ 1까지의 숫자 랜덤 반환
+        int rand = (int)(Math.random()*admin.size());
+        if(guest.getRole().equals(User.Role.ROLE_BOT)){
+            matching = Matching.builder()
+                    .hostId(user.getId())
+                    .guestId(admin.get(rand).getId())
+                    .build();}
+        else {
+            matching = Matching.builder()
+                    .hostId(user.getId())
+                    .guestId(guestId)
+                    .build();
+        }
         matchingRepository.save(matching);
-
-//        user.setMatchingList(matching);
-//        guest.setMatchingList(matching);
 
         return "신청이 완료되었습니다.";
     }
