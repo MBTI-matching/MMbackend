@@ -49,11 +49,11 @@ public class ChatRoom implements Serializable {
     }
 
     public void deleteGuestId() {
-        this.guestId = null;
+        this.guestId = 0L;
     }
 
     public void deleteHostId() {
-        this.hostId = null;
+        this.hostId = 0L;
     }
 
 }

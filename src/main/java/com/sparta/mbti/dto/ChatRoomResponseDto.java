@@ -1,5 +1,6 @@
 package com.sparta.mbti.dto;
 
+import com.sparta.mbti.model.ChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,4 +27,13 @@ public class ChatRoomResponseDto {
 
     @Column
     private String guestImg;
+
+    @Column
+    private String lastMessage;
+
+    @Column
+    private String messageTime;
+
+    @Column
+    private ChatMessage.MessageType messageType;
 }

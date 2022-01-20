@@ -16,6 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class User {
+
+    public enum RoleType {
+        BOT, ADMIN, USER
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")

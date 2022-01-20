@@ -11,6 +11,7 @@ import com.sparta.mbti.repository.ChatRoomRepository;
 import com.sparta.mbti.repository.MatchingRepository;
 import com.sparta.mbti.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -57,25 +58,41 @@ public class ChatRoomService{
         }
 
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
+
         for(ChatRoom chatRoom : chatRoomHostList){
+            ChatMessage msg = new ChatMessage();
+            if(chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
+                msg = chatMessageRepository.findFirstByRoomIdOrderByIdDesc(chatRoom.getRoomId());
             chatRoomResponseDtoList.add(ChatRoomResponseDto.builder()
                     .guestId(chatRoom.getGuestId())
                     .roomId(chatRoom.getRoomId())
                     .guestImg(chatRoom.getGuestImg())
                     .guestMbti(chatRoom.getGuestMbti())
                     .guestNick(chatRoom.getGuestNick())
+                    .lastMessage(msg != null ? msg.getMessage() : "")
+                    .messageType(msg != null ? msg.getType() : null)
+                    .messageTime(msg != null ? msg.getDate() : null)
                     .build());
         }
+        //초대 받은 방의 메세지 리스트
         for(ChatRoom chatRoom : chatRoomGuestList){
             User host = userRepository.findById(chatRoom.getHostId()).orElse(null);
+            ChatMessage msg = new ChatMessage();
+            if(chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
+                msg = chatMessageRepository.findFirstByRoomIdOrderByIdDesc(chatRoom.getRoomId());
+
             chatRoomResponseDtoList.add(ChatRoomResponseDto.builder()
                     .guestId(chatRoom.getHostId())
                     .roomId(chatRoom.getRoomId())
                     .guestImg(host.getProfileImage())
                     .guestMbti(host.getMbti().getMbti())
                     .guestNick(host.getNickname())
+                    .lastMessage(msg != null ? msg.getMessage() : "")
+                    .messageType(msg != null ? msg.getType() : null)
+                    .messageTime(msg != null ? msg.getDate() : null)
                     .build());
         }
+
         return chatRoomResponseDtoList;
         //return opsHashChatRoom.values(CHAT_ROOMS);
     }
@@ -87,21 +104,22 @@ public class ChatRoomService{
 //    }
 
     //특정 채팅방의 모든 채팅 조회
-    public List<ChatMessageResponseDto> readAllMessage(String roomId){
-        List<ChatMessage> chatMessageList = chatMessageRepository.findAllByRoomId(roomId);
+    public List<ChatMessageResponseDto> readAllMessage(Pageable pageable, String roomId){
+        List<ChatMessage> chatMessageList = chatMessageRepository.findAllByRoomIdOrderByIdDesc(pageable, roomId);
         List<ChatMessageResponseDto> chatMessageResponseDtoList = new ArrayList<>();
 
-        for (ChatMessage message : chatMessageList) {
+        for (int i = chatMessageList.toArray().length - 1; 0 <= i; i--) {
             chatMessageResponseDtoList.add(ChatMessageResponseDto.builder()
-                    .type(message.getType())
-                    .message(message.getMessage())
-                    .senderId(message.getSenderId())
-                    .senderName(message.getSenderName())
-                    .senderImg(message.getSenderImg())
-                    .senderNick(message.getSenderNick())
-                    .date(message.getDate())
+                    .type(chatMessageList.get(i).getType())
+                    .message(chatMessageList.get(i).getMessage())
+                    .senderId(chatMessageList.get(i).getSenderId())
+                    .senderName(chatMessageList.get(i).getSenderName())
+                    .senderImg(chatMessageList.get(i).getSenderImg())
+                    .senderNick(chatMessageList.get(i).getSenderNick())
+                    .date(chatMessageList.get(i).getDate())
                     .build());
         }
+
         return chatMessageResponseDtoList;
     }
 
@@ -135,11 +153,12 @@ public class ChatRoomService{
                 .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
         if(room.getGuestId().equals(userId)) {
             room.deleteGuestId();
-            System.out.println("방 나가짐");
+            chatRoomRepository.save(room);
         }
+
         else if(room.getHostId().equals(userId)) {
             room.deleteHostId();
-            System.out.println("방 나가짐");
+            chatRoomRepository.save(room);
         }
     }
 }

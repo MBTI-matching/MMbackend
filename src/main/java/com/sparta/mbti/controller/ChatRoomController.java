@@ -7,6 +7,9 @@ import com.sparta.mbti.model.ChatRoom;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +38,12 @@ public class ChatRoomController{
 
     //채팅방 입장 시 메세지 조회
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ChatMessageResponseDto>> readAllMessage(@PathVariable String roomId){
-        List<ChatMessageResponseDto> responseDto = chatRoomService.readAllMessage(roomId);
+    public ResponseEntity<List<ChatMessageResponseDto>> readAllMessage(@RequestParam int page,
+                                                                       @RequestParam int size, @PathVariable String roomId){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<ChatMessageResponseDto> responseDto = chatRoomService.readAllMessage(pageable, roomId);
         return ResponseEntity.ok().body(responseDto);
     }
     //채팅방 나가기
