@@ -75,7 +75,7 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 // 어떤 요청이든 허용
-                .antMatchers("/admin/**").hasAnyRole("ADMIN")
+                //.antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .anyRequest().permitAll()
                 .and()
                 // [로그아웃 기능]
