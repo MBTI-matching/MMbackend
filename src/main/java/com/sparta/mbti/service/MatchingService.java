@@ -1,5 +1,6 @@
 package com.sparta.mbti.service;
 
+
 import com.sparta.mbti.dto.response.MatchResponseDto;
 import com.sparta.mbti.model.Matching;
 import com.sparta.mbti.model.User;
@@ -24,20 +25,34 @@ public class MatchingService {
      /*매칭 신청
      1. 매칭 신청 대기 상태인지 확인
      2. 이미 매칭이 성사되어 채팅중인 상태인지 확인
-     3. 매칭 신청 보내기*/
+     3. 매치 신청 보내기*/
+    @Transactional
     public String requestMatching (User user, Long guestId){
-        if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId) || matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
+        userRepository.findById(guestId).orElseThrow(
+                () -> new NullPointerException("유저 정보가 존재하지 않습니다."));
+        if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
+                matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
             return "신청 대기 상태입니다.";
         }
 
-        if(chatRoomRepository.existsByHostIdAndGuestId(user.getId(), guestId) || chatRoomRepository.existsByHostIdAndGuestId(guestId, user.getId())){
+        if(chatRoomRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
+                chatRoomRepository.existsByHostIdAndGuestId(guestId, user.getId())){
             return "대화 중인 상대입니다.";
         }
 
-        matchingRepository.save(Matching.builder()
+        if(guestId.equals(user.getId()))
+            return "본인과의 매칭은 불가능합니다.";
+
+        Matching matching = Matching.builder()
                 .hostId(user.getId())
                 .guestId(guestId)
-                .build());
+                .build();
+
+        matchingRepository.save(matching);
+
+//        user.setMatchingList(matching);
+//        guest.setMatchingList(matching);
+
         return "신청이 완료되었습니다.";
     }
 
@@ -49,9 +64,7 @@ public class MatchingService {
                 () -> new NullPointerException("해당 신청을 주신 유저분은 존재하지 않습니다.")
         );
 
-        Matching matching = matchingRepository.findByHostIdAndGuestId(hostId, user.getId()).orElseThrow(
-                () -> new IllegalArgumentException("잘못된 정보입니다.")
-        );
+        Matching matching = matchingRepository.findByHostIdAndGuestId(hostId, user.getId());
 
         if (!accept) {
             matchingRepository.delete(matching);
@@ -114,9 +127,12 @@ public class MatchingService {
     }
 
     public String deleteMatching(User user, Long guestId) {
-        Matching matching = matchingRepository.findByHostIdAndGuestId(user.getId(), guestId).orElseThrow(
-                () -> new IllegalArgumentException("잘못된 정보입니다.")
-        );
+        Matching matching;
+        if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId)) {
+            matching = matchingRepository.findByHostIdAndGuestId(user.getId(), guestId);
+        }else {
+            matching = matchingRepository.findByHostIdAndGuestId(guestId, user.getId());
+        }
 
         matchingRepository.delete(matching);
 

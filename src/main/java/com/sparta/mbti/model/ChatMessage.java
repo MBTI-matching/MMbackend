@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class ChatMessage {
 
     public enum MessageType {
-        ENTER, TALK, QUIT
+        ENTER, TALK, QUIT, EMO
     }
 
     @Id
@@ -47,4 +47,7 @@ public class ChatMessage {
     @Column
     private String date;
 
+    public void emoMessage() {
+        this.message = "이모티콘";
+    }
 }

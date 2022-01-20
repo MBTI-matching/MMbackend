@@ -16,6 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class User {
+
+    public enum Role {
+        BOT, ADMIN, USER
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
@@ -57,7 +62,10 @@ public class User {
     private final List<UserInterest> userInterestList = new ArrayList<>();    // 관심사 리스트
 
     @Column
-    private boolean status;
+    private boolean status;                     // 카카오 추가정보 입력상태 체크
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private final List<Matching> matchingList = new ArrayList<>();
 
     // 추가 입력 정보
     public void update(UserRequestDto userRequestDto, String imgUrl, Location location, Mbti mbti, boolean status) {
@@ -70,4 +78,5 @@ public class User {
         this.mbti = mbti;
         this.status = status;
     }
+
 }

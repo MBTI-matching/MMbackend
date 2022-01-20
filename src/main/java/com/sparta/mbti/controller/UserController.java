@@ -29,7 +29,6 @@ public class UserController {
     public UserResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException {
         // 카카오 서버로부터 받은 인가 코드, JWT 토큰
         return userService.kakaoLogin(code, response);
-        //response.sendRedirect("http://localhost:8080/chat/room");
     }
 
     // 내정보 입력 / 수정

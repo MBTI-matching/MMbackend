@@ -23,6 +23,4 @@ public class Interest {
     @Column
     private String interest;                   // 관심사
 
-//    @OneToMany(mappedBy = "interest", cascade = CascadeType.ALL)    // 관심사 삭제 => 해당 사용자관심사리스트 모두 삭제
-//    List<UserInterest> userInterestList = new ArrayList<>();        // 관심사 리스트
 }

@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'com.sparta'
-version = new Date().format("yyyyMMddHHmmss") + '-0.0.1-SNAPSHOT'
+//version = new Date().format("yyyyMMddHHmmss") + '-0.0.1-SNAPSHOT'
+version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
@@ -76,5 +77,5 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    systemProperty "jasypt.encryptor.password", project.getProperties().get("jasypt.encryptor.password")
+    systemProperty "jasypt.encryptor.password", findProperty("jasypt.encryptor.password")
 }

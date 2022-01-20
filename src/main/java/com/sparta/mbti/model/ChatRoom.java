@@ -1,5 +1,6 @@
 package com.sparta.mbti.model;
 
+import com.sparta.mbti.dto.request.PostRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,4 +47,13 @@ public class ChatRoom implements Serializable {
         this.guestNick = guestNick;
         this.roomId = roomId;
     }
+
+    public void deleteGuestId() {
+        this.guestId = 0L;
+    }
+
+    public void deleteHostId() {
+        this.hostId = 0L;
+    }
+
 }
