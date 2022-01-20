@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 public class User {
 
-    public enum RoleType {
+    public enum Role {
         BOT, ADMIN, USER
     }
 
