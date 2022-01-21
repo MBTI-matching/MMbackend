@@ -35,7 +35,7 @@ public class ChemyService {
         // 사용자 리스트 수 범위만큼 랜덤 생성 (10 이면 0~9 랜덤 생성)
         Random generator = new Random();
         int size = 0;
-        if (findUserList.size() > 0) {
+        if (!findUserList.isEmpty()) {
             size = generator.nextInt(findUserList.size());
 
             // 랜덤 사용자 관심사 리스트 조회
