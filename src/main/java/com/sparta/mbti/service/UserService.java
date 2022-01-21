@@ -82,6 +82,7 @@ public class UserService {
         body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
 //        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
 //        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
+
         body.add("code", code);
 
 
@@ -193,7 +194,7 @@ public class UserService {
 
         String ageRange;
 
-        if(Integer.parseInt(kakaoUserRequestDto.getAgeRange().substring(0, 2)) >= 50)
+        if (Integer.parseInt(kakaoUserRequestDto.getAgeRange().substring(0, 2)) >= 50)
             ageRange = "50대 이상";
         else
             ageRange = kakaoUserRequestDto.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
@@ -202,14 +203,14 @@ public class UserService {
         if (kakaoUser == null) {
             // 사용자 저장
             kakaoUser = User.builder()
-                        .kakaoId(kakaoId)
-                        .username(username)
-                        .password(encodedPassword)
-                        .nickname(nickname)
-                        .profileImage(profileImage)
-                        .gender(gender)
-                        .ageRange(ageRange)
-                        .build();
+                    .kakaoId(kakaoId)
+                    .username(username)
+                    .password(encodedPassword)
+                    .nickname(nickname)
+                    .profileImage(profileImage)
+                    .gender(gender)
+                    .ageRange(ageRange)
+                    .build();
             userRepository.save(kakaoUser);
             signStatus = false;                 // 처음 가입하면 false => 추가 정보 입력 페이지로 이동
         } else if (!kakaoUser.isStatus()) {     // 카카오 가입은 되었으나, 추가정보 입력 안했으면 false
@@ -329,9 +330,9 @@ public class UserService {
             );
 
             userInterest.add(UserInterest.builder()
-                                        .user(findUser)
-                                        .interest(interest)
-                                        .build());
+                    .user(findUser)
+                    .interest(interest)
+                    .build());
         }
 
         // DB 저장
@@ -351,6 +352,7 @@ public class UserService {
                 .intro(findUser.getIntro())
                 .location(findUser.getLocation().getLocation())
                 .locDetail(findUser.getLocDetail().getLocDetail())
+                .locFull(findUser.getLocFull())
                 .longitude(findUser.getLongitude())
                 .latitude(findUser.getLatitude())
                 .mbti(findUser.getMbti().getMbti())
