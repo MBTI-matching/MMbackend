@@ -21,7 +21,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Service
-public class ChatRoomService{
+public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
@@ -59,40 +59,42 @@ public class ChatRoomService{
 
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
 
-
-        for(ChatRoom chatRoom : chatRoomHostList){
-            ChatMessage msg = new ChatMessage();
-            if(chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
-                msg = chatMessageRepository.findFirstByRoomIdOrderByIdDesc(chatRoom.getRoomId());
-            chatRoomResponseDtoList.add(ChatRoomResponseDto.builder()
-                    .guestId(chatRoom.getGuestId())
-                    .roomId(chatRoom.getRoomId())
-                    .guestImg(chatRoom.getGuestImg())
-                    .guestMbti(chatRoom.getGuestMbti())
-                    .guestNick(chatRoom.getGuestNick())
-                    .lastMessage(msg != null ? msg.getMessage() : "")
-                    .messageType(msg != null ? msg.getType() : null)
-                    .messageTime(msg != null ? msg.getDate() : null)
-                    .build());
-        }
+        if (chatRoomHostList != null)
+            for (ChatRoom chatRoom : chatRoomHostList) {
+                ChatMessage msg = new ChatMessage();
+                if (chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
+                    msg = chatMessageRepository.findFirstByRoomIdOrderByIdDesc(chatRoom.getRoomId());
+                chatRoomResponseDtoList.add(ChatRoomResponseDto.builder()
+                        .guestId(chatRoom.getGuestId())
+                        .roomId(chatRoom.getRoomId())
+                        .guestImg(chatRoom.getGuestImg())
+                        .guestMbti(chatRoom.getGuestMbti())
+                        .guestNick(chatRoom.getGuestNick())
+                        .lastMessage(msg != null ? msg.getMessage() : "")
+                        .messageType(msg != null ? msg.getType() : null)
+                        .messageTime(msg != null ? msg.getDate() : null)
+                        .build());
+            }
         //초대 받은 방의 메세지 리스트
-        for(ChatRoom chatRoom : chatRoomGuestList){
-            User host = userRepository.findById(chatRoom.getHostId()).orElse(null);
-            ChatMessage msg = new ChatMessage();
-            if(chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
-                msg = chatMessageRepository.findFirstByRoomIdOrderByIdDesc(chatRoom.getRoomId());
+        //유저 탈퇴 시 예오
+        if (chatRoomGuestList != null)
+            for (ChatRoom chatRoom : chatRoomGuestList) {
+                User host = userRepository.findById(chatRoom.getHostId()).orElse(null);
+                ChatMessage msg = new ChatMessage();
+                if (chatMessageRepository.existsByRoomId(chatRoom.getRoomId()))
+                    msg = chatMessageRepository.findFirstByRoomIdOrderByIdDesc(chatRoom.getRoomId());
 
-            chatRoomResponseDtoList.add(ChatRoomResponseDto.builder()
-                    .guestId(chatRoom.getHostId())
-                    .roomId(chatRoom.getRoomId())
-                    .guestImg(host.getProfileImage())
-                    .guestMbti(host.getMbti().getMbti())
-                    .guestNick(host.getNickname())
-                    .lastMessage(msg != null ? msg.getMessage() : "")
-                    .messageType(msg != null ? msg.getType() : null)
-                    .messageTime(msg != null ? msg.getDate() : null)
-                    .build());
-        }
+                chatRoomResponseDtoList.add(ChatRoomResponseDto.builder()
+                        .guestId(chatRoom.getHostId())
+                        .roomId(chatRoom.getRoomId())
+                        .guestImg(host != null ? host.getProfileImage() : null)
+                        .guestMbti(host != null ? host.getMbti().getMbti() : "ENTJ")
+                        .guestNick(host != null ? host.getNickname() : "없는 사용자 입니다.")
+                        .lastMessage(msg != null ? msg.getMessage() : "")
+                        .messageType(msg != null ? msg.getType() : null)
+                        .messageTime(msg != null ? msg.getDate() : null)
+                        .build());
+            }
 
         return chatRoomResponseDtoList;
         //return opsHashChatRoom.values(CHAT_ROOMS);
@@ -105,7 +107,7 @@ public class ChatRoomService{
 //    }
 
     //특정 채팅방의 모든 채팅 조회
-    public List<ChatMessageResponseDto> readAllMessage(Pageable pageable, String roomId){
+    public List<ChatMessageResponseDto> readAllMessage(Pageable pageable, String roomId) {
         List<ChatMessage> chatMessageList = chatMessageRepository.findAllByRoomIdOrderByIdDesc(pageable, roomId);
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByRoomId(roomId);
 
@@ -132,7 +134,7 @@ public class ChatRoomService{
     public ChatRoom createChatRoom(Long hostId, ChatRoomRequestDto chatRoomDto) {
 
         User guest = userRepository.findByUsername(chatRoomDto.getGuestEmail())
-                .orElseThrow(()->new NullPointerException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
 
         String roomId = UUID.randomUUID().toString();
 
@@ -153,15 +155,13 @@ public class ChatRoomService{
     }
 
     // 채팅방 나가기(유저가 호스트일때, 게스트일 때 나눠서)
-    public void exitChatRoom(Long userId, String roomId){
+    public void exitChatRoom(Long userId, String roomId) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId)
                 .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
-        if(room.getGuestId().equals(userId)) {
+        if (room.getGuestId().equals(userId)) {
             room.deleteGuestId();
             chatRoomRepository.save(room);
-        }
-
-        else if(room.getHostId().equals(userId)) {
+        } else if (room.getHostId().equals(userId)) {
             room.deleteHostId();
             chatRoomRepository.save(room);
         }
