@@ -70,6 +70,7 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
          * UsernamePasswordAuthenticationFilter 이전에 JwtFilter 를 등록합니다.
          * JwtFilter       : 서버에 접근시 JWT 확인 후 인증을 실시합니다.
          */
+
         http
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 

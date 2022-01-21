@@ -17,4 +17,5 @@ public class ChatMessageResponseDto {
     private String message;
     private String senderNick;
     private String date;
+    private int totalMessage;
 }

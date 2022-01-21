@@ -7,7 +7,9 @@ import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatRoomRepository;
 import com.sparta.mbti.repository.MatchingRepository;
 import com.sparta.mbti.repository.UserRepository;
+import com.sparta.mbti.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,30 +30,40 @@ public class MatchingService {
      3. 매치 신청 보내기*/
     @Transactional
     public String requestMatching (User user, Long guestId){
-        userRepository.findById(guestId).orElseThrow(
+        User guest = userRepository.findById(guestId).orElseThrow(
                 () -> new NullPointerException("유저 정보가 존재하지 않습니다."));
-        if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
-                matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
+        List<User> admin = userRepository.findAllByRole(User.Role.ROLE_ADMIN);
+
+        Matching matching;
+        // 0 ~ 1까지의 숫자 랜덤 반환
+        // 관리자 중복 안되게
+        int rand = (int)(Math.random() * admin.size());
+        if(guest.getRole().equals(User.Role.ROLE_BOT)){
+            matching = Matching.builder()
+                    .hostId(user.getId())
+                    .guestId(admin.get(rand).getId())
+                    .build();}
+        else {
+            matching = Matching.builder()
+                    .hostId(user.getId())
+                    .guestId(guestId)
+                    .build();
+        }
+        
+        if(matchingRepository.existsByHostIdAndGuestId(matching.getHostId(), matching.getGuestId()) ||
+                matchingRepository.existsByHostIdAndGuestId(matching.getGuestId(), matching.getHostId())){
             return "신청 대기 상태입니다.";
         }
 
-        if(chatRoomRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
-                chatRoomRepository.existsByHostIdAndGuestId(guestId, user.getId())){
+        if(chatRoomRepository.existsByHostIdAndGuestId(matching.getHostId(), matching.getGuestId()) ||
+                chatRoomRepository.existsByHostIdAndGuestId(matching.getGuestId(), matching.getHostId())){
             return "대화 중인 상대입니다.";
         }
 
         if(guestId.equals(user.getId()))
             return "본인과의 매칭은 불가능합니다.";
 
-        Matching matching = Matching.builder()
-                .hostId(user.getId())
-                .guestId(guestId)
-                .build();
-
         matchingRepository.save(matching);
-
-//        user.setMatchingList(matching);
-//        guest.setMatchingList(matching);
 
         return "신청이 완료되었습니다.";
     }
@@ -126,13 +138,17 @@ public class MatchingService {
     }
 
     public String deleteMatching(User user, Long guestId) {
-        Matching matching;
+        Matching matching = null;
+        //초대 했을 경우 신청 취소
         if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId)) {
             matching = matchingRepository.findByHostIdAndGuestId(user.getId(), guestId);
-        }else {
+        }
+        //초대 받았을 경우 신청 취소
+        else if(matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
             matching = matchingRepository.findByHostIdAndGuestId(guestId, user.getId());
         }
-
+        else
+            return "잘못된 요청입니다";
         matchingRepository.delete(matching);
 
         return "신청이 취소되었습니다.";

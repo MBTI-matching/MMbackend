@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     List<ChatMessage> findAllByRoomIdOrderByIdDesc(Pageable pageable, String roomId);
+    List<ChatMessage> findAllByRoomId(String roomId);
     ChatMessage findFirstByRoomIdOrderByIdDesc(String roomId);
     Boolean existsByRoomId(String roomId);
 }
