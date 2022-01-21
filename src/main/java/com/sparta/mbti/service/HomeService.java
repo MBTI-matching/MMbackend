@@ -49,7 +49,6 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-
             chemyUserListDtos.add(ChemyUserResponseDto.builder()
                                                 .userId(oneUser.getId())
                                                 .nickname(oneUser.getNickname())

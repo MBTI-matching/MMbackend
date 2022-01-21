@@ -284,9 +284,9 @@ public class UserService {
         );
 
         // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
-        if (userRequestDto.getNickname() == null) {
-            userRequestDto.setNickname(user.getNickname());
-        }
+//        if (userRequestDto.getNickname() == null) {
+//            userRequestDto.setNickname(user.getNickname());
+//        }
 
         // 카카오 이미지 초기화
         String imgUrl = findUser.getProfileImage();

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ChatRoomController{
         return chatRoomService.createChatRoom(userDetails.getUser().getId(), chatRoomRequestDto);
     }
 
-    //채팅방 입장 시 메세지 조회
+    // 채팅방 입장 시 메세지 조회
     @GetMapping("/room/{roomId}")
     public ResponseEntity<List<ChatMessageResponseDto>> readAllMessage(@RequestParam int page,
                                                                        @RequestParam int size, @PathVariable String roomId){
@@ -46,9 +47,14 @@ public class ChatRoomController{
         List<ChatMessageResponseDto> responseDto = chatRoomService.readAllMessage(pageable, roomId);
         return ResponseEntity.ok().body(responseDto);
     }
-    //채팅방 나가기
+    // 채팅방 나가기
     @PutMapping("/room/{roomId}")
     public void quitRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String roomId){
         chatRoomService.exitChatRoom(userDetails.getUser().getId(), roomId);
+    }
+    // 방 삭제
+    @DeleteMapping("/room/{roomId}")
+    public void deleteRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String roomId){
+        chatRoomService.deleteChatRoom(userDetails.getUser().getId(), roomId);
     }
 }

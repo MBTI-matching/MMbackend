@@ -157,13 +157,25 @@ public class ChatRoomService {
     // 채팅방 나가기(유저가 호스트일때, 게스트일 때 나눠서)
     public void exitChatRoom(Long userId, String roomId) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId)
-                .orElseThrow(() -> new NullPointerException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new NullPointerException("존재하지 않는 채팅방입니다."));
         if (room.getGuestId().equals(userId)) {
             room.deleteGuestId();
             chatRoomRepository.save(room);
         } else if (room.getHostId().equals(userId)) {
             room.deleteHostId();
             chatRoomRepository.save(room);
+        }
+    }
+
+    public void deleteChatRoom(Long userId, String roomId){
+        ChatRoom room = chatRoomRepository.findByRoomId(roomId)
+                .orElseThrow(() -> new NullPointerException("존재하지 않는 채팅방입니다."));
+        if (room.getGuestId().equals(userId)) {
+            room.deleteGuestId();
+            chatRoomRepository.delete(room);
+        } else if (room.getHostId().equals(userId)) {
+            room.deleteHostId();
+            chatRoomRepository.delete(room);
         }
     }
 }
