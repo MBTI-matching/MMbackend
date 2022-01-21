@@ -80,8 +80,8 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
-        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
+//        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
 
         body.add("code", code);
 
@@ -283,18 +283,11 @@ public class UserService {
                 () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
         );
 
-        // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
-        if (userRequestDto.getNickname() == null) {
-            userRequestDto.setNickname(user.getNickname());
-        }
-
         // 카카오 이미지 초기화
         String imgUrl = findUser.getProfileImage();
         // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장
         if (!multipartFile.isEmpty()) {
-            if (multipartFile.getSize() != 0) {
-                imgUrl = s3Uploader.upload(multipartFile, imageDirName);
-            }
+            imgUrl = s3Uploader.upload(multipartFile, imageDirName);
         }
 
         // 추가정보 설정하여 업데이트 (닉네임, 프로필, 소개글, 위치, 관심사, mbti)
@@ -408,7 +401,7 @@ public class UserService {
     @Transactional
     public List<PostResponseDto> getMyposts(Pageable pageable, User user) {
         // page, size, 내림차순으로 페이징한 내가 쓴 게시글 리스트
-        List<Post> postList = postRepository.findAllByUserOrderByCreatedAtDesc(pageable, user).getContent();
+        List<Post> postList = postRepository.findAllByUser(user, pageable).getContent();
         // 반환할 게시글 리스트
         List<PostResponseDto> posts = new ArrayList<>();
         for (Post onePost : postList) {
