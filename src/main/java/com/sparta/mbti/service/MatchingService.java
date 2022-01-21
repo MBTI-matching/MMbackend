@@ -34,21 +34,9 @@ public class MatchingService {
                 () -> new NullPointerException("유저 정보가 존재하지 않습니다."));
         List<User> admin = userRepository.findAllByRole(User.Role.ROLE_ADMIN);
 
-        if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
-                matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
-            return "신청 대기 상태입니다.";
-        }
-
-        if(chatRoomRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
-                chatRoomRepository.existsByHostIdAndGuestId(guestId, user.getId())){
-            return "대화 중인 상대입니다.";
-        }
-
-        if(guestId.equals(user.getId()))
-            return "본인과의 매칭은 불가능합니다.";
-
         Matching matching;
         // 0 ~ 1까지의 숫자 랜덤 반환
+        // 관리자 중복 안되게
         int rand = (int)(Math.random() * admin.size());
         if(guest.getRole().equals(User.Role.ROLE_BOT)){
             matching = Matching.builder()
@@ -61,6 +49,20 @@ public class MatchingService {
                     .guestId(guestId)
                     .build();
         }
+        
+        if(matchingRepository.existsByHostIdAndGuestId(matching.getHostId(), matching.getGuestId()) ||
+                matchingRepository.existsByHostIdAndGuestId(matching.getGuestId(), matching.getHostId())){
+            return "신청 대기 상태입니다.";
+        }
+
+        if(chatRoomRepository.existsByHostIdAndGuestId(matching.getHostId(), matching.getGuestId()) ||
+                chatRoomRepository.existsByHostIdAndGuestId(matching.getGuestId(), matching.getHostId())){
+            return "대화 중인 상대입니다.";
+        }
+
+        if(guestId.equals(user.getId()))
+            return "본인과의 매칭은 불가능합니다.";
+
         matchingRepository.save(matching);
 
         return "신청이 완료되었습니다.";
