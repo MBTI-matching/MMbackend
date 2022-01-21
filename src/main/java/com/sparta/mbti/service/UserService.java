@@ -351,6 +351,7 @@ public class UserService {
                 .intro(findUser.getIntro())
                 .location(findUser.getLocation().getLocation())
                 .locDetail(findUser.getLocDetail().getLocDetail())
+                .locFull(findUser.getLocFull())
                 .longitude(findUser.getLongitude())
                 .latitude(findUser.getLatitude())
                 .mbti(findUser.getMbti().getMbti())

@@ -59,6 +59,9 @@ public class User {
     private LocDetail locDetail;                // 구
 
     @Column
+    private String locFull;                     // 전체 위치
+
+    @Column
     private String longitude;
 
     @Column
@@ -89,6 +92,7 @@ public class User {
         this.intro = userRequestDto.getIntro();
         this.longitude = userRequestDto.getLongitude();
         this.latitude = userRequestDto.getLatitude();
+        this.locFull = userRequestDto.getLocFull();
         this.profileImage = imgUrl;
         this.location = location;
         this.locDetail = locDetail;
