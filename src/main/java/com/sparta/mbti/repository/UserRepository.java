@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByKakaoId(Long kakaoId);
     Optional<User> findByUsername(String username);
-    List<User> findAllByRole(String role);
+    List<User> findAllByRole(User.Role role);
     List<User> findAllByLocationAndLocDetail(Location location, LocDetail locDetail);
     List<User> findAllByLocationAndLocDetailAndMbtiIn(Location location, LocDetail locDetail, List<Mbti> mbtiList);
     List<User> findAllByLocationAndLocDetailAndMbti(Location location, LocDetail locDetail, Mbti mbti);

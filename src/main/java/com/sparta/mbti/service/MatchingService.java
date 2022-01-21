@@ -30,7 +30,7 @@ public class MatchingService {
     public String requestMatching (User user, Long guestId){
         User guest = userRepository.findById(guestId).orElseThrow(
                 () -> new NullPointerException("유저 정보가 존재하지 않습니다."));
-        List<User> admin = userRepository.findAllByRole("ROLE_ADMIN");
+        List<User> admin = userRepository.findAllByRole(User.Role.ROLE_ADMIN);
 
         if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId) ||
                 matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
