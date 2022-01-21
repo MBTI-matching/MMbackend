@@ -7,7 +7,9 @@ import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatRoomRepository;
 import com.sparta.mbti.repository.MatchingRepository;
 import com.sparta.mbti.repository.UserRepository;
+import com.sparta.mbti.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +49,7 @@ public class MatchingService {
 
         Matching matching;
         // 0 ~ 1까지의 숫자 랜덤 반환
-        int rand = (int)(Math.random()*admin.size());
+        int rand = (int)(Math.random() * admin.size());
         if(guest.getRole().equals(User.Role.ROLE_BOT)){
             matching = Matching.builder()
                     .hostId(user.getId())
@@ -134,13 +136,17 @@ public class MatchingService {
     }
 
     public String deleteMatching(User user, Long guestId) {
-        Matching matching;
+        Matching matching = null;
+        //초대 했을 경우 신청 취소
         if(matchingRepository.existsByHostIdAndGuestId(user.getId(), guestId)) {
             matching = matchingRepository.findByHostIdAndGuestId(user.getId(), guestId);
-        }else {
+        }
+        //초대 받았을 경우 신청 취소
+        else if(matchingRepository.existsByHostIdAndGuestId(guestId, user.getId())){
             matching = matchingRepository.findByHostIdAndGuestId(guestId, user.getId());
         }
-
+        else
+            return "잘못된 요청입니다";
         matchingRepository.delete(matching);
 
         return "신청이 취소되었습니다.";
