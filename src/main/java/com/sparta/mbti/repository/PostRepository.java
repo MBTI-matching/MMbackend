@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
-    Page<Post> findAllByUserOrderByCreatedAtDesc(Pageable pageable, User user);
+    Page<Post> findAllByUser(User user, Pageable pageable);
 
     Page<Post> findAllByTagOrderByCreatedAtDesc(Pageable pageable, String tag);
 
