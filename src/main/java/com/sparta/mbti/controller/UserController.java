@@ -6,6 +6,7 @@ import com.sparta.mbti.dto.response.MbtiResponseDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.dto.response.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
+import com.sparta.mbti.sentry.SentrySupport;
 import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,11 +24,13 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserService userService;
+    private final SentrySupport sentrySupport;
 
     // 카카오 로그인
     @GetMapping("/user/kakao/callback")
     public UserResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException {
         // 카카오 서버로부터 받은 인가 코드, JWT 토큰
+        sentrySupport.logSimpleMessage("카카오 로그인");
         return userService.kakaoLogin(code, response);
     }
 
@@ -38,11 +41,14 @@ public class UserController {
                                          @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile
     ) throws IOException {
         // 추가 정보 입력
+        sentrySupport.logSimpleMessage("유저 정보 수정");
         return userService.updateProfile(userDetails.getUser(), userRequestDto, multipartFile);
     }
 
+    // 회원 탈퇴
     @DeleteMapping("/api/profile")
     public void deleteProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        sentrySupport.logSimpleMessage("회원 탈퇴");
         userService.deleteProfile(userDetails.getUser());
     }
 
@@ -51,6 +57,7 @@ public class UserController {
     public List<PostResponseDto> getMyPosts(@RequestParam int page,
                                             @RequestParam int size,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        sentrySupport.logSimpleMessage("내가 쓴 글 조회");
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return userService.getMyposts(pageable, userDetails.getUser());
     }
@@ -58,6 +65,7 @@ public class UserController {
     // 내 MBTI 세부 정보 조회
     @GetMapping("/api/profile/mbti")
     public MbtiResponseDto viewProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        sentrySupport.logSimpleMessage("MBTI 조회");
         return userService.viewProfile(userDetails.getUser());
     }
 
