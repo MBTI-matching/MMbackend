@@ -47,7 +47,4 @@ public class ChatMessage {
     @Column
     private String date;
 
-    public void emoMessage() {
-        this.message = "이모티콘";
-    }
 }

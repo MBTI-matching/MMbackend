@@ -168,13 +168,16 @@ public class ChatRoomService {
     }
 
     public void deleteChatRoom(Long userId, String roomId){
+        List<ChatMessage> chatMessageList = chatMessageRepository.findAllByRoomId(roomId);
         ChatRoom room = chatRoomRepository.findByRoomId(roomId)
                 .orElseThrow(() -> new NullPointerException("존재하지 않는 채팅방입니다."));
         if (room.getGuestId().equals(userId)) {
             room.deleteGuestId();
             chatRoomRepository.delete(room);
+            chatMessageRepository.deleteAll(chatMessageList);
         } else if (room.getHostId().equals(userId)) {
             room.deleteHostId();
+            chatMessageRepository.deleteAll(chatMessageList);
             chatRoomRepository.delete(room);
         }
     }

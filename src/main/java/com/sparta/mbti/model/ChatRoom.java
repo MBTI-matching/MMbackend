@@ -38,8 +38,8 @@ public class ChatRoom implements Serializable {
     @Column
     private String guestMbti;
 
-//    @OneToMany(cascade = CascadeType.ALL)
-//    private final List<ChatMessage> messageList = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private final List<ChatMessage> messageList = new ArrayList<>();
 
     @Column
     private String roomId;
