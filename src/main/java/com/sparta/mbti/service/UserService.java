@@ -80,8 +80,8 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
-        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
+//        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
 
         body.add("code", code);
 
@@ -126,6 +126,7 @@ public class UserService {
         // JSON -> Java Object
         // 이 부분에서 카톡 프로필 정보 가져옴
         JSONObject body = new JSONObject(response.getBody());
+        System.out.println(body);
 
         // ID (카카오 기본키)
         Long id = body.getLong("id");
@@ -193,7 +194,9 @@ public class UserService {
 
         String ageRange;
 
-        if (Integer.parseInt(kakaoUserRequestDto.getAgeRange().substring(0, 2)) >= 50)
+        if (kakaoUserRequestDto.getAgeRange() != null) {
+            ageRange = "";
+        } else if (Integer.parseInt(kakaoUserRequestDto.getAgeRange().substring(0, 2)) >= 50)
             ageRange = "50대 이상";
         else
             ageRange = kakaoUserRequestDto.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
