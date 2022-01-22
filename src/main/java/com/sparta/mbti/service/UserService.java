@@ -51,6 +51,7 @@ public class UserService {
     private final LikesRepository likesRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final S3Uploader s3Uploader;
+    private final MatchingRepository matchingRepository;
 
     private final String imageDirName = "user";   // S3 폴더 경로
     static boolean signStatus = false;      // 회원가입 상태
@@ -391,6 +392,10 @@ public class UserService {
         // 채팅방 조회
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByGuestId(findUser.getId());
 
+        // 초대받은 요청 삭제
+        matchingRepository.deleteAllByGuestId(user.getId());
+        // 초대 한 요청 삭제
+        matchingRepository.deleteAllByHostId(user.getId());
         // 채팅방 삭제
         chatRoomRepository.deleteAll(chatRoomList);
         // 게시글 좋아요 삭제

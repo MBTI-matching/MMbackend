@@ -13,4 +13,8 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
 
     List<Matching> findAllByGuestId(Long id);
 
+    void deleteAllByHostId(Long id);
+
+    void deleteAllByGuestId(Long id);
+
 }
