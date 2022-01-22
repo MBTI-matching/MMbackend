@@ -77,6 +77,14 @@ dependencies {
 
     //nginx - health check
     implementation 'org.springframework.boot:spring-boot-starter-actuator:2.6.1'
+
+    // sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:5.5.2'
+    implementation 'io.sentry:sentry-logback:5.5.2'
+
+    implementation 'io.sentry:sentry:5.5.3'
+
+    implementation 'org.springframework.boot:spring-boot-starter-aop:2.6.1'
 }
 
 test {
