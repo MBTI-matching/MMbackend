@@ -80,8 +80,8 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
-        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
+//        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
 
         body.add("code", code);
 
@@ -194,9 +194,11 @@ public class UserService {
 
         String ageRange;
 
-        if (kakaoUserRequestDto.getAgeRange() != null) {
+        System.out.println(kakaoUserRequestDto.getAgeRange());
+
+        if (kakaoUserRequestDto.getAgeRange().equals("")) {
             ageRange = "";
-        } else if (Integer.parseInt(kakaoUserRequestDto.getAgeRange().substring(0, 2)) >= 50)
+        } else if (Integer.parseInt(kakaoUserRequestDto.getAgeRange().split("~")[0]) >= 50)
             ageRange = "50대 이상";
         else
             ageRange = kakaoUserRequestDto.getAgeRange().substring(0, 2).concat("대");  // 카카오 연령대
