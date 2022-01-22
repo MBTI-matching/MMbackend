@@ -85,6 +85,7 @@ public class User {
     private final List<Matching> matchingList = new ArrayList<>();
 
     // 추가 입력 정보
+    // DTO 모델에 안쓰기로 바꾸기
     public void update(UserRequestDto userRequestDto, String imgUrl, Location location, LocDetail locDetail, Mbti mbti, boolean status) {
         this.nickname = userRequestDto.getNickname();
         this.gender = userRequestDto.getGender();

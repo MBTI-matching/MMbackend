@@ -285,6 +285,12 @@ public class UserService {
                 () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
         );
 
+
+        // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
+//        if (userRequestDto.getNickname() == null) {
+//            userRequestDto.setNickname(user.getNickname());
+//        }
+
         // 카카오 이미지 초기화
         String imgUrl = findUser.getProfileImage();
         // 이미지 첨부 있으면 URL 에 S3에 업로드된 파일 url 저장

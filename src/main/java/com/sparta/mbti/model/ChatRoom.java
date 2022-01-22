@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -35,6 +37,9 @@ public class ChatRoom implements Serializable {
 
     @Column
     private String guestMbti;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private final List<ChatMessage> messageList = new ArrayList<>();
 
     @Column
     private String roomId;

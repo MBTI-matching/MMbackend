@@ -49,7 +49,6 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-
             chemyUserListDtos.add(ChemyUserResponseDto.builder()
                                                 .userId(oneUser.getId())
                                                 .nickname(oneUser.getNickname())
@@ -95,6 +94,7 @@ public class HomeService {
                     );
 
             // 해당 위치에서 사용자 리스트
+            // limit query
             List<User> userList = userRepository.findAllByLocationAndLocDetail(location, locDetail);
             Random generatorUser = new Random();
             // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
