@@ -47,11 +47,13 @@ public class ChatRoomController{
         List<ChatMessageResponseDto> responseDto = chatRoomService.readAllMessage(pageable, roomId);
         return ResponseEntity.ok().body(responseDto);
     }
+
     // 채팅방 나가기
     @PutMapping("/room/{roomId}")
     public void quitRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String roomId){
         chatRoomService.exitChatRoom(userDetails.getUser().getId(), roomId);
     }
+
     // 방 삭제
     @DeleteMapping("/room/{roomId}")
     public void deleteRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String roomId){
