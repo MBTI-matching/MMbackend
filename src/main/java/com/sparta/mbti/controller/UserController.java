@@ -6,7 +6,6 @@ import com.sparta.mbti.dto.response.MbtiResponseDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.dto.response.UserResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
-import com.sparta.mbti.sentry.SentrySupport;
 import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

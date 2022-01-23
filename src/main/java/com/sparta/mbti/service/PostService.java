@@ -76,6 +76,18 @@ public class PostService {
                 () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 
+        // 사이
+        String affinity;
+        if (user.getMbti().getBestMatch().contains(post.getUser().getMbti().getMbti())) {
+            affinity = "소울메이트";
+        } else if (user.getMbti().getGoodMatch().contains(post.getUser().getMbti().getMbti())) {
+            affinity = "좋은 사이";
+        } else if (user.getMbti().getBadMatch().contains(post.getUser().getMbti().getMbti())) {
+            affinity = "어려운 사이";
+        } else {
+            affinity = "무난한 사이";
+        }
+
         // 게시글 좋아요 수
         int likesCount = likesRepository.findAllByPost(post).size();
         // 게시글 좋아요 여부
@@ -117,6 +129,7 @@ public class PostService {
                 .tag(post.getTag())
                 .likesCount(likesCount)
                 .likeStatus(likeStatus)
+                .affinity(affinity)
                 .imageList(images)
                 .commentList(comments)
                 .createdAt(post.getCreatedAt())
@@ -188,6 +201,9 @@ public class PostService {
                 () -> new NullPointerException("해당 관심사는 다루지 않습니다.")
         );
 
+        // 사이
+        String affinity;
+
         // 태그(관심사명), page, size, 내림차순으로 페이징한 게시글 리스트
         List<Post> postList = postRepository.findAllByTagOrderByCreatedAtDesc(pageable, interest.getInterest()).getContent();
 
@@ -225,6 +241,16 @@ public class PostService {
                         .build());
             }
 
+            if (user.getMbti().getBestMatch().contains(onePost.getUser().getMbti().getMbti())) {
+                affinity = "소울메이트";
+            } else if (user.getMbti().getGoodMatch().contains(onePost.getUser().getMbti().getMbti())) {
+                affinity = "좋은 사이";
+            } else if (user.getMbti().getBadMatch().contains(onePost.getUser().getMbti().getMbti())) {
+                affinity = "어려운 사이";
+            } else {
+                affinity = "무난한 사이";
+            }
+
             posts.add(PostResponseDto.builder()
                     .postId(onePost.getId())
                     .nickname(onePost.getUser().getNickname())
@@ -236,6 +262,7 @@ public class PostService {
                     .tag(onePost.getTag())
                     .likesCount(likesCount)
                     .likeStatus(likeStatus)
+                    .affinity(affinity)
                     .imageList(images)
                     .commentList(comments)
                     .createdAt(onePost.getCreatedAt())

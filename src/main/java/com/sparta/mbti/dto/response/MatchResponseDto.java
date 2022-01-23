@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatchResponseDto {
-    private Long matchingId;
-    private Long hostId;
-    private Long guestId;
+    private Long partnerId;
     private String partnerNick;
     private String partnerImg;
     private String partnerMbti;
     private String partnerIntro;
+    private String affinity;
 }

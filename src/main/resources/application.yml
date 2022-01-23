@@ -5,6 +5,14 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+#  h2:
+#    console:
+#      enabled: true
+#
+#  datasource:
+#    url: jdbc:h2:mem:mbtidb
+#    username: sa
+#    password:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -46,7 +54,7 @@ sentry:
   logging:
     enabled: true
     minimum-event-level: info
-    minimum-breadcrumb-level: debug
+    minimum-breadcrumb-level: info
   debug: true
   sample-rate: 1
   traces-sample-rate: 1

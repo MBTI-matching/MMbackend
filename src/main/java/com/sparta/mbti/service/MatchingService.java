@@ -87,53 +87,84 @@ public class MatchingService {
         return user.getNickname() + "님이 " + host.getNickname() + "님의 신청을 수락하셨습니다.";
     }
 
-    // host가 guest내역 조회
+    // 보낸 내역 조회
     @Transactional
-    public List<MatchResponseDto> sentMatching(User user) {
+    public List<MatchResponseDto> sentMatching(User user) { //user == host
         List<Matching> matchList = matchingRepository.findAllByHostId(user.getId());
 
         List<MatchResponseDto> sentList = new ArrayList<>();
-        for (Matching oneMatch : matchList ) {
-
-            User guest = userRepository.findById(oneMatch.getGuestId()).orElseThrow(
-                    () -> new NullPointerException("유저의 정보가 없습니다.")
-            );
-
-            sentList.add(MatchResponseDto.builder()
-                    .matchingId(oneMatch.getId())
-                    .hostId(oneMatch.getHostId())
-                    .guestId(guest.getId())
-                    .partnerNick(guest.getNickname())
-                    .partnerImg(guest.getProfileImage())
-                    .partnerMbti(guest.getMbti().getMbti())
-                    .partnerIntro(guest.getIntro())
-                    .build());
+        for (Matching match : matchList) {
+            User partner;
+            if(userRepository.existsById(match.getGuestId())){
+                partner = userRepository.findById(match.getGuestId()).orElseThrow(
+                        () -> new NullPointerException("유저의 정보가 없습니다.")
+                );
+                sentList.add(MatchResponseDto.builder()
+                        .partnerId(partner.getId())
+                        .partnerNick(partner.getNickname())
+                        .partnerImg(partner.getProfileImage())
+                        .partnerMbti(partner.getMbti().getMbti())
+                        .partnerIntro(partner.getIntro())
+                        .build());
+            }
+            else
+                sentList.add(MatchResponseDto.builder()
+                        .partnerId(0L)
+                        .partnerNick("없는 상대입니다.")
+                        .partnerImg("https://bizchemy-bucket-s3.s3.ap-northeast-2.amazonaws.com/default/default.png")
+                        .partnerMbti("ENTJ")
+                        .partnerIntro("없는 상대입니다.")
+                        .build());
         }
         return sentList;
     }
 
-    // guest가 host내역 조회
+    // 받은 내역 조회
     @Transactional
-    public List<MatchResponseDto> invitedMatching(User user) {
+    public List<MatchResponseDto> invitedMatching(User user) {  // User = guest
         List<Matching> matchList = matchingRepository.findAllByGuestId(user.getId());
 
+        // MBTI 상성
+        String affinity;
+
         List<MatchResponseDto> invitations = new ArrayList<>();
-        for (Matching oneMatch : matchList) {
+        for (Matching match : matchList) {
+            User partner;
+            if (userRepository.existsById(match.getHostId())) {
+                partner = userRepository.findById(match.getHostId()).orElseThrow(
+                        () -> new NullPointerException("유저의 정보가 없습니다.")
+                );
 
-            User host = userRepository.findById(oneMatch.getHostId()).orElseThrow(
-                    () -> new NullPointerException("유저의 정보가 없습니다.")
-            );
+                if (user.getMbti().getBestMatch().contains(partner.getMbti().getMbti())) {
+                    affinity = "소울메이트";
+                } else if (user.getMbti().getGoodMatch().contains(partner.getMbti().getMbti())) {
+                    affinity = "좋은 사이";
+                } else if (user.getMbti().getBadMatch().contains(partner.getMbti().getMbti())) {
+                    affinity = "어려운 사이";
+                } else {
+                    affinity = "무난한 사이";
+                }
 
-            invitations.add(MatchResponseDto.builder()
-                    .matchingId(oneMatch.getId())
-                    .hostId(oneMatch.getHostId())
-                    .guestId(oneMatch.getGuestId())
-                    .partnerNick(host.getNickname())
-                    .partnerImg(host.getProfileImage())
-                    .partnerMbti(host.getMbti().getMbti())
-                    .partnerIntro(host.getIntro())
-                    .build());
+                invitations.add(MatchResponseDto.builder()
+                        .partnerId(partner.getId())
+                        .partnerNick(partner.getNickname())
+                        .partnerImg(partner.getProfileImage())
+                        .partnerMbti(partner.getMbti().getMbti())
+                        .partnerIntro(partner.getIntro())
+                        .affinity(affinity)
+                        .build());
+            }
+            // 상대가 없는경우
+            else
+                invitations.add(MatchResponseDto.builder()
+                        .partnerId(0L)
+                        .partnerNick("없는 상대입니다.")
+                        .partnerImg("https://bizchemy-bucket-s3.s3.ap-northeast-2.amazonaws.com/default/default.png")
+                        .partnerMbti("ENTJ")
+                        .partnerIntro("없는 상대입니다.")
+                        .build());
         }
+
         return invitations;
     }
 
