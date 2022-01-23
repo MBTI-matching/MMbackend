@@ -415,6 +415,7 @@ public class UserService {
     // 내가 쓴 글 조회
     @Transactional
     public List<PostResponseDto> getMyposts(Pageable pageable, User user) {
+
         // page, size, 내림차순으로 페이징한 내가 쓴 게시글 리스트
         List<Post> postList = postRepository.findAllByUser(user, pageable).getContent();
         // 반환할 게시글 리스트
@@ -446,6 +447,7 @@ public class UserService {
                         .createdAt(oneComment.getCreatedAt())
                         .build());
             }
+
             // 내가 쓴 게시글 리스트
             posts.add(PostResponseDto.builder()
                     .postId(onePost.getId())

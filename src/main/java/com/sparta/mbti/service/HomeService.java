@@ -28,20 +28,35 @@ public class HomeService {
 
     // 케미 리스트 (위치 / MBTI 케미)
     @Transactional
-    public ChemyAllResponseDto chemyList(User user) {
-        // MBTI 이상적 궁합 리스트 4개까지 조회
-        String mbtiChemy = user.getMbti().getMbti();
-        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy);
+    public ChemyAffinityResponseDto chemyList(User user) {
+        // MBTI 이상적 궁합 리스트 조회
+        String bestMatch = user.getMbti().getBestMatch();
 
+        List<Mbti> findMbtiList = new ArrayList<>();
+        List<Mbti> allList = mbtiRepository.findAll();
+        for (Mbti one : allList) {
+            if (bestMatch.contains(one.getMbti())) {
+                findMbtiList.add(one);
+            }
+        }
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(user.getLocation(), user.getLocDetail(), findMbtiList);
         // 반환 사용자 리스트
-        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+        List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
+        // 사이
+        String affinity;
         for (User oneUser : findUserList) {
+
+            if (bestMatch.contains(oneUser.getMbti().getMbti())) {
+                affinity = "소울메이트";
+            } else if (user.getMbti().getGoodMatch().contains(oneUser.getMbti().getMbti())) {
+                affinity = "좋은 사이";
+            } else if (user.getMbti().getBadMatch().contains(oneUser.getMbti().getMbti())) {
+                affinity = "어려운 사이";
+            } else {
+                affinity = "무난한 사이";
+            }
+
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
             List<String> interestList = new ArrayList<>();
@@ -49,20 +64,21 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserResponseDto.builder()
-                                                .userId(oneUser.getId())
-                                                .nickname(oneUser.getNickname())
-                                                .profileImage(oneUser.getProfileImage())
-                                                .intro(oneUser.getIntro())
-                                                .location(oneUser.getLocation().getLocation())
-                                                .locDetail(oneUser.getLocDetail().getLocDetail())
-                                                .mbti(oneUser.getMbti().getMbti())
-                                                .interestList(interestList)
-                                                .build());
+            chemyUserListDtos.add(UserAffinityResponseDto.builder()
+                    .userId(oneUser.getId())
+                    .nickname(oneUser.getNickname())
+                    .profileImage(oneUser.getProfileImage())
+                    .intro(oneUser.getIntro())
+                    .location(oneUser.getLocation().getLocation())
+                    .locDetail(oneUser.getLocDetail().getLocDetail())
+                    .mbti(oneUser.getMbti().getMbti())
+                    .affinity(affinity)
+                    .interestList(interestList)
+                    .build());
         }
 
         // 반환
-        return ChemyAllResponseDto.builder()
+        return ChemyAffinityResponseDto.builder()
                                 .location(user.getLocation().getLocation())
                                 .locDetail(user.getLocDetail().getLocDetail())
                                 .userCount(findUserList.size())
@@ -153,7 +169,7 @@ public class HomeService {
     }
 
     // 지역 케미 리스트 (위치 / MBTI)
-    public ChemyAllResponseDto locationList(Long locationId, Long locDetailId, User user) {
+    public ChemyAffinityResponseDto locationList(Long locationId, Long locDetailId, User user) {
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
@@ -164,19 +180,34 @@ public class HomeService {
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
         );
 
-        // MBTI 이상적 궁합 리스트 4개까지 조회
-        String mbtiChemy = user.getMbti().getMbti();
-        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy);
+        // MBTI 이상적 궁합 리스트 조회
+        String bestMatch = user.getMbti().getBestMatch();
+        List<Mbti> findMbtiList = new ArrayList<>();
+
+        List<Mbti> allList = mbtiRepository.findAll();
+        for (Mbti one : allList) {
+            if (bestMatch.contains(one.getMbti())) {
+                findMbtiList.add(one);
+            }
+        }
 
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
         // 반환 사용자 리스트
-        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+        List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
+        // 사이
+        String affinity;
         for (User oneUser : findUserList) {
+            if (bestMatch.contains(oneUser.getMbti().getMbti())) {
+                affinity = "소울메이트";
+            } else if (user.getMbti().getGoodMatch().contains(oneUser.getMbti().getMbti())) {
+                affinity = "좋은 사이";
+            } else if (user.getMbti().getBadMatch().contains(oneUser.getMbti().getMbti())) {
+                affinity = "어려운 사이";
+            } else {
+                affinity = "무난한 사이";
+            }
+
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
             List<String> interestList = new ArrayList<>();
@@ -184,7 +215,7 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserResponseDto.builder()
+            chemyUserListDtos.add(UserAffinityResponseDto.builder()
                     .userId(oneUser.getId())
                     .nickname(oneUser.getNickname())
                     .profileImage(oneUser.getProfileImage())
@@ -192,22 +223,27 @@ public class HomeService {
                     .location(oneUser.getLocation().getLocation())
                     .locDetail(oneUser.getLocDetail().getLocDetail())
                     .mbti(oneUser.getMbti().getMbti())
+                    .affinity(affinity)
                     .interestList(interestList)
                     .build());
         }
 
         // 반환
-        return ChemyAllResponseDto.builder()
+        return ChemyAffinityResponseDto.builder()
                 .location(location.getLocation())
                 .locDetail(locDetail.getLocDetail())
                 .userCount(findUserList.size())
                 .userList(chemyUserListDtos)
                 .build();
     }
-    // 전체 게시글
 
+    // 전체 게시글
     @Transactional
     public List<PostResponseDto> getAllposts(Pageable pageable, User user) {
+
+        // 사이
+        String affinity;
+
         // page, size, 내림차순으로 페이징한 게시글 리스트
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
         // 반환할 게시글 리스트
@@ -242,22 +278,34 @@ public class HomeService {
                                             .createdAt(oneComment.getCreatedAt())
                                             .build());
             }
+
+            if (user.getMbti().getBestMatch().contains(onePost.getUser().getMbti().getMbti())) {
+                affinity = "소울메이트";
+            } else if (user.getMbti().getGoodMatch().contains(onePost.getUser().getMbti().getMbti())) {
+                affinity = "좋은 사이";
+            } else if (user.getMbti().getBadMatch().contains(onePost.getUser().getMbti().getMbti())) {
+                affinity = "어려운 사이";
+            } else {
+                affinity = "무난한 사이";
+            }
+
             // 전체 게시글 리스트
             posts.add(PostResponseDto.builder()
-                                .postId(onePost.getId())
-                                .nickname(onePost.getUser().getNickname())
-                                .profileImage(onePost.getUser().getProfileImage())
-                                .location(onePost.getUser().getLocation().getLocation())
-                                .locDetail(onePost.getUser().getLocDetail().getLocDetail())
-                                .mbti(onePost.getUser().getMbti().getMbti())
-                                .content(onePost.getContent())
-                                .tag(onePost.getTag())
-                                .likesCount(likesCount)
-                                .likeStatus(likeStatus)
-                                .imageList(images)
-                                .commentList(comments)
-                                .createdAt(onePost.getCreatedAt())
-                                .build());
+                    .postId(onePost.getId())
+                    .nickname(onePost.getUser().getNickname())
+                    .profileImage(onePost.getUser().getProfileImage())
+                    .location(onePost.getUser().getLocation().getLocation())
+                    .locDetail(onePost.getUser().getLocDetail().getLocDetail())
+                    .mbti(onePost.getUser().getMbti().getMbti())
+                    .content(onePost.getContent())
+                    .tag(onePost.getTag())
+                    .likesCount(likesCount)
+                    .likeStatus(likeStatus)
+                    .affinity(affinity)
+                    .imageList(images)
+                    .commentList(comments)
+                    .createdAt(onePost.getCreatedAt())
+                    .build());
         }
         return posts;
     }
@@ -345,7 +393,7 @@ public class HomeService {
     }
 
     // 관심사별 케미 리스트 #2 (지역 / 관심사 / MBTI)
-    public ChemyAllResponseDto chemyInterest(Long locationId, Long locDetailId, Long interestId, User user) {
+    public ChemyAffinityResponseDto chemyInterest(Long locationId, Long locDetailId, Long interestId, User user) {
 
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
@@ -362,13 +410,16 @@ public class HomeService {
                 () -> new NullPointerException("해당 관심사는 존재하지 않습니다.")
         );
 
-        // MBTI 이상적 궁합 리스트 4개까지 조회
-        String mbtiChemy = user.getMbti().getMbti();
-        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy);
+        // MBTI 이상적 궁합 리스트 조회
+        String bestMatch = user.getMbti().getBestMatch();
+        List<Mbti> findMbtiList = new ArrayList<>();
+
+        List<Mbti> allList = mbtiRepository.findAll();
+        for (Mbti one : allList) {
+            if (bestMatch.contains(one.getMbti())) {
+                findMbtiList.add(one);
+            }
+        }
 
         // 지역별 사용자 리스트
         List<User> userList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
@@ -392,7 +443,7 @@ public class HomeService {
             maxCount = 10;
         }
 
-        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+        List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
         // 사용자 리스트 인덱스 값 저장
         int[] userSize = new int[maxCount];
         for (int i = 0; i < maxCount; i++) {
@@ -406,8 +457,21 @@ public class HomeService {
             }
         }
 
+        // 사이
+        String affinity;
+
         for (int i = 0; i < maxCount; i++) {
             User findUser = interestedUser.get(i);
+
+            if (bestMatch.contains(findUser.getMbti().getMbti())) {
+                affinity = "소울메이트";
+            } else if (user.getMbti().getGoodMatch().contains(findUser.getMbti().getMbti())) {
+                affinity = "좋은 사이";
+            } else if (user.getMbti().getBadMatch().contains(findUser.getMbti().getMbti())) {
+                affinity = "어려운 사이";
+            } else {
+                affinity = "무난한 사이";
+            }
 
             // 관심사 리스트 조회
             List<String> interestList = new ArrayList<>();
@@ -416,7 +480,7 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(ChemyUserResponseDto.builder()
+            chemyUserListDtos.add(UserAffinityResponseDto.builder()
                     .userId(findUser.getId())
                     .nickname(findUser.getNickname())
                     .profileImage(findUser.getProfileImage())
@@ -424,10 +488,11 @@ public class HomeService {
                     .location(findUser.getLocation().getLocation())
                     .locDetail(findUser.getLocDetail().getLocDetail())
                     .mbti(findUser.getMbti().getMbti())
+                    .affinity(affinity)
                     .interestList(interestList)
                     .build());
         }
-        return ChemyAllResponseDto.builder()
+        return ChemyAffinityResponseDto.builder()
                 .location(location.getLocation())
                 .locDetail(locDetail.getLocDetail())
                 .userCount(interestedUser.size())

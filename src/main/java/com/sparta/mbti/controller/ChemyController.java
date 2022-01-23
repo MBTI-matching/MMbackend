@@ -1,6 +1,7 @@
 package com.sparta.mbti.controller;
 
 import com.sparta.mbti.dto.response.ChemyUserResponseDto;
+import com.sparta.mbti.dto.response.UserAffinityResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.ChemyService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class ChemyController {
 
     // 자동 매칭
     @GetMapping("/api/chemy/auto")
-    public ChemyUserResponseDto chemyAuto(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public UserAffinityResponseDto chemyAuto(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return chemyService.chemyAuto(userDetails.getUser());
     }
 
@@ -24,5 +25,11 @@ public class ChemyController {
     @GetMapping("/api/chemy/{userId}")
     public ChemyUserResponseDto chemyUser(@PathVariable Long userId) {
         return chemyService.chemyUser(userId);
+    }
+
+    // 케미 사용자 상세 정보 보기 - 열람자와의 궁합 고려
+    @GetMapping("/api/chemy/affinity/{userId}")
+    public UserAffinityResponseDto affinityUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long userId) {
+        return chemyService.affinityUser(userDetails.getUser(), userId);
     }
 }

@@ -34,6 +34,15 @@ public class Mbti {
     private String mbtiForth;                   // mbti 이상적 4단계
 
     @Column
+    private String bestMatch;                   // 소울메이트
+
+    @Column
+    private String goodMatch;                   // 좋은 사이
+
+    @Column
+    private String badMatch;                    // 안 맞는 사이
+
+    @Column
     private String firstTitle;                  // 제목 #1
 
     @Column(columnDefinition = "TEXT")

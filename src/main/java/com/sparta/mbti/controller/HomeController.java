@@ -1,5 +1,6 @@
 package com.sparta.mbti.controller;
 
+import com.sparta.mbti.dto.response.ChemyAffinityResponseDto;
 import com.sparta.mbti.dto.response.ChemyAllResponseDto;
 import com.sparta.mbti.dto.response.PostResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
@@ -23,7 +24,7 @@ public class HomeController {
 
     // 전체 케미 리스트 (위치 / MBTI)
     @GetMapping("/api/chemy/list")
-    public ChemyAllResponseDto chemyList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ChemyAffinityResponseDto chemyList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return homeService.chemyList(userDetails.getUser());
     }
 
@@ -35,13 +36,13 @@ public class HomeController {
 
     // 지역 케미 리스트 (위치 / MBTI)
     @GetMapping("/api/chemy/list/{locationId}/{locDetailId}")
-    public ChemyAllResponseDto locationList(@PathVariable Long locationId,
+    public ChemyAffinityResponseDto locationList(@PathVariable Long locationId,
                                             @PathVariable Long locDetailId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return homeService.locationList(locationId, locDetailId, userDetails.getUser());
     }
 
-    // 지역 & 관심사별 케미 리스트: (위치 / 관심사)
+    // 지역 & 관심사별 케미 리스트 #1: (위치 / 관심사)
     @GetMapping("/api/chemy/{locationId}/{locDetailId}/{interestId}")
     public ChemyAllResponseDto interestList(@PathVariable Long locationId,
                                             @PathVariable Long locDetailId,
@@ -49,9 +50,9 @@ public class HomeController {
         return homeService.interestList(locationId, locDetailId, interestId);
     }
 
-    // 지역 & 관심사별 케미 리스트: (위치 / 관심사 / MBTI)
+    // 지역 & 관심사별 케미 리스트 #2: (위치 / 관심사 / MBTI)
     @GetMapping("/api/chemy/list/{locationId}/{locDetailId}/{interestId}")
-    public ChemyAllResponseDto chemyInterest(@PathVariable Long locationId,
+    public ChemyAffinityResponseDto chemyInterest(@PathVariable Long locationId,
                                              @PathVariable Long locDetailId,
                                              @PathVariable Long interestId,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
