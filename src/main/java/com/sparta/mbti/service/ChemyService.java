@@ -24,21 +24,12 @@ public class ChemyService {
     // 전국 매칭
     @Transactional
     public UserAffinityResponseDto chemyAuto(User user) {
-
-        String bestMatch = user.getMbti().getBestMatch();
-        List<Mbti> foundMbtiList = new ArrayList<>();
-
-        List<Mbti> allList = mbtiRepository.findAll();
-        for (Mbti one : allList) {
-            if (bestMatch.contains(one.getMbti())) {
-                foundMbtiList.add(one);
-            }
-        }
+        // 사용자 가장 이상적 MBTI 조회
+        Mbti findMbti = mbtiRepository.findByMbtiFirst(user.getMbti().getMbti()).orElseThrow(
+                () -> new IllegalArgumentException("해당 MBTI가 존재하지 않습니다.")
+        );
         // MBTI // ROLE  가장 이상적인 사용자 리스트 조회
-        List<User> findUserList = userRepository.findAllByRoleAndMbtiIn(User.Role.ROLE_USER, foundMbtiList);
-
-        // 궁합
-        String affinity;
+        List<User> findUserList = userRepository.findAllByMbtiAndRole(findMbti, User.Role.ROLE_USER);
 
         // 사용자 리스트 수 범위만큼 랜덤 생성 (10 이면 0~9 랜덤 생성)
         Random generator = new Random();
@@ -53,17 +44,6 @@ public class ChemyService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-            if (user.getMbti().getBestMatch().contains(findUserList.get(size).getMbti().getMbti())) {
-                affinity = "소울메이트";
-            } else if (user.getMbti().getGoodMatch().contains(findUserList.get(size).getMbti().getMbti())) {
-                affinity = "좋은 사이";
-            } else if (user.getMbti().getBadMatch().contains(findUserList.get(size).getMbti().getMbti())) {
-                affinity = "어려운 사이";
-            } else {
-                affinity = "무난한 사이";
-            }
-
-
             // 랜덤 사용자 반환
             return UserAffinityResponseDto.builder()
                     .username(findUserList.get(size).getUsername())
@@ -76,12 +56,12 @@ public class ChemyService {
                     .location(findUserList.get(size).getLocation().getLocation())
                     .locDetail(findUserList.get(size).getLocDetail().getLocDetail())
                     .mbti(findUserList.get(size).getMbti().getMbti())
-                    .affinity(affinity)
+                    .affinity("우리는 소울메이트!")
                     .interestList(interestList)
                     .build();
         } else {
-
-            List<User> findLocUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(user.getLocation(), user.getLocDetail(), foundMbtiList);
+            // 위치 / 상세위치 / MBTI 와 가장 이상적인 사용자 리스트 조회
+            List<User> findLocUserList = userRepository.findAllByLocationAndLocDetailAndMbti(user.getLocation(), user.getLocDetail(), findMbti);
             // 사용자 리스트 수 범위만큼 랜덤 생성 (10 이면 0~9 랜덤 생성)
             Random votGenerator = new Random();
             int votSize = 0;
@@ -93,16 +73,6 @@ public class ChemyService {
                 List<String> interestList = new ArrayList<>();
                 for (UserInterest userInterest : userInterestList) {
                     interestList.add(userInterest.getInterest().getInterest());
-                }
-
-                if (user.getMbti().getBestMatch().contains(findLocUserList.get(votSize).getMbti().getMbti())) {
-                    affinity = "소울메이트";
-                } else if (user.getMbti().getGoodMatch().contains(findLocUserList.get(votSize).getMbti().getMbti())) {
-                    affinity = "좋은 사이";
-                } else if (user.getMbti().getBadMatch().contains(findLocUserList.get(votSize).getMbti().getMbti())) {
-                    affinity = "어려운 사이";
-                } else {
-                    affinity = "무난한 사이";
                 }
 
                 // 랜덤 사용자 반환
@@ -117,7 +87,7 @@ public class ChemyService {
                         .location(findLocUserList.get(votSize).getLocation().getLocation())
                         .locDetail(findLocUserList.get(votSize).getLocDetail().getLocDetail())
                         .mbti(findLocUserList.get(votSize).getMbti().getMbti())
-                        .affinity(affinity)
+                        .affinity("우리는 소울메이트!")
                         .interestList(interestList)
                         .build();
             }
@@ -200,9 +170,9 @@ public class ChemyService {
     }
 
     public UserAffinityResponseDto affinityUser(User user, Long userId) {
-
         // 사용자 조회
         User findUser = userRepository.getById(userId);
+        String findMbti = findUser.getMbti().getMbti();
 
         // 관심사 리스트 조회
         List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
@@ -211,19 +181,15 @@ public class ChemyService {
             interestList.add(userInterest.getInterest().getInterest());
         }
 
-        // 궁합
+        // 상성 표기
         String affinity;
-
-        if (user.getMbti().getBestMatch().contains(findUser.getMbti().getMbti())) {
-            affinity = "소울메이트";
-        } else if (user.getMbti().getGoodMatch().contains(findUser.getMbti().getMbti())) {
-            affinity = "좋은 사이";
-        } else if (user.getMbti().getBadMatch().contains(findUser.getMbti().getMbti())) {
-            affinity = "어려운 사이";
+        if (findMbti == user.getMbti().getMbtiFirst()) {
+            affinity = "우리는 소울메이트!";
+        } else if (findMbti.equals(user.getMbti().getMbtiSecond()) || findMbti.equals(user.getMbti().getMbtiThird()) || findMbti.equals(user.getMbti().getMbtiForth())) {
+            affinity = "친해지기 쉬운 사이입니다.";
         } else {
-            affinity = "무난한 사이";
+            affinity = "무난한 사이입니다.";
         }
-
         return UserAffinityResponseDto.builder()
                 .username(findUser.getUsername())
                 .userId(findUser.getId())
@@ -235,8 +201,8 @@ public class ChemyService {
                 .location(findUser.getLocation().getLocation())
                 .locDetail(findUser.getLocDetail().getLocDetail())
                 .mbti(findUser.getMbti().getMbti())
-                .interestList(interestList)
                 .affinity(affinity)
+                .interestList(interestList)
                 .build();
     }
 }
