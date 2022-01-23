@@ -78,14 +78,12 @@ public class PostService {
 
         // 사이
         String affinity;
-        if (user.getMbti().getBestMatch().contains(post.getUser().getMbti().getMbti())) {
-            affinity = "소울메이트";
-        } else if (user.getMbti().getGoodMatch().contains(post.getUser().getMbti().getMbti())) {
-            affinity = "좋은 사이";
-        } else if (user.getMbti().getBadMatch().contains(post.getUser().getMbti().getMbti())) {
-            affinity = "어려운 사이";
+        if (post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+            affinity = "우리는 소울메이트!";
+        } else if (post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+            affinity = "친해지기 쉬운 사이입니다.";
         } else {
-            affinity = "무난한 사이";
+            affinity = "무난한 사이입니다.";
         }
 
         // 게시글 좋아요 수
@@ -241,14 +239,12 @@ public class PostService {
                         .build());
             }
 
-            if (user.getMbti().getBestMatch().contains(onePost.getUser().getMbti().getMbti())) {
-                affinity = "소울메이트";
-            } else if (user.getMbti().getGoodMatch().contains(onePost.getUser().getMbti().getMbti())) {
-                affinity = "좋은 사이";
-            } else if (user.getMbti().getBadMatch().contains(onePost.getUser().getMbti().getMbti())) {
-                affinity = "어려운 사이";
+            if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                affinity = "우리는 소울메이트!";
+            } else if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                affinity = "친해지기 쉬운 사이입니다.";
             } else {
-                affinity = "무난한 사이";
+                affinity = "무난한 사이입니다.";
             }
 
             posts.add(PostResponseDto.builder()

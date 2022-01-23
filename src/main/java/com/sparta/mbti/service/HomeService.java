@@ -29,39 +29,35 @@ public class HomeService {
     // 케미 리스트 (위치 / MBTI 케미)
     @Transactional
     public ChemyAffinityResponseDto chemyList(User user) {
-        // MBTI 이상적 궁합 리스트 조회
-        String bestMatch = user.getMbti().getBestMatch();
+        // MBTI 이상적 궁합 리스트 4개까지 조회
+        String mbtiChemy = user.getMbti().getMbti();
+        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy);
 
-        List<Mbti> findMbtiList = new ArrayList<>();
-        List<Mbti> allList = mbtiRepository.findAll();
-        for (Mbti one : allList) {
-            if (bestMatch.contains(one.getMbti())) {
-                findMbtiList.add(one);
-            }
-        }
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(user.getLocation(), user.getLocDetail(), findMbtiList);
         // 반환 사용자 리스트
         List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
         // 사이
-        String affinity;
         for (User oneUser : findUserList) {
-
-            if (bestMatch.contains(oneUser.getMbti().getMbti())) {
-                affinity = "소울메이트";
-            } else if (user.getMbti().getGoodMatch().contains(oneUser.getMbti().getMbti())) {
-                affinity = "좋은 사이";
-            } else if (user.getMbti().getBadMatch().contains(oneUser.getMbti().getMbti())) {
-                affinity = "어려운 사이";
-            } else {
-                affinity = "무난한 사이";
-            }
-
             // 관심사 리스트 조회
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
             List<String> interestList = new ArrayList<>();
             for (UserInterest userInterest : userInterestList) {
                 interestList.add(userInterest.getInterest().getInterest());
+            }
+
+            // 상성 표기
+            String affinity;
+            if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                affinity = "우리는 소울메이트!";
+            } else if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                affinity = "친해지기 쉬운 사이입니다.";
+            } else {
+                affinity = "무난한 사이입니다.";
             }
 
             chemyUserListDtos.add(UserAffinityResponseDto.builder()
@@ -79,11 +75,11 @@ public class HomeService {
 
         // 반환
         return ChemyAffinityResponseDto.builder()
-                                .location(user.getLocation().getLocation())
-                                .locDetail(user.getLocDetail().getLocDetail())
-                                .userCount(findUserList.size())
-                                .userList(chemyUserListDtos)
-                                .build();
+                .location(user.getLocation().getLocation())
+                .locDetail(user.getLocDetail().getLocDetail())
+                .userCount(findUserList.size())
+                .userList(chemyUserListDtos)
+                .build();
     }
 
     // 둘러보기
@@ -180,16 +176,13 @@ public class HomeService {
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
         );
 
-        // MBTI 이상적 궁합 리스트 조회
-        String bestMatch = user.getMbti().getBestMatch();
-        List<Mbti> findMbtiList = new ArrayList<>();
-
-        List<Mbti> allList = mbtiRepository.findAll();
-        for (Mbti one : allList) {
-            if (bestMatch.contains(one.getMbti())) {
-                findMbtiList.add(one);
-            }
-        }
+        // MBTI 이상적 궁합 리스트 4개까지 조회
+        String mbtiChemy = user.getMbti().getMbti();
+        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy);
 
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
@@ -198,14 +191,12 @@ public class HomeService {
         // 사이
         String affinity;
         for (User oneUser : findUserList) {
-            if (bestMatch.contains(oneUser.getMbti().getMbti())) {
-                affinity = "소울메이트";
-            } else if (user.getMbti().getGoodMatch().contains(oneUser.getMbti().getMbti())) {
-                affinity = "좋은 사이";
-            } else if (user.getMbti().getBadMatch().contains(oneUser.getMbti().getMbti())) {
-                affinity = "어려운 사이";
+            if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                affinity = "우리는 소울메이트!";
+            } else if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                affinity = "친해지기 쉬운 사이입니다.";
             } else {
-                affinity = "무난한 사이";
+                affinity = "무난한 사이입니다.";
             }
 
             // 관심사 리스트 조회
@@ -279,14 +270,12 @@ public class HomeService {
                                             .build());
             }
 
-            if (user.getMbti().getBestMatch().contains(onePost.getUser().getMbti().getMbti())) {
-                affinity = "소울메이트";
-            } else if (user.getMbti().getGoodMatch().contains(onePost.getUser().getMbti().getMbti())) {
-                affinity = "좋은 사이";
-            } else if (user.getMbti().getBadMatch().contains(onePost.getUser().getMbti().getMbti())) {
-                affinity = "어려운 사이";
+            if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                affinity = "우리는 소울메이트!";
+            } else if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                affinity = "친해지기 쉬운 사이입니다.";
             } else {
-                affinity = "무난한 사이";
+                affinity = "무난한 사이입니다.";
             }
 
             // 전체 게시글 리스트
@@ -410,16 +399,13 @@ public class HomeService {
                 () -> new NullPointerException("해당 관심사는 존재하지 않습니다.")
         );
 
-        // MBTI 이상적 궁합 리스트 조회
-        String bestMatch = user.getMbti().getBestMatch();
-        List<Mbti> findMbtiList = new ArrayList<>();
-
-        List<Mbti> allList = mbtiRepository.findAll();
-        for (Mbti one : allList) {
-            if (bestMatch.contains(one.getMbti())) {
-                findMbtiList.add(one);
-            }
-        }
+        // MBTI 이상적 궁합 리스트 4개까지 조회
+        String mbtiChemy = user.getMbti().getMbti();
+        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy,
+                mbtiChemy);
 
         // 지역별 사용자 리스트
         List<User> userList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
@@ -463,14 +449,12 @@ public class HomeService {
         for (int i = 0; i < maxCount; i++) {
             User findUser = interestedUser.get(i);
 
-            if (bestMatch.contains(findUser.getMbti().getMbti())) {
-                affinity = "소울메이트";
-            } else if (user.getMbti().getGoodMatch().contains(findUser.getMbti().getMbti())) {
-                affinity = "좋은 사이";
-            } else if (user.getMbti().getBadMatch().contains(findUser.getMbti().getMbti())) {
-                affinity = "어려운 사이";
+            if (findUser.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                affinity = "우리는 소울메이트!";
+            } else if (findUser.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || findUser.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || findUser.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                affinity = "친해지기 쉬운 사이입니다.";
             } else {
-                affinity = "무난한 사이";
+                affinity = "무난한 사이입니다.";
             }
 
             // 관심사 리스트 조회

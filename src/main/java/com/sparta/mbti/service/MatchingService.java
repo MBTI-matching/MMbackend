@@ -99,12 +99,22 @@ public class MatchingService {
                 partner = userRepository.findById(match.getGuestId()).orElseThrow(
                         () -> new NullPointerException("유저의 정보가 없습니다.")
                 );
+                // 상성 표기
+                String affinity;
+                if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                    affinity = "우리는 소울메이트!";
+                } else if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                    affinity = "친해지기 쉬운 사이입니다.";
+                } else {
+                    affinity = "무난한 사이입니다.";
+                }
                 sentList.add(MatchResponseDto.builder()
                         .partnerId(partner.getId())
                         .partnerNick(partner.getNickname())
                         .partnerImg(partner.getProfileImage())
                         .partnerMbti(partner.getMbti().getMbti())
                         .partnerIntro(partner.getIntro())
+                        .affinity(affinity)
                         .build());
             }
             else
@@ -135,14 +145,13 @@ public class MatchingService {
                         () -> new NullPointerException("유저의 정보가 없습니다.")
                 );
 
-                if (user.getMbti().getBestMatch().contains(partner.getMbti().getMbti())) {
-                    affinity = "소울메이트";
-                } else if (user.getMbti().getGoodMatch().contains(partner.getMbti().getMbti())) {
-                    affinity = "좋은 사이";
-                } else if (user.getMbti().getBadMatch().contains(partner.getMbti().getMbti())) {
-                    affinity = "어려운 사이";
+                // 상성 표기
+                if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                    affinity = "우리는 소울메이트!";
+                } else if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                    affinity = "친해지기 쉬운 사이입니다.";
                 } else {
-                    affinity = "무난한 사이";
+                    affinity = "무난한 사이입니다.";
                 }
 
                 invitations.add(MatchResponseDto.builder()

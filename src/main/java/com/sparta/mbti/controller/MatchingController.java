@@ -1,6 +1,5 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.dto.MatchingResponseDto;
 import com.sparta.mbti.dto.response.MatchResponseDto;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.MatchingService;
