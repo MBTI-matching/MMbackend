@@ -13,6 +13,9 @@ import com.sparta.mbti.security.jwt.JwtTokenUtils;
 import com.sparta.mbti.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -81,8 +84,8 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
-//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
-        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
+//        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
 
         body.add("code", code);
 
@@ -282,7 +285,7 @@ public class UserService {
     public UserResponseDto updateProfile(User user,
                                          UserRequestDto userRequestDto,
                                          MultipartFile multipartFile
-    ) throws IOException {
+    ) throws IOException, ParseException {
         // 사용자 조회
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
@@ -317,7 +320,13 @@ public class UserService {
                 () -> new IllegalArgumentException("해당 MBTI 가 존재하지 않습니다.")
         );
 
-        findUser.update(userRequestDto, imgUrl, location, locDetail, mbti, true);
+        // 반경
+        Double latitude = Double.valueOf(userRequestDto.getLatitude());
+        Double longitude = Double.valueOf(userRequestDto.getLongitude());
+        String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
+        Point point = (Point) new WKTReader().read(pointWKT);
+
+        findUser.update(userRequestDto, imgUrl, location, locDetail, mbti, point, true);
 
         // DB 저장
         userRepository.save(findUser);

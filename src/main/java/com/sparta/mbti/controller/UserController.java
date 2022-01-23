@@ -9,6 +9,7 @@ import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.sentry.SentrySupport;
 import com.sparta.mbti.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,7 +38,7 @@ public class UserController {
     public UserResponseDto updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestPart(value = "data") UserRequestDto userRequestDto,
                                          @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile
-    ) throws IOException {
+    ) throws IOException, ParseException {
         // 추가 정보 입력
         return userService.updateProfile(userDetails.getUser(), userRequestDto, multipartFile);
     }

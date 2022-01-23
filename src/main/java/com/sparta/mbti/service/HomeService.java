@@ -3,10 +3,15 @@ package com.sparta.mbti.service;
 import com.sparta.mbti.dto.response.*;
 import com.sparta.mbti.model.*;
 import com.sparta.mbti.repository.*;
+import com.sparta.mbti.utils.CardinalDirection;
+import com.sparta.mbti.utils.GeometryUtils;
+import com.sparta.mbti.utils.Radius;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,49 +30,80 @@ public class HomeService {
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
     private final UserInterestRepository userInterestRepository;
+    private final EntityManager entityManager;
 
-    // 케미 리스트 (위치 / MBTI 케미)
+    // 내위치 2km 반경 케미 리스트 (위치 / MBTI)
     @Transactional
     public ChemyAllResponseDto chemyList(User user) {
-        // MBTI 이상적 궁합 리스트 4개까지 조회
-        String mbtiChemy = user.getMbti().getMbti();
-        List<Mbti> findMbtiList = mbtiRepository.findAllByMbtiFirstOrMbtiSecondOrMbtiThirdOrMbtiForth(
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy,
-                mbtiChemy);
+        Long baseUserId = user.getId();
+        String baseMbti = user.getMbti().getMbti();
+        Long baseLocationId = user.getLocation().getId();
+        double baseLatitude = Double.parseDouble(user.getLatitude());
+        double baseLongitude = Double.parseDouble(user.getLongitude());
+        double distance = 2;    // 2Km
 
-        // 사용자 조회
-        List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(user.getLocation(), user.getLocDetail(), findMbtiList);
-        // 반환 사용자 리스트
-        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
-        for (User oneUser : findUserList) {
-            // 관심사 리스트 조회
-            List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
-            List<String> interestList = new ArrayList<>();
-            for (UserInterest userInterest : userInterestList) {
-                interestList.add(userInterest.getInterest().getInterest());
+        // 북동쪽 좌표 구하기
+        Radius northEast = GeometryUtils.calculateByDirection(baseLatitude, baseLongitude, distance, CardinalDirection.NORTHEAST.getBearing());
+        // 남서쪽 좌표 구하기
+        Radius southWest = GeometryUtils.calculateByDirection(baseLatitude, baseLongitude, distance, CardinalDirection.SOUTHWEST.getBearing());
+
+        double x1 = northEast.getLongitude();
+        double y1 = northEast.getLatitude();
+        double x2 = southWest.getLongitude();
+        double y2 = southWest.getLatitude();
+
+        // native query 활용
+        Query query = entityManager.createNativeQuery(
+                        "SELECT * " +
+                                "FROM user AS u, mbti AS m " +
+                                "WHERE u.mbti_id = m.mbti_id " +
+                                "AND MBRContains(ST_LINESTRINGFROMTEXT(" + String.format("'LINESTRING(%f %f, %f %f)')", x1, y1, x2, y2) + ", u.point) " +
+                                "AND u.user_id != ? " +
+                                "AND u.location_id = ? " +
+                                "AND (m.mbti_first = ? OR m.mbti_second = ? OR m.mbti_third = ? OR m.mbti_forth = ?) "
+                        , User.class)
+                .setParameter(1, baseUserId)
+                .setParameter(2, baseLocationId)
+                .setParameter(3, baseMbti)
+                .setParameter(4, baseMbti)
+                .setParameter(5, baseMbti)
+                .setParameter(6, baseMbti);
+
+        List<User> results = query.getResultList();
+
+        if (!results.isEmpty()) {
+            // 반환 사용자 리스트
+            List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+            for (User oneUser : results) {
+                // 관심사 리스트 조회
+                List<UserInterest> userInterestList = userInterestRepository.findAllByUser(oneUser);
+                List<String> interestList = new ArrayList<>();
+                for (UserInterest userInterest : userInterestList) {
+                    interestList.add(userInterest.getInterest().getInterest());
+                }
+
+                chemyUserListDtos.add(ChemyUserResponseDto.builder()
+                        .userId(oneUser.getId())
+                        .nickname(oneUser.getNickname())
+                        .profileImage(oneUser.getProfileImage())
+                        .intro(oneUser.getIntro())
+                        .location(oneUser.getLocation().getLocation())
+                        .locDetail(oneUser.getLocDetail().getLocDetail())
+                        .mbti(oneUser.getMbti().getMbti())
+                        .interestList(interestList)
+                        .build());
             }
 
-            chemyUserListDtos.add(ChemyUserResponseDto.builder()
-                                                .userId(oneUser.getId())
-                                                .nickname(oneUser.getNickname())
-                                                .profileImage(oneUser.getProfileImage())
-                                                .intro(oneUser.getIntro())
-                                                .location(oneUser.getLocation().getLocation())
-                                                .locDetail(oneUser.getLocDetail().getLocDetail())
-                                                .mbti(oneUser.getMbti().getMbti())
-                                                .interestList(interestList)
-                                                .build());
+            // 반환
+            return ChemyAllResponseDto.builder()
+                    .location(user.getLocation().getLocation())
+                    .locDetail(user.getLocDetail().getLocDetail())
+                    .userCount(results.size())
+                    .userList(chemyUserListDtos)
+                    .build();
         }
-
-        // 반환
         return ChemyAllResponseDto.builder()
-                                .location(user.getLocation().getLocation())
-                                .locDetail(user.getLocDetail().getLocDetail())
-                                .userCount(findUserList.size())
-                                .userList(chemyUserListDtos)
-                                .build();
+                .build();
     }
 
     // 둘러보기

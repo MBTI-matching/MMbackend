@@ -21,7 +21,7 @@ import java.util.List;
 public class HomeController {
     private final HomeService homeService;
 
-    // 전체 케미 리스트 (위치 / MBTI)
+    // 내위치 2km 반경 케미 리스트 (위치 / MBTI)
     @GetMapping("/api/chemy/list")
     public ChemyAllResponseDto chemyList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return homeService.chemyList(userDetails.getUser());
