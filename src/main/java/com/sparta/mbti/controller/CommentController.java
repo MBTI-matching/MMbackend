@@ -22,8 +22,7 @@ public class CommentController {
     }
 
     // 댓글 수정
-    // {postId} 실제로 이용하지 않고 있음
-    @PutMapping("/api/comment/{postId}/{commentId}")
+    @PutMapping("/api/comment/{commentId}")
     public void updateComment(@PathVariable Long commentId,
                               @AuthenticationPrincipal UserDetailsImpl userDetails,
                               @RequestBody CommentRequestDto commentRequestDto) {
@@ -31,8 +30,7 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    // {postId} 실제로 이용하지 않고 있음
-    @DeleteMapping("api/comment/{postId}/{commentId}")
+    @DeleteMapping("api/comment/{commentId}")
     public void deleteComment(@PathVariable Long commentId,
                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
         commentService.deleteComment(commentId, userDetails.getUser());
