@@ -239,10 +239,12 @@ public class PostService {
                         .createdAt(oneComment.getCreatedAt())
                         .build());
             }
+            Mbti userMbti = user.getMbti();
+            Mbti postMbti = onePost.getUser().getMbti();
 
-            if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+            if (userMbti.getMbti().equals(postMbti.getMbtiFirst())) {
                 affinity = "우리는 소울메이트!";
-            } else if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+            } else if (userMbti.getMbti().equals(postMbti.getMbtiSecond()) || userMbti.getMbti().equals(postMbti.getMbtiThird()) || userMbti.getMbti().equals(postMbti.getMbtiForth())) {
                 affinity = "친해지기 쉬운 사이입니다.";
             } else {
                 affinity = "무난한 사이입니다.";

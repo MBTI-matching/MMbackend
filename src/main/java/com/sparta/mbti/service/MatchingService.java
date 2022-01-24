@@ -3,6 +3,7 @@ package com.sparta.mbti.service;
 
 import com.sparta.mbti.dto.response.MatchResponseDto;
 import com.sparta.mbti.model.Matching;
+import com.sparta.mbti.model.Mbti;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.ChatRoomRepository;
 import com.sparta.mbti.repository.MatchingRepository;
@@ -101,9 +102,12 @@ public class MatchingService {
                 );
                 // 상성 표기
                 String affinity;
-                if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                Mbti userMbti = user.getMbti();
+                Mbti partnerMbti = partner.getMbti();
+
+                if (userMbti.getMbti().equals(partnerMbti.getMbtiFirst())) {
                     affinity = "우리는 소울메이트!";
-                } else if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                } else if (userMbti.getMbti().equals(partnerMbti.getMbtiSecond()) || userMbti.getMbti().equals(partnerMbti.getMbtiThird()) || userMbti.getMbti().equals(partnerMbti.getMbtiForth())) {
                     affinity = "친해지기 쉬운 사이입니다.";
                 } else {
                     affinity = "무난한 사이입니다.";
@@ -145,10 +149,12 @@ public class MatchingService {
                         () -> new NullPointerException("유저의 정보가 없습니다.")
                 );
 
-                // 상성 표기
-                if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+                Mbti userMbti = user.getMbti();
+                Mbti partnerMbti = partner.getMbti();
+
+                if (userMbti.getMbti().equals(partnerMbti.getMbtiFirst())) {
                     affinity = "우리는 소울메이트!";
-                } else if (partner.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || partner.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                } else if (userMbti.getMbti().equals(partnerMbti.getMbtiSecond()) || userMbti.getMbti().equals(partnerMbti.getMbtiThird()) || userMbti.getMbti().equals(partnerMbti.getMbtiForth())) {
                     affinity = "친해지기 쉬운 사이입니다.";
                 } else {
                     affinity = "무난한 사이입니다.";
@@ -171,6 +177,7 @@ public class MatchingService {
                         .partnerImg("https://bizchemy-bucket-s3.s3.ap-northeast-2.amazonaws.com/default/default.png")
                         .partnerMbti("ENTJ")
                         .partnerIntro("없는 상대입니다.")
+                        .affinity("없는 상대입니다.")
                         .build());
         }
 

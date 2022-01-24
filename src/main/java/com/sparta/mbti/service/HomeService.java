@@ -86,9 +86,13 @@ public class HomeService {
 
                 // 상성 표기
                 String affinity;
-                if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+
+                Mbti userMbti = user.getMbti();
+                Mbti oneMbti = oneUser.getMbti();
+
+                if (userMbti.getMbti().equals(oneMbti.getMbtiFirst())) {
                     affinity = "우리는 소울메이트!";
-                } else if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+                } else if (userMbti.getMbti().equals(oneMbti.getMbtiSecond()) || userMbti.getMbti().equals(oneMbti.getMbtiThird()) || userMbti.getMbti().equals(oneMbti.getMbtiForth())) {
                     affinity = "친해지기 쉬운 사이입니다.";
                 } else {
                     affinity = "무난한 사이입니다.";
@@ -228,9 +232,13 @@ public class HomeService {
         // 사이
         String affinity;
         for (User oneUser : findUserList) {
-            if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+
+            Mbti oneMbti = oneUser.getMbti();
+            Mbti userMbti = user.getMbti();
+
+            if (userMbti.getMbti().equals(oneMbti.getMbtiFirst())) {
                 affinity = "우리는 소울메이트!";
-            } else if (oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || oneUser.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+            } else if (userMbti.getMbti().equals(oneMbti.getMbtiSecond()) || userMbti.getMbti().equals(oneMbti.getMbtiThird()) || userMbti.getMbti().equals(oneMbti.getMbtiForth())) {
                 affinity = "친해지기 쉬운 사이입니다.";
             } else {
                 affinity = "무난한 사이입니다.";
@@ -307,9 +315,12 @@ public class HomeService {
                                             .build());
             }
 
-            if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+            Mbti userMbti = user.getMbti();
+            Mbti postMbti = onePost.getUser().getMbti();
+
+            if (userMbti.getMbti().equals(postMbti.getMbtiFirst())) {
                 affinity = "우리는 소울메이트!";
-            } else if (onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || onePost.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+            } else if (userMbti.getMbti().equals(postMbti.getMbtiSecond()) || userMbti.getMbti().equals(postMbti.getMbtiThird()) || userMbti.getMbti().equals(postMbti.getMbtiForth())) {
                 affinity = "친해지기 쉬운 사이입니다.";
             } else {
                 affinity = "무난한 사이입니다.";
@@ -485,10 +496,12 @@ public class HomeService {
 
         for (int i = 0; i < maxCount; i++) {
             User findUser = interestedUser.get(i);
+            Mbti findMbti = findUser.getMbti();
+            Mbti userMbti = user.getMbti();
 
-            if (findUser.getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
+            if (userMbti.getMbti().equals(findMbti.getMbtiFirst())) {
                 affinity = "우리는 소울메이트!";
-            } else if (findUser.getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || findUser.getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || findUser.getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
+            } else if (userMbti.getMbti().equals(findMbti.getMbtiSecond()) || userMbti.getMbti().equals(findMbti.getMbtiThird()) || userMbti.getMbti().equals(findMbti.getMbtiForth())) {
                 affinity = "친해지기 쉬운 사이입니다.";
             } else {
                 affinity = "무난한 사이입니다.";

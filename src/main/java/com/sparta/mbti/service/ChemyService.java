@@ -172,7 +172,6 @@ public class ChemyService {
     public UserAffinityResponseDto affinityUser(User user, Long userId) {
         // 사용자 조회
         User findUser = userRepository.getById(userId);
-        String findMbti = findUser.getMbti().getMbti();
 
         // 관심사 리스트 조회
         List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
@@ -183,9 +182,12 @@ public class ChemyService {
 
         // 상성 표기
         String affinity;
-        if (findMbti == user.getMbti().getMbtiFirst()) {
+        Mbti userMbti = user.getMbti();
+        Mbti searchMbti = findUser.getMbti();
+
+        if (userMbti.getMbti().equals(searchMbti.getMbtiFirst())) {
             affinity = "우리는 소울메이트!";
-        } else if (findMbti.equals(user.getMbti().getMbtiSecond()) || findMbti.equals(user.getMbti().getMbtiThird()) || findMbti.equals(user.getMbti().getMbtiForth())) {
+        } else if (userMbti.getMbti().equals(searchMbti.getMbtiSecond()) || userMbti.getMbti().equals(searchMbti.getMbtiThird()) || userMbti.getMbti().equals(searchMbti.getMbtiForth())) {
             affinity = "친해지기 쉬운 사이입니다.";
         } else {
             affinity = "무난한 사이입니다.";
