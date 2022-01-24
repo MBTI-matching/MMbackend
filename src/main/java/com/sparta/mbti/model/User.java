@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -84,9 +85,12 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER)
     private final List<Matching> matchingList = new ArrayList<>();
 
+    @Column
+    private Point point;
+
     // 추가 입력 정보
     // DTO 모델에 안쓰기로 바꾸기
-    public void update(UserRequestDto userRequestDto, String imgUrl, Location location, LocDetail locDetail, Mbti mbti, boolean status) {
+    public void update(UserRequestDto userRequestDto, String imgUrl, Location location, LocDetail locDetail, Mbti mbti, Point point, boolean status) {
         this.nickname = userRequestDto.getNickname();
         this.gender = userRequestDto.getGender();
         this.ageRange = userRequestDto.getAgeRange();
@@ -99,6 +103,7 @@ public class User {
         this.locDetail = locDetail;
         this.mbti = mbti;
         this.role = Role.ROLE_USER;
+        this.point = point;
         this.status = status;
     }
 
