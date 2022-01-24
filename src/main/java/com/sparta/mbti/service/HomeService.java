@@ -191,6 +191,7 @@ public class HomeService {
                             .locDetail(findUser.getLocDetail().getLocDetail())
                             .mbti(findUser.getMbti().getMbti())
                             .interestList(interestList)
+                            .affinity("로그인이 필요합니다.")
                             .detail(findUser.getMbti().getDetail())
                             .build());
                 }
@@ -318,17 +319,6 @@ public class HomeService {
                         .build());
             }
 
-            Mbti userMbti = user.getMbti();
-            Mbti postMbti = onePost.getUser().getMbti();
-
-            if (userMbti.getMbti().equals(postMbti.getMbtiFirst())) {
-                affinity = "우리는 소울메이트!";
-            } else if (userMbti.getMbti().equals(postMbti.getMbtiSecond()) || userMbti.getMbti().equals(postMbti.getMbtiThird()) || userMbti.getMbti().equals(postMbti.getMbtiForth())) {
-                affinity = "친해지기 쉬운 사이입니다.";
-            } else {
-                affinity = "무난한 사이입니다.";
-            }
-
             // 전체 게시글 리스트
             posts.add(PostResponseDto.builder()
                     .postId(onePost.getId())
@@ -341,7 +331,6 @@ public class HomeService {
                     .tag(onePost.getTag())
                     .likesCount(likesCount)
                     .likeStatus(likeStatus)
-                    .affinity(affinity)
                     .imageList(images)
                     .commentList(comments)
                     .createdAt(onePost.getCreatedAt())

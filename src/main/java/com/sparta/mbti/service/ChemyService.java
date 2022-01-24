@@ -143,10 +143,21 @@ public class ChemyService {
 
     // 케미 사용자 선택
     @Transactional
-    public ChemyUserResponseDto chemyUser(Long userId) {
-        // 사용자 조회
+    public ChemyUserResponseDto chemyUser(User user, Long userId) {
+        // 상대방 조회
         User findUser = userRepository.getById(userId);
 
+        String affinity;
+        Mbti myMbti = user.getMbti();
+        Mbti partnerMbti = findUser.getMbti();
+
+        if (myMbti.getMbti().equals(partnerMbti.getMbtiFirst())) {
+            affinity = "우리는 소울메이트!";
+        } else if (myMbti.getMbti().equals(partnerMbti.getMbtiSecond()) || myMbti.getMbti().equals(myMbti.getMbtiThird()) || myMbti.getMbti().equals(partnerMbti.getMbtiForth())) {
+            affinity = "친해지기 쉬운 사이입니다.";
+        } else {
+            affinity = "무난한 사이입니다.";
+        }
         // 관심사 리스트 조회
         List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
         List<String> interestList = new ArrayList<>();
@@ -167,6 +178,7 @@ public class ChemyService {
                 .locDetail(findUser.getLocDetail().getLocDetail())
                 .mbti(findUser.getMbti().getMbti())
                 .detail(findUser.getMbti().getDetail())
+                .affinity(affinity)
                 .interestList(interestList)
                 .build();
     }

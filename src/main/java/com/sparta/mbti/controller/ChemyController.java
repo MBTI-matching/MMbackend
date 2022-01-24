@@ -22,8 +22,8 @@ public class ChemyController {
 
     // 케미 사용자 선택
     @GetMapping("/api/chemy/{userId}")
-    public ChemyUserResponseDto chemyUser(@PathVariable Long userId) {
-        return chemyService.chemyUser(userId);
+    public ChemyUserResponseDto chemyUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return chemyService.chemyUser(userDetails.getUser(), userId);
     }
 
     // 케미 사용자 상세 정보 보기 - 열람자와의 궁합 고려
