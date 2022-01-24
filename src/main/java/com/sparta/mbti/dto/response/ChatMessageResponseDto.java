@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import com.sparta.mbti.model.ChatMessage;
 import lombok.*;
@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageResponseDto {
-
     private ChatMessage.MessageType type;
     private Long senderId;
     private String senderImg;

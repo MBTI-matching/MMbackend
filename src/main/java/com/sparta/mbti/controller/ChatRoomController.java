@@ -1,18 +1,16 @@
 package com.sparta.mbti.controller;
 
-import com.sparta.mbti.dto.ChatMessageResponseDto;
-import com.sparta.mbti.dto.ChatRoomRequestDto;
-import com.sparta.mbti.dto.ChatRoomResponseDto;
+import com.sparta.mbti.dto.response.ChatMessageResponseDto;
+import com.sparta.mbti.dto.request.ChatRoomRequestDto;
+import com.sparta.mbti.dto.response.ChatRoomResponseDto;
 import com.sparta.mbti.model.ChatRoom;
 import com.sparta.mbti.security.UserDetailsImpl;
 import com.sparta.mbti.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

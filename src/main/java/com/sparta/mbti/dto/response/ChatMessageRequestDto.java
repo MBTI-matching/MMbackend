@@ -13,8 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageRequestDto {
-    // 메시지 타입 : 입장, 채팅
-
     private ChatMessage.MessageType type;
     private String roomId;
     private Long senderId;

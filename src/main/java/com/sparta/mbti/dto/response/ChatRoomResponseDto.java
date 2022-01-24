@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.response;
 
 import com.sparta.mbti.model.ChatMessage;
 import lombok.AllArgsConstructor;
@@ -13,27 +13,12 @@ import javax.persistence.Column;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomResponseDto {
-    @Column
     private String roomId;
-
-    @Column
     private Long guestId;
-
-    @Column
     private String guestMbti;
-
-    @Column
     private String guestNick;
-
-    @Column
     private String guestImg;
-
-    @Column
     private String lastMessage;
-
-    @Column
     private String messageTime;
-
-    @Column
     private ChatMessage.MessageType messageType;
 }

@@ -11,8 +11,6 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<Post> findAllByUser(User user, Pageable pageable);
-
     Page<Post> findAllByTagOrderByCreatedAtDesc(Pageable pageable, String tag);
-
     List<Post> findAllByUser(User findUser);
 }

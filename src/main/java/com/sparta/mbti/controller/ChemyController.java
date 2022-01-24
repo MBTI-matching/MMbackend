@@ -27,6 +27,7 @@ public class ChemyController {
     }
 
     // 케미 사용자 상세 정보 보기 - 열람자와의 궁합 고려
+    // 삭제(프론트와 협의)
     @GetMapping("/api/chemy/affinity/{userId}")
     public ChemyUserResponseDto affinityUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long userId) {
         return chemyService.affinityUser(userDetails.getUser(), userId);

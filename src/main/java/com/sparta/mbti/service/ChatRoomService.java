@@ -1,8 +1,8 @@
 package com.sparta.mbti.service;
 
-import com.sparta.mbti.dto.ChatMessageResponseDto;
-import com.sparta.mbti.dto.ChatRoomRequestDto;
-import com.sparta.mbti.dto.ChatRoomResponseDto;
+import com.sparta.mbti.dto.response.ChatMessageResponseDto;
+import com.sparta.mbti.dto.request.ChatRoomRequestDto;
+import com.sparta.mbti.dto.response.ChatRoomResponseDto;
 import com.sparta.mbti.model.ChatMessage;
 import com.sparta.mbti.model.ChatRoom;
 import com.sparta.mbti.model.User;
@@ -26,7 +26,6 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
-    private final MatchingRepository matchingRepository;
     private final MatchingService matchingService;
 
     // Redis repo

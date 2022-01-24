@@ -1,4 +1,4 @@
-package com.sparta.mbti.dto;
+package com.sparta.mbti.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,15 +13,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomRequestDto {
-    @Column
-    private String guestEmail; // guestEmail로 바꿔쓰길 제의
-
-    @Column
+    private String guestEmail;
     private String guestMbti;
-
-    @Column
     private String guestNick;
-
-    @Column
     private String guestImg;
 }

@@ -1,6 +1,5 @@
 package com.sparta.mbti.model;
 
-import com.sparta.mbti.dto.request.PostRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Builder

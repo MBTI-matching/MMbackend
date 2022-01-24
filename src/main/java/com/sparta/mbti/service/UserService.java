@@ -84,7 +84,7 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
- //       body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URImatching
+ //       body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
 
         body.add("code", code);
@@ -290,12 +290,6 @@ public class UserService {
         User findUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new NullPointerException("해당 사용자가 존재하지 않습니다.")
         );
-
-
-        // 닉네임 필수값이므로, null 값이면 카카오 닉네임으로 설정
-//        if (userRequestDto.getNickname() == null) {
-//            userRequestDto.setNickname(user.getNickname());
-//        }
 
         // 카카오 이미지 초기화
         String imgUrl = findUser.getProfileImage();

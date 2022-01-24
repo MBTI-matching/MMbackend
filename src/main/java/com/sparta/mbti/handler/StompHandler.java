@@ -1,6 +1,5 @@
 package com.sparta.mbti.handler;
 
-import com.sparta.mbti.model.ChatMessage;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.repository.UserRepository;
 import com.sparta.mbti.security.jwt.JwtDecoder;
@@ -14,8 +13,6 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,19 +34,9 @@ public class StompHandler implements ChannelInterceptor {
             jwtTokenUtils.validateToken(accessor.getFirstNativeHeader("token"));
         }
         else if(StompCommand.SUBSCRIBE == accessor.getCommand()){
-            //String roomId = chatService.getRoomId(Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
-
-            System.out.println(message.getHeaders());
             String jwtToken = accessor.getFirstNativeHeader("token");
             String username = jwtDecoder.decodeUsername(jwtToken);
             User user = userRepository.findByUsername(username).orElseThrow(() -> new NullPointerException("존재하지 않는 사용자 입니다."));
-//            chatService.sendChatMessage(ChatMessage.builder()
-//                    .type(ChatMessage.MessageType.ENTER)
-//                    .roomId(roomId)
-//                    .sender(user)
-//                    .build());
-            Long userId = user.getId();
-            //chatRoomService.setUserEnterInfo(sessionId, roomId,userId);
         }
         return message;
     }

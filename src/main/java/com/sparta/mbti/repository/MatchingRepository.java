@@ -6,15 +6,10 @@ import java.util.List;
 
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
     Boolean existsByHostIdAndGuestId(Long hostId, Long guestId);
-
     Matching findByHostIdAndGuestId(Long hostId, Long id);
-
     List<Matching> findAllByHostId(Long id);
-
     List<Matching> findAllByGuestId(Long id);
-
     void deleteAllByHostId(Long id);
-
     void deleteAllByGuestId(Long id);
 
 }
