@@ -1,7 +1,6 @@
 package com.sparta.mbti.service;
 
 import com.sparta.mbti.dto.response.ChemyUserResponseDto;
-import com.sparta.mbti.dto.response.UserAffinityResponseDto;
 import com.sparta.mbti.model.Mbti;
 import com.sparta.mbti.model.User;
 import com.sparta.mbti.model.UserInterest;
@@ -23,7 +22,7 @@ public class ChemyService {
 
     // 전국 매칭
     @Transactional
-    public UserAffinityResponseDto chemyAuto(User user) {
+    public ChemyUserResponseDto chemyAuto(User user) {
         // 사용자 가장 이상적 MBTI 조회
         Mbti findMbti = mbtiRepository.findByMbtiFirst(user.getMbti().getMbti()).orElseThrow(
                 () -> new IllegalArgumentException("해당 MBTI가 존재하지 않습니다.")
@@ -45,7 +44,7 @@ public class ChemyService {
             }
 
             // 랜덤 사용자 반환
-            return UserAffinityResponseDto.builder()
+            return ChemyUserResponseDto.builder()
                     .username(findUserList.get(size).getUsername())
                     .userId(findUserList.get(size).getId())
                     .nickname(findUserList.get(size).getNickname())
@@ -57,6 +56,7 @@ public class ChemyService {
                     .locDetail(findUserList.get(size).getLocDetail().getLocDetail())
                     .mbti(findUserList.get(size).getMbti().getMbti())
                     .affinity("우리는 소울메이트!")
+                    .detail(findUserList.get(size).getMbti().getDetail())
                     .interestList(interestList)
                     .build();
         } else {
@@ -76,7 +76,7 @@ public class ChemyService {
                 }
 
                 // 랜덤 사용자 반환
-                return UserAffinityResponseDto.builder()
+                return ChemyUserResponseDto.builder()
                         .username(findLocUserList.get(votSize).getUsername())
                         .userId(findLocUserList.get(votSize).getId())
                         .nickname(findLocUserList.get(votSize).getNickname())
@@ -89,10 +89,11 @@ public class ChemyService {
                         .mbti(findLocUserList.get(votSize).getMbti().getMbti())
                         .affinity("우리는 소울메이트!")
                         .interestList(interestList)
+                        .detail(findLocUserList.get(votSize).getMbti().getDetail())
                         .build();
             }
         }
-        return UserAffinityResponseDto.builder()
+        return ChemyUserResponseDto.builder()
                 .userId(-1L)
                 .build();
     }
@@ -165,11 +166,12 @@ public class ChemyService {
                 .location(findUser.getLocation().getLocation())
                 .locDetail(findUser.getLocDetail().getLocDetail())
                 .mbti(findUser.getMbti().getMbti())
+                .detail(findUser.getMbti().getDetail())
                 .interestList(interestList)
                 .build();
     }
 
-    public UserAffinityResponseDto affinityUser(User user, Long userId) {
+    public ChemyUserResponseDto affinityUser(User user, Long userId) {
         // 사용자 조회
         User findUser = userRepository.getById(userId);
 
@@ -192,7 +194,7 @@ public class ChemyService {
         } else {
             affinity = "무난한 사이입니다.";
         }
-        return UserAffinityResponseDto.builder()
+        return ChemyUserResponseDto.builder()
                 .username(findUser.getUsername())
                 .userId(findUser.getId())
                 .nickname(findUser.getNickname())
@@ -205,6 +207,7 @@ public class ChemyService {
                 .mbti(findUser.getMbti().getMbti())
                 .affinity(affinity)
                 .interestList(interestList)
+                .detail(findUser.getMbti().getDetail())
                 .build();
     }
 }

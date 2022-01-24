@@ -119,6 +119,7 @@ public class MatchingService {
                         .partnerMbti(partner.getMbti().getMbti())
                         .partnerIntro(partner.getIntro())
                         .affinity(affinity)
+                        .details(partner.getMbti().getDetail())
                         .build());
             }
             else
@@ -167,6 +168,7 @@ public class MatchingService {
                         .partnerMbti(partner.getMbti().getMbti())
                         .partnerIntro(partner.getIntro())
                         .affinity(affinity)
+                        .details(partner.getMbti().getDetail())
                         .build());
             }
             // 상대가 없는경우

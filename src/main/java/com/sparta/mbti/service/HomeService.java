@@ -34,7 +34,7 @@ public class HomeService {
 
     // 내위치 2km 반경 케미 리스트 (위치 / MBTI)
     @Transactional
-    public ChemyAffinityResponseDto chemyList(User user) {
+    public ChemyAllResponseDto chemyList(User user) {
         Long baseUserId = user.getId();                     // 쿼리 조건 (본인 제외)
         String baseMbti = user.getMbti().getMbti();         // 쿼리 조건 (mbti 궁합 4개까지)
         Long baseLocationId = user.getLocation().getId();   // 쿼리 조건 (본인 위치 지역)
@@ -74,7 +74,7 @@ public class HomeService {
 
         if (!findUserList.isEmpty()) {
             // 반환 사용자 리스트
-            List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
+            List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
             // 사이
             for (User oneUser : findUserList) {
                 // 관심사 리스트 조회
@@ -98,7 +98,7 @@ public class HomeService {
                     affinity = "무난한 사이입니다.";
                 }
 
-                chemyUserListDtos.add(UserAffinityResponseDto.builder()
+                chemyUserListDtos.add(ChemyUserResponseDto.builder()
                         .userId(oneUser.getId())
                         .nickname(oneUser.getNickname())
                         .profileImage(oneUser.getProfileImage())
@@ -108,18 +108,19 @@ public class HomeService {
                         .mbti(oneUser.getMbti().getMbti())
                         .affinity(affinity)
                         .interestList(interestList)
+                        .detail(oneUser.getMbti().getDetail())
                         .build());
             }
 
             // 반환
-            return ChemyAffinityResponseDto.builder()
+            return ChemyAllResponseDto.builder()
                     .location(user.getLocation().getLocation())
                     .locDetail(user.getLocDetail().getLocDetail())
                     .userCount(findUserList.size())
                     .userList(chemyUserListDtos)
                     .build();
         }
-        return ChemyAffinityResponseDto.builder()
+        return ChemyAllResponseDto.builder()
                 .build();
     }
 
@@ -190,6 +191,7 @@ public class HomeService {
                             .locDetail(findUser.getLocDetail().getLocDetail())
                             .mbti(findUser.getMbti().getMbti())
                             .interestList(interestList)
+                            .detail(findUser.getMbti().getDetail())
                             .build());
                 }
                 // 반환
@@ -206,7 +208,7 @@ public class HomeService {
     }
 
     // 지역 케미 리스트 (위치 / MBTI)
-    public ChemyAffinityResponseDto locationList(Long locationId, Long locDetailId, User user) {
+    public ChemyAllResponseDto locationList(Long locationId, Long locDetailId, User user) {
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
@@ -228,7 +230,7 @@ public class HomeService {
         // 사용자 조회
         List<User> findUserList = userRepository.findAllByLocationAndLocDetailAndMbtiIn(location, locDetail, findMbtiList);
         // 반환 사용자 리스트
-        List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         // 사이
         String affinity;
         for (User oneUser : findUserList) {
@@ -251,7 +253,7 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(UserAffinityResponseDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                     .userId(oneUser.getId())
                     .nickname(oneUser.getNickname())
                     .profileImage(oneUser.getProfileImage())
@@ -261,11 +263,12 @@ public class HomeService {
                     .mbti(oneUser.getMbti().getMbti())
                     .affinity(affinity)
                     .interestList(interestList)
+                    .detail(oneUser.getMbti().getDetail())
                     .build());
         }
 
         // 반환
-        return ChemyAffinityResponseDto.builder()
+        return ChemyAllResponseDto.builder()
                 .location(location.getLocation())
                 .locDetail(locDetail.getLocDetail())
                 .userCount(findUserList.size())
@@ -286,7 +289,7 @@ public class HomeService {
         List<PostResponseDto> posts = new ArrayList<>();
         for (Post onePost : postList) {
             // 게시글 좋아요 수
-            int likesCount = (int)likesRepository.findAllByPost(onePost).size();
+            int likesCount = (int) likesRepository.findAllByPost(onePost).size();
             // 게시글 좋아요 여부
             boolean likeStatus = likesRepository.existsByUserAndPost(user, onePost);
             // 게시글 이미지 리스트
@@ -306,13 +309,13 @@ public class HomeService {
             List<CommentResopnseDto> comments = new ArrayList<>();
             for (Comment oneComment : commentList) {
                 comments.add(CommentResopnseDto.builder()
-                                            .commentId(oneComment.getId())
-                                            .nickname(oneComment.getUser().getNickname())
-                                            .image(oneComment.getUser().getProfileImage())
-                                            .mbti(oneComment.getUser().getMbti().getMbti())
-                                            .comment(oneComment.getComment())
-                                            .createdAt(oneComment.getCreatedAt())
-                                            .build());
+                        .commentId(oneComment.getId())
+                        .nickname(oneComment.getUser().getNickname())
+                        .image(oneComment.getUser().getProfileImage())
+                        .mbti(oneComment.getUser().getMbti().getMbti())
+                        .comment(oneComment.getComment())
+                        .createdAt(oneComment.getCreatedAt())
+                        .build());
             }
 
             Mbti userMbti = user.getMbti();
@@ -348,7 +351,7 @@ public class HomeService {
     }
 
     // 관심사별 케미 리스트 #1 (지역 / 관심사)
-    public ChemyAllResponseDto interestList(Long locationId, Long locDetailId, Long interestId) {
+    public ChemyAllResponseDto interestList(Long locationId, Long locDetailId, Long interestId, User user) {
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
                 () -> new NullPointerException("해당 위치가 존재하지 않습니다.")
@@ -360,7 +363,7 @@ public class HomeService {
         );
 
         // 관심사 조회
-        Interest interest =interestRepository.findById(interestId).orElseThrow(
+        Interest interest = interestRepository.findById(interestId).orElseThrow(
                 () -> new NullPointerException("해당 관심사는 존재하지 않습니다.")
         );
 
@@ -369,14 +372,14 @@ public class HomeService {
 
         // 같은 관심사를 지닌 유저 골라내기
         List<User> interestedUser = new ArrayList<>();
-        for (User user : userList) {
+        for (User finduser : userList) {
 
-            int maxInterest = user.getUserInterestList().size();
+            int maxInterest = finduser.getUserInterestList().size();
             for (int i = 0; i < maxInterest; i++)
 
-            if (user.getUserInterestList().get(i).getInterest().getInterest().equals(interest.getInterest())) {
-                interestedUser.add(user);
-            }
+                if (finduser.getUserInterestList().get(i).getInterest().getInterest().equals(interest.getInterest())) {
+                    interestedUser.add(finduser);
+                }
         }
 
         // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
@@ -400,9 +403,20 @@ public class HomeService {
             }
         }
 
+        String affinity;
+
         for (int i = 0; i < maxCount; i++) {
             User findUser = interestedUser.get(i);
+            Mbti findMbti = findUser.getMbti();
+            Mbti userMbti = user.getMbti();
 
+            if (userMbti.getMbti().equals(findMbti.getMbtiFirst())) {
+                affinity = "우리는 소울메이트!";
+            } else if (userMbti.getMbti().equals(findMbti.getMbtiSecond()) || userMbti.getMbti().equals(findMbti.getMbtiThird()) || userMbti.getMbti().equals(findMbti.getMbtiForth())) {
+                affinity = "친해지기 쉬운 사이입니다.";
+            } else {
+                affinity = "무난한 사이입니다.";
+            }
             // 관심사 리스트 조회
             List<String> interestList = new ArrayList<>();
             List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
@@ -418,6 +432,8 @@ public class HomeService {
                     .location(findUser.getLocation().getLocation())
                     .locDetail(findUser.getLocDetail().getLocDetail())
                     .mbti(findUser.getMbti().getMbti())
+                    .affinity(affinity)
+                    .detail(findUser.getMbti().getDetail())
                     .interestList(interestList)
                     .build());
         }
@@ -430,7 +446,7 @@ public class HomeService {
     }
 
     // 관심사별 케미 리스트 #2 (지역 / 관심사 / MBTI)
-    public ChemyAffinityResponseDto chemyInterest(Long locationId, Long locDetailId, Long interestId, User user) {
+    public ChemyAllResponseDto chemyInterest(Long locationId, Long locDetailId, Long interestId, User user) {
 
         // 위치 조회
         Location location = locationRepository.findById(locationId).orElseThrow(
@@ -443,7 +459,7 @@ public class HomeService {
         );
 
         // 관심사 조회
-        Interest interest =interestRepository.findById(interestId).orElseThrow(
+        Interest interest = interestRepository.findById(interestId).orElseThrow(
                 () -> new NullPointerException("해당 관심사는 존재하지 않습니다.")
         );
 
@@ -477,7 +493,7 @@ public class HomeService {
             maxCount = 10;
         }
 
-        List<UserAffinityResponseDto> chemyUserListDtos = new ArrayList<>();
+        List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
         // 사용자 리스트 인덱스 값 저장
         int[] userSize = new int[maxCount];
         for (int i = 0; i < maxCount; i++) {
@@ -514,7 +530,7 @@ public class HomeService {
                 interestList.add(userInterest.getInterest().getInterest());
             }
 
-            chemyUserListDtos.add(UserAffinityResponseDto.builder()
+            chemyUserListDtos.add(ChemyUserResponseDto.builder()
                     .userId(findUser.getId())
                     .nickname(findUser.getNickname())
                     .profileImage(findUser.getProfileImage())
@@ -524,9 +540,10 @@ public class HomeService {
                     .mbti(findUser.getMbti().getMbti())
                     .affinity(affinity)
                     .interestList(interestList)
+                    .detail(findUser.getMbti().getDetail())
                     .build());
         }
-        return ChemyAffinityResponseDto.builder()
+        return ChemyAllResponseDto.builder()
                 .location(location.getLocation())
                 .locDetail(locDetail.getLocDetail())
                 .userCount(interestedUser.size())

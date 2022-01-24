@@ -16,4 +16,5 @@ public class MatchResponseDto {
     private String partnerMbti;
     private String partnerIntro;
     private String affinity;
+    private String details;
 }

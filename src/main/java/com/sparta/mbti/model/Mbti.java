@@ -53,4 +53,7 @@ public class Mbti {
 
     @Column(columnDefinition = "TEXT")
     private String secondContent;               // 설명 #2
+
+    @Column
+    private String detail;
 }

@@ -24,5 +24,7 @@ public class ChemyUserResponseDto {
     private String locDetail;           // 상세위치
     private String mbti;                // MBTI
     private String username;            // 유저 이메일
+    private String affinity;            // 사이
+    private String detail;              // 친해지는법
     List<String> interestList; // 관심사 리스트 // dto 안 builder -> stream
 }
