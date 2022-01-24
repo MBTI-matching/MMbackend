@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostResponseDto {
     private Long postId;            // 게시글 ID
+    private Long userId;            // 작성자 ID
     private String nickname;        // 닉네임
     private String profileImage;    // 프로필 이미지
     private String location;        // 위치

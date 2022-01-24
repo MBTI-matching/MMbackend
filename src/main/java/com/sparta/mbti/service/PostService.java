@@ -118,6 +118,7 @@ public class PostService {
         // 반환할 상세 게시글
         return PostResponseDto.builder()
                 .postId(post.getId())
+                .userId(post.getUser().getId())
                 .nickname(post.getUser().getNickname())
                 .profileImage(post.getUser().getProfileImage())
                 .location(post.getUser().getLocation().getLocation())
