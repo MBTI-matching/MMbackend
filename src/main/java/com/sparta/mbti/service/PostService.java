@@ -76,16 +76,6 @@ public class PostService {
                 () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 
-        // 사이
-        String affinity;
-        if (post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiFirst())) {
-            affinity = "우리는 소울메이트!";
-        } else if (post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiSecond()) || post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiThird()) || post.getUser().getMbti().getMbti().equals(user.getMbti().getMbtiForth())) {
-            affinity = "친해지기 쉬운 사이입니다.";
-        } else {
-            affinity = "무난한 사이입니다.";
-        }
-
         // 게시글 좋아요 수
         int likesCount = likesRepository.findAllByPost(post).size();
         // 게시글 좋아요 여부
@@ -128,7 +118,6 @@ public class PostService {
                 .tag(post.getTag())
                 .likesCount(likesCount)
                 .likeStatus(likeStatus)
-                .affinity(affinity)
                 .imageList(images)
                 .commentList(comments)
                 .createdAt(post.getCreatedAt())
@@ -200,9 +189,6 @@ public class PostService {
                 () -> new NullPointerException("해당 관심사는 다루지 않습니다.")
         );
 
-        // 사이
-        String affinity;
-
         // 태그(관심사명), page, size, 내림차순으로 페이징한 게시글 리스트
         List<Post> postList = postRepository.findAllByTagOrderByCreatedAtDesc(pageable, interest.getInterest()).getContent();
 
@@ -239,16 +225,6 @@ public class PostService {
                         .createdAt(oneComment.getCreatedAt())
                         .build());
             }
-            Mbti userMbti = user.getMbti();
-            Mbti postMbti = onePost.getUser().getMbti();
-
-            if (userMbti.getMbti().equals(postMbti.getMbtiFirst())) {
-                affinity = "우리는 소울메이트!";
-            } else if (userMbti.getMbti().equals(postMbti.getMbtiSecond()) || userMbti.getMbti().equals(postMbti.getMbtiThird()) || userMbti.getMbti().equals(postMbti.getMbtiForth())) {
-                affinity = "친해지기 쉬운 사이입니다.";
-            } else {
-                affinity = "무난한 사이입니다.";
-            }
 
             posts.add(PostResponseDto.builder()
                     .postId(onePost.getId())
@@ -261,7 +237,6 @@ public class PostService {
                     .tag(onePost.getTag())
                     .likesCount(likesCount)
                     .likeStatus(likeStatus)
-                    .affinity(affinity)
                     .imageList(images)
                     .commentList(comments)
                     .createdAt(onePost.getCreatedAt())
