@@ -85,6 +85,9 @@ dependencies {
     implementation 'io.sentry:sentry:5.5.3'
 
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.6.1'
+
+    // 반경 2Km, MySQL 함수 사용
+    implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.6.1.Final'
 }
 
 test {
