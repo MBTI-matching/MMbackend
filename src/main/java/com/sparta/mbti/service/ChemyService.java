@@ -140,44 +140,4 @@ public class ChemyService {
                 .interestList(interestList)
                 .build();
     }
-
-    public ChemyUserResponseDto affinityUser(User user, Long userId) {
-        // 사용자 조회
-        User findUser = userRepository.getById(userId);
-
-        // 관심사 리스트 조회
-        List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
-        List<String> interestList = new ArrayList<>();
-        for (UserInterest userInterest : userInterestList) {
-            interestList.add(userInterest.getInterest().getInterest());
-        }
-
-        // 상성 표기
-        String affinity;
-        Mbti userMbti = user.getMbti();
-        Mbti searchMbti = findUser.getMbti();
-
-        if (userMbti.getMbti().equals(searchMbti.getMbtiFirst())) {
-            affinity = "우리는 소울메이트!";
-        } else if (userMbti.getMbti().equals(searchMbti.getMbtiSecond()) || userMbti.getMbti().equals(searchMbti.getMbtiThird()) || userMbti.getMbti().equals(searchMbti.getMbtiForth())) {
-            affinity = "친해지기 쉬운 사이입니다.";
-        } else {
-            affinity = "무난한 사이입니다.";
-        }
-        return ChemyUserResponseDto.builder()
-                .username(findUser.getUsername())
-                .userId(findUser.getId())
-                .nickname(findUser.getNickname())
-                .profileImage(findUser.getProfileImage())
-                .gender(findUser.getGender())
-                .ageRange(findUser.getAgeRange())
-                .intro(findUser.getIntro())
-                .location(findUser.getLocation().getLocation())
-                .locDetail(findUser.getLocDetail().getLocDetail())
-                .mbti(findUser.getMbti().getMbti())
-                .affinity(affinity)
-                .interestList(interestList)
-                .detail(findUser.getMbti().getDetail())
-                .build();
-    }
 }
