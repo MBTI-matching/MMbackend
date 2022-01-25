@@ -84,7 +84,7 @@ public class UserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
 //        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");      // 개발 Redirect URI
- //       body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+//        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
        body.add("redirect_uri", "https://www.bizchemy.com/user/kakao/callback");      // 개발 Redirect URI
 
         body.add("code", code);
@@ -197,8 +197,6 @@ public class UserService {
         String gender = kakaoUserRequestDto.getGender();                      // 카카오 성별
 
         String ageRange;
-
-        System.out.println(kakaoUserRequestDto.getAgeRange());
 
         if (kakaoUserRequestDto.getAgeRange().equals("")) {
             ageRange = "";
@@ -381,15 +379,11 @@ public class UserService {
         // 사용자 게시글 리스트 조회
         List<Post> postList = postRepository.findAllByUser(findUser);
         List<Image> imageList = new ArrayList<>();
-        List<Comment> commentList = new ArrayList<>();
-        List<Likes> likesList = new ArrayList<>();
+        List<Comment> commentList = commentRepository.findAllByUser(findUser);
+        List<Likes> likesList = likesRepository.findAllByUser(findUser);
         for (int i = 0; i < postList.size(); i++) {
             // 게시글 이미지 리스트 조회
             imageList = imageRepository.findAllByPost(postList.get(i));
-            // 게시글 댓글 리스트 조회
-            commentList = commentRepository.findAllByPost(postList.get(i));
-            // 게시글 좋아요 조회
-            likesList = likesRepository.findAllByPost(postList.get(i));
         }
 
         // 채팅방 조회
