@@ -110,11 +110,12 @@ public class ChemyService {
 
         if (myMbti.getMbti().equals(partnerMbti.getMbtiFirst())) {
             affinity = "우리는 소울메이트!";
-        } else if (myMbti.getMbti().equals(partnerMbti.getMbtiSecond()) || myMbti.getMbti().equals(myMbti.getMbtiThird()) || myMbti.getMbti().equals(partnerMbti.getMbtiForth())) {
+        } else if (myMbti.getMbti().equals(partnerMbti.getMbtiSecond()) || myMbti.getMbti().equals(partnerMbti.getMbtiThird()) || myMbti.getMbti().equals(partnerMbti.getMbtiForth())) {
             affinity = "친해지기 쉬운 사이입니다.";
         } else {
             affinity = "무난한 사이입니다.";
         }
+
         // 관심사 리스트 조회
         List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
         List<String> interestList = new ArrayList<>();
