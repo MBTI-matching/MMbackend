@@ -128,80 +128,83 @@ public class HomeService {
     public ChemyAllResponseDto chemyGuest() {
         // 위치 랜덤 생성
         List<Location> locationList = locationRepository.findAll();
-        List<LocDetail> locDetailList = locDetailRepository.findAll();
 
         Random generatorLoc = new Random();
-        Random generatorLocDetail = new Random();
 
         int locSize = locationList.size();
-        int locDetailSize = locDetailList.size();
 
         // 위차가 존재하면
-        if (locSize > 0 && locDetailSize > 0) {
+        if (locSize > 0) {
             // 해당 위치 조회
             Location location = locationRepository.findById(locationList.get(generatorLoc.nextInt(locSize)).getId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 위치가 존재하지 않습니다.")
                     );
             // 해당 상세위치 조회
-            LocDetail locDetail = locDetailRepository.findById(locDetailList.get(generatorLocDetail.nextInt(locDetailSize)).getId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 상세위치가 존재하지 않습니다.")
-                    );
+            List<LocDetail> locDetailList = locDetailRepository.findAllByLocation(location);
 
-            // 해당 위치에서 사용자 리스트
-            // limit query
-            List<User> userList = userRepository.findAllByLocationAndLocDetail(location, locDetail);
-            Random generatorUser = new Random();
-            // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
-            int maxCount = userList.size();
-            if (maxCount >= 10) {
-                maxCount = 10;
-            }
-            // 사용자 존재하면
-            if (maxCount > 0) {
-                List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
-                // 사용자 리스트 인덱스 값 저장
-                int[] userSize = new int[maxCount];
-                for (int i = 0; i < maxCount; i++) {
-                    userSize[i] = generatorUser.nextInt(maxCount);  // 랜덤 변수 생성
-                    // 중복 제거
-                    for (int j = 0; j < i; j++) {
-                        if (userSize[i] == userSize[j]) {
-                            i--;
-                            break;
+            Random generatorLocDetail = new Random();
+            int locDetailSize = locDetailList.size();
+
+            if (locDetailSize > 0) {
+                LocDetail locDetail = locDetailRepository.findById(locDetailList.get(generatorLocDetail.nextInt(locDetailSize)).getId())
+                        .orElseThrow(() -> new IllegalArgumentException("해당 상세위치가 존재하지 않습니다.")
+                        );
+                // 해당 위치에서 사용자 리스트
+                // limit query
+                List<User> userList = userRepository.findAllByLocationAndLocDetail(location, locDetail);
+                Random generatorUser = new Random();
+                // 사용자 리스트 최대 10명으로 설정, 10명 미만이면 해당 리스트 갯수로 설정
+                int maxCount = userList.size();
+                if (maxCount >= 10) {
+                    maxCount = 10;
+                }
+                // 사용자 존재하면
+                if (maxCount > 0) {
+                    List<ChemyUserResponseDto> chemyUserListDtos = new ArrayList<>();
+                    // 사용자 리스트 인덱스 값 저장
+                    int[] userSize = new int[maxCount];
+                    for (int i = 0; i < maxCount; i++) {
+                        userSize[i] = generatorUser.nextInt(maxCount);  // 랜덤 변수 생성
+                        // 중복 제거
+                        for (int j = 0; j < i; j++) {
+                            if (userSize[i] == userSize[j]) {
+                                i--;
+                                break;
+                            }
                         }
                     }
-                }
 
-                for (int i = 0; i < maxCount; i++) {
-                    User findUser = userList.get(i);
+                    for (int i = 0; i < maxCount; i++) {
+                        User findUser = userList.get(i);
 
-                    // 관심사 리스트 조회
-                    List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
-                    List<String> interestList = new ArrayList<>();
-                    for (UserInterest userInterest : userInterestList) {
-                        interestList.add(userInterest.getInterest().getInterest());
+                        // 관심사 리스트 조회
+                        List<UserInterest> userInterestList = userInterestRepository.findAllByUser(findUser);
+                        List<String> interestList = new ArrayList<>();
+                        for (UserInterest userInterest : userInterestList) {
+                            interestList.add(userInterest.getInterest().getInterest());
+                        }
+
+                        chemyUserListDtos.add(ChemyUserResponseDto.builder()
+                                .userId(findUser.getId())
+                                .nickname(findUser.getNickname())
+                                .profileImage(findUser.getProfileImage())
+                                .intro(findUser.getIntro())
+                                .location(findUser.getLocation().getLocation())
+                                .locDetail(findUser.getLocDetail().getLocDetail())
+                                .mbti(findUser.getMbti().getMbti())
+                                .interestList(interestList)
+                                .affinity("로그인이 필요합니다.")
+                                .detail(findUser.getMbti().getDetail())
+                                .build());
                     }
-
-                    chemyUserListDtos.add(ChemyUserResponseDto.builder()
-                            .userId(findUser.getId())
-                            .nickname(findUser.getNickname())
-                            .profileImage(findUser.getProfileImage())
-                            .intro(findUser.getIntro())
-                            .location(findUser.getLocation().getLocation())
-                            .locDetail(findUser.getLocDetail().getLocDetail())
-                            .mbti(findUser.getMbti().getMbti())
-                            .interestList(interestList)
-                            .affinity("로그인이 필요합니다.")
-                            .detail(findUser.getMbti().getDetail())
-                            .build());
+                    // 반환
+                    return ChemyAllResponseDto.builder()
+                            .location(location.getLocation())
+                            .locDetail(locDetail.getLocDetail())
+                            .userCount(userList.size())
+                            .userList(chemyUserListDtos)
+                            .build();
                 }
-                // 반환
-                return ChemyAllResponseDto.builder()
-                        .location(location.getLocation())
-                        .locDetail(locDetail.getLocDetail())
-                        .userCount(userList.size())
-                        .userList(chemyUserListDtos)
-                        .build();
             }
         }
         return ChemyAllResponseDto.builder()
