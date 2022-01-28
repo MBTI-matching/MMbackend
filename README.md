@@ -23,7 +23,7 @@
         <a href=""><img src="https://img.shields.io/badge/성해인-D77EE9?style=뱃지모양&logo=로고&logoColor=white"/></a>
         </td>
     </tr>
-    <tr>![image](https://user-images.githubusercontent.com/93525885/151488622-396c223b-3ecb-440f-8d13-4de66b2b9e72.png)
+    <tr>
 
         <th width="25%" align="center">:spider_web: BACK-END
         </th>
