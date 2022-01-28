@@ -32,13 +32,13 @@
         </th>
     </tr>
     <tr>
-        <td align="center">
+        <td width="33%" align="center">
 		<h5>"가나다"</h5>
         </td>
-        <td align="center">
+        <td width="33%" align="center">
         	<h5>"가나다"</h5>
         </td>
-        <td align="center">
+        <td width="33%" align="center">
         	<h5>"가나다"</h5>
         </td>
     </tr>
