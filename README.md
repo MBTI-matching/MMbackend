@@ -16,10 +16,10 @@
 <table align="center">
     <tr>
         <td align="center">
-        <a href=""><img src="https://img.shields.io/badge/김종욱-000AFF?style=뱃지모양&logo=로고&logoColor=white"/></a>
+        <a href=""><img src="https://img.shields.io/badge/김영철-000AFF?style=뱃지모양&logo=로고&logoColor=white"/></a>
         </td>
         <td align="center">
-        <a href=""><img src="https://img.shields.io/badge/김영철-2DDC88?style=뱃지모양&logo=로고&logoColor=black"/></a>
+        <a href=""><img src="https://img.shields.io/badge/김종욱-2DDC88?style=뱃지모양&logo=로고&logoColor=black"/></a>
         </td>
         <td align="center">
         <a href=""><img src="https://img.shields.io/badge/성해인-D77EE9?style=뱃지모양&logo=로고&logoColor=white"/></a>
@@ -40,7 +40,7 @@
         <td width="33%" align="center">
         	<h5>"실전 프로젝트를 통해<br>프론트엔드, 백엔드, 디자이너와의 협업으로<br>프로젝트가 완성되는 경험을 할 수 있었고,<br>
 실제 서비스를 런칭하면서<br>사용자 피드백 및 오류를 해결하는 방법을<br>배울 수 있었습니다.<br>
-또한 6주간의 팀원들과 협업하면서<br>배운 내용을 통해<br>꾸준히 성장하는 개발자가 되도록 노력하겠습니다."</h5>
+또한 6주간의 팀원들과 협업하면서<br>배운 내용을 통해<br>꾸준히 성장하는 개발자가 되도록<br>노력하겠습니다."</h5>
         </td>
         <td width="33%" align="center">
         	<h5>"팀 프로젝트를 진행하고 있을 때는<br>최선에 가까운 결정을 해왔다고 생각했었지만,<br>
