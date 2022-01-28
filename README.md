@@ -6,6 +6,8 @@
 
 <h3 align="center"><b>🎫 프로젝트 소개 🎫</b></h3>
 <h4 align="center"> MBTI궁합 기반 취미 메이트 매칭 어플리케이션 </h4>
+<br>
+<h4 align="center">FrontEnd Github README.md: https://github.com/MBTI-matching/MMfrontend/blob/main/README.md</h4>
 
 ---
 
