@@ -34,13 +34,13 @@
         </th>
     </tr>
     <tr>
-        <td align="center">
+        <td width="33%" align="center">
         <h5 align="center"> MBTI궁합 기반 취미 메이트 매칭 어플리케이션 </h5>
         </td>
-        <td align="center">
+        <td width="33%" align="center">
         <h5 align="center"> MBTI궁합 기반 취미 메이트 매칭 어플리케이션 </h5>
         </td>
-        <td align="center">
+        <td width="33%" align="center">
         <h5> 이전에도 팀 프로젝트를 한 경험이 전혀 없는 것은 아니지만, <br>
 6주 동안, 팀원들과 거의 매일 한나절 이상씩 만나며 프로젝트를 진행한 적은 처음이라 매우 신선했습니다.<br>
 팀 프로젝트를 진행하고 있을 때는 최선에 가까운 결정을 해왔다고 생각했었지만, <br>
