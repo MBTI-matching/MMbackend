@@ -1,13 +1,11 @@
 <h3 align="center"><b>📰 항해99 9팀 메인 프로젝트 📰</b></h3>
 	
 <h4 align="center">📆 2021.12.20 ~ 2022.1.28</h4>
-<br>
 
 ---
 
 <h3 align="center"><b>🎫 프로젝트 소개 🎫</b></h3>
 <h4 align="center"> MBTI궁합 기반 취미 메이트 매칭 어플리케이션 </h4>
-<br><br>
 
 ---
 
