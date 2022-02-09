@@ -1,4 +1,4 @@
-# Bit Chemy
+# BIZ Chemy
 
 <p align="center"><img width="100%"  src="https://marvelous-rhinoceros-ebb.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F31351e21-edce-4fa4-ac4f-703e634097d8%2F%EB%85%B8%EC%85%98_%EB%A9%94%EC%9D%B8.jpg?table=block&id=a8e02136-4393-477a-a308-afa55dcb55ff&spaceId=edc55e63-e37f-4d77-a2bf-ea067b707e09&width=2000&userId=&cache=v2">
  </p>
