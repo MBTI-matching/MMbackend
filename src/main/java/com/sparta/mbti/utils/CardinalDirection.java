@@ -13,6 +13,7 @@ public enum CardinalDirection {
     SOUTHEAST(135.0),
     NORTHEAST(45.0);
 
+    // 방위각
     private final Double bearing;
 
     CardinalDirection(Double bearing) {

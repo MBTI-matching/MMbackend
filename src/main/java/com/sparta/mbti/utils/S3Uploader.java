@@ -64,7 +64,6 @@ public class S3Uploader {
             }
             return Optional.of(convertFile);
         }
-
         return Optional.empty();
     }
 

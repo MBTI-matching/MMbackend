@@ -318,7 +318,7 @@ public class UserService {
         String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
         Point point = (Point) new WKTReader().read(pointWKT);
 
-        
+
         findUser.update(userRequestDto, imgUrl, location, locDetail, mbti, point, true);
 
         // DB 저장
